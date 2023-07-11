@@ -6,6 +6,7 @@ if (
     && isset($_POST['tb_teacher_id'])
     && isset($_POST['absent'])
     && isset($_POST['class'])
+    && isset($_POST['absence_reason'])
 ) {
     //ไฟล์เชื่อมต่อฐานข้อมูล
     require_once 'connection.php';
@@ -20,6 +21,7 @@ if (
     `subject`,
     `tb_teacher_id`,
     `class`,
+    `absence_reason`,
     `absent`)
     VALUES
     (:current_time,

@@ -211,6 +211,7 @@
                                 <button type="submit" class="btn btn-primary btn-user btn-block">
                                     ยันยืนการบันทึกข้อมูล
                                 </button>
+
                                 <?php
                                 require_once 'db_add.php';
                                 // if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -218,7 +219,7 @@
                                 //     print_r($_POST);
                                 //     echo '</pre>';
                                 // }
-                                // 
+
                                 ?>
                             </form>
                         </div>

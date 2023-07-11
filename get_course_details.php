@@ -13,13 +13,14 @@ if (isset($_GET['course_code'])) {
     // ตรวจสอบว่ามีข้อมูลหรือไม่
     if ($stmt->rowCount() > 0) {
         // สร้างตาราง HTML สำหรับแสดงข้อมูล
-        $tableHTML = '<form method="post" action="process.php">'; // เพิ่ม form เพื่อส่งข้อมูลไปยัง process.php
+        $tableHTML = '<form method="post" action="process.php">';
         $tableHTML .= '<table class="table table-bordered">
                         <thead>
                             <tr>
                                 <th>Student ID</th>
                                 <th>Student Name</th>
-                                <th>ขาดเรียน</th>
+                                <th>Absent</th>
+                                <th>Absence Reason</th>
                             </tr>
                         </thead>
                         <tbody>';
@@ -30,13 +31,16 @@ if (isset($_GET['course_code'])) {
             $studentCode = $row["tb_student_code"];
 
             $tableHTML .= '<tr>
-                    <td>' . $studentId . '</td>
-                    <td>' . $studentName . '</td>
-                    <td><input type="checkbox" name="absent[]" value="' . $studentCode . '"></td>
-                </tr>';
+    <td>' . $studentId . '</td>
+    <td>' . $studentName . '</td>
+    <td><input type="checkbox" name="absent[]" value="' . $studentCode . '"></td>
+    <td><input type="text" class="form-control form-control-user" name="absence_reason[' . $studentCode . ']" onblur="checkEmpty(this)"></td>
+</tr>';
         }
 
         $tableHTML .= '</tbody></table>';
+
+
         $tableHTML .= '</form>';
 
         echo $tableHTML;
