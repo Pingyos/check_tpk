@@ -1,7 +1,7 @@
 <?php
 if (
     isset($_POST['current_time'])
-    && isset($_POST['period'])
+    && isset($_POST['periods'])
     && isset($_POST['subject'])
     && isset($_POST['tb_teacher_id'])
     && isset($_POST['absent'])
@@ -16,14 +16,14 @@ if (
     // SQL insert
     $stmt = $conn->prepare("INSERT INTO tb_users_logs
     (`current_time`,
-    `period`,
+    `periods`,
     `subject`,
     `tb_teacher_id`,
     `class`,
     `absent`)
     VALUES
     (:current_time,
-    :period,
+    :periods,
     :subject,
     :tb_teacher_id,
     :class,
@@ -34,7 +34,7 @@ if (
     $stmt->bindParam(':class', $_POST['class'], PDO::PARAM_STR);
     $stmt->bindParam(':subject', $_POST['subject'], PDO::PARAM_STR);
     $stmt->bindParam(':tb_teacher_id', $_POST['tb_teacher_id'], PDO::PARAM_STR);
-    $stmt->bindValue(':period', implode(',', $_POST['period']), PDO::PARAM_STR);
+    $stmt->bindValue(':periods', implode(',', $_POST['periods']), PDO::PARAM_STR);
 
     // เพิ่มแถวใหม่เมื่อ absent มีข้อมูลมากกว่า 1 ตัว
     if ($absentCount > 1) {
