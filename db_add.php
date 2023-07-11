@@ -34,7 +34,7 @@ if (
     $stmt->bindParam(':class', $_POST['class'], PDO::PARAM_STR);
     $stmt->bindParam(':subject', $_POST['subject'], PDO::PARAM_STR);
     $stmt->bindParam(':tb_teacher_id', $_POST['tb_teacher_id'], PDO::PARAM_STR);
-    $stmt->bindValue(':periods', implode(',', $_POST['periods']), PDO::PARAM_STR);
+    $stmt->bindParam(':periods', $_POST['periods'], PDO::PARAM_STR);
 
     // เพิ่มแถวใหม่เมื่อ absent มีข้อมูลมากกว่า 1 ตัว
     if ($absentCount > 1) {

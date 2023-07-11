@@ -212,11 +212,13 @@
                                     ยันยืนการบันทึกข้อมูล
                                 </button>
                                 <?php
-                                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                                    echo '<pre>';
-                                    print_r($_POST);
-                                    echo '</pre>';
-                                }
+                                require_once 'db_add.php';
+                                // if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                                //     echo '<pre>';
+                                //     print_r($_POST);
+                                //     echo '</pre>';
+                                // }
+                                // 
                                 ?>
                             </form>
                         </div>
