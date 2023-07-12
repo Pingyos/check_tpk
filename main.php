@@ -30,6 +30,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
 </head>
 
 <body>
@@ -41,11 +42,51 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                 <h5 class="text-center">สวัสดีคุณ <?= $_SESSION['name'] . ' ' . $_SESSION['surname']; ?></h5>
             </div>
             <form method="post">
+                <div class="mb-2">
+                    <div class="col-sm-9">
+                        <input type="date" name="time" id="time" class="form-control" required>
+                    </div>
+                    <script>
+                        var currentDateInput = document.getElementById('time');
+                        var currentDate = new Date();
+                        var year = currentDate.getFullYear();
+                        var month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+                        var day = ("0" + currentDate.getDate()).slice(-2);
+                        currentDateInput.value = year + "-" + month + "-" + day;
+                    </script>
+                </div>
+                <div class="mb-2">
+                    <div class="col-sm-9">
+                        <input type="checkbox" class="checkbox" name="period[]" value="1" id="period1">
+                        <label for="period1">คาบที่ 1</label>
+
+                        <input type="checkbox" class="checkbox" name="period[]" value="2" id="period2">
+                        <label for="period2">คาบที่ 2</label>
+
+                        <input type="checkbox" class="checkbox" name="period[]" value="3" id="period3">
+                        <label for="period3">คาบที่ 3</label>
+
+                        <input type="checkbox" class="checkbox" name="period[]" value="4" id="period4">
+                        <label for="period4">คาบที่ 4</label>
+
+                        <input type="checkbox" class="checkbox" name="period[]" value="5" id="period5">
+                        <label for="period5">คาบที่ 5</label>
+
+                        <input type="checkbox" class="checkbox" name="period[]" value="6" id="period6">
+                        <label for="period6">คาบที่ 6</label>
+
+                        <input type="checkbox" class="checkbox" name="period[]" value="7" id="period7">
+                        <label for="period7">คาบที่ 7</label>
+
+                        <input type="checkbox" class="checkbox" name="period[]" value="8" id="period8">
+                        <label for="period8">คาบที่ 8</label>
+                    </div>
+                </div>
 
                 <div class="mb-2">
                     <div class="col-sm-9">
                         <!-- HTML -->
-                        <select name="courses" class="form-control" onchange="updateClassDropdown(this.value)">
+                        <select name="courses" required class="form-control" onchange="updateClassDropdown(this.value)">
                             <option value="">เลือกวิชา</option>
                             <?php
                             require_once 'connect.php';
@@ -66,11 +107,13 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                             }
                             ?>
                         </select>
-
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="col-sm-9">
                         <select name="class" class="form-control">
                             <option value="">เลือกระดับชั้น</option>
                         </select>
-
                         <script>
                             function updateClassDropdown(selectedCourse) {
                                 var classDropdown = document.querySelector('select[name="class"]');
@@ -101,52 +144,15 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                         </script>
                     </div>
                 </div>
-                <div class="students-box">
-                    <h2>รายชื่อนักเรียน</h2>
-                    <ul id="students-list"></ul>
-                </div>
-
-                <script>
-                    function loadStudents(selectedCourse) {
-                        var studentsList = document.getElementById('students-list');
-                        studentsList.innerHTML = '<li>Loading...</li>';
-
-                        axios.get('get_rooms.php', {
-                                params: {
-                                    course: selectedCourse
-                                }
-                            })
-                            .then(function(response) {
-                                studentsList.innerHTML = ''; // เคลียร์รายการเดิม
-
-                                response.data.forEach(function(student) {
-                                    var li = document.createElement('li');
-                                    li.textContent = student;
-                                    studentsList.appendChild(li);
-                                });
-                            })
-                            .catch(function(error) {
-                                studentsList.innerHTML = '<li>Error loading students.</li>';
-                                console.error(error);
-                            });
-                    }
-
-                    var courseDropdown = document.querySelector('select[name="courses"]');
-                    courseDropdown.addEventListener('change', function() {
-                        var selectedCourse = courseDropdown.value;
-                        loadStudents(selectedCourse);
-                    });
-                </script>
-
                 <div>
                     <input type="hidden" name="teacher_id" class="form-control" value="<?php echo $_SESSION['id']; ?>">
                     <input type="hidden" name="name" class="form-control" value="<?php echo $_SESSION['name']; ?>">
                     <input type="hidden" name="surname" class="form-control" value="<?php echo $_SESSION['surname']; ?>">
                 </div>
                 <div class="d-grid gap-2 col-sm-9 mb-3">
-                    <button type="submit" class="btn btn-primary">ยืนยัน</button>
+                    <button type="submit" class="btn btn-primary">แสดงรายชื่อ</button>
                     <?php
-                    // require_once 'add_student_db.php';
+                    require_once 'add_checking_db.php';
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         echo '<pre>';
                         print_r($_POST);
