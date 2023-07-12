@@ -34,7 +34,7 @@ if (
             timer: 2000, 
             showConfirmButton: false 
         }, function(){
-            window.location.href = "add_student.php";
+            window.location.href = "index.php";
         });
         </script>';
     } else {
