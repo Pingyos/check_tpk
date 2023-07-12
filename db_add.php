@@ -8,11 +8,8 @@ if (
     && isset($_POST['class'])
     && isset($_POST['absence_reason'])
 ) {
-    //ไฟล์เชื่อมต่อฐานข้อมูล
+    // ไฟล์เชื่อมต่อฐานข้อมูล
     require_once 'connection.php';
-
-    // ตรวจสอบจำนวนข้อมูลในตัวแปร absent
-    $absentCount = count($_POST['absent']);
 
     // SQL insert
     $stmt = $conn->prepare("INSERT INTO tb_users_logs
@@ -29,6 +26,7 @@ if (
     :subject,
     :tb_teacher_id,
     :class,
+    :absence_reason,
     :absent)");
 
     // Bind parameter values
@@ -38,19 +36,16 @@ if (
     $stmt->bindParam(':tb_teacher_id', $_POST['tb_teacher_id'], PDO::PARAM_STR);
     $stmt->bindParam(':periods', $_POST['periods'], PDO::PARAM_STR);
 
-    // เพิ่มแถวใหม่เมื่อ absent มีข้อมูลมากกว่า 1 ตัว
-    if ($absentCount > 1) {
-        foreach ($_POST['absent'] as $absentItem) {
-            $stmt->bindValue(':absent', $absentItem, PDO::PARAM_STR);
-            $stmt->execute();
-        }
-    } else {
-        $absentValue = implode(',', $_POST['absent']);
-        $stmt->bindValue(':absent', $absentValue, PDO::PARAM_STR);
+    // Iterate over the absent array
+    foreach ($_POST['absent'] as $absentItem) {
+        $absence_reason = $_POST['absence_reason'][$absentItem];
+        $stmt->bindParam(':absent', $absentItem, PDO::PARAM_STR);
+        $stmt->bindParam(':absence_reason', $absence_reason, PDO::PARAM_STR);
         $stmt->execute();
     }
 
-    $tb_teacher_id = $_POST['tb_teacher_id']; // เปลี่ยนจาก $user['tb_teacher_id'] เป็น $_POST['tb_teacher_id']
+    $tb_teacher_id = $_POST['tb_teacher_id'];
+    $tb_teacher_name = $_POST['tb_teacher_name'];
 
     // เงื่อนไขตรวจสอบการเพิ่มข้อมูล
     echo '
@@ -65,7 +60,7 @@ if (
         timer: 2000, 
         showConfirmButton: false 
     }, function(){
-        window.location.href = "index.php?tb_teacher_id=' . $tb_teacher_id . '";
+        window.location.href = "report.php?tb_teacher_id=' . $tb_teacher_id . '&tb_teacher_name=' . $tb_teacher_name . '";
     });
     </script>';
 } else {
@@ -78,3 +73,4 @@ if (
     });
     </script>';
 }
+?>
