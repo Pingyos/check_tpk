@@ -72,7 +72,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                     </div>
                     <div class="mb-2">
                         <div class="col-sm-9">
-                            <select name="rooms" class="form-control" required>
+                            <select name="rooms" class="form-control" required onchange="updateRoomName(this)">
                                 <option value="">เลือกระดับชั้น</option>
                                 <?php
                                 require_once 'connect.php';
@@ -90,6 +90,16 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                         </div>
                     </div>
 
+                    <input type="hidden" name="room_name" id="tb_room_name" class="form-control">
+
+                    <script>
+                        function updateRoomName(selectElement) {
+                            var roomNameField = document.getElementById("tb_room_name");
+                            var selectedOption = selectElement.options[selectElement.selectedIndex];
+                            var roomName = selectedOption.text;
+                            roomNameField.value = roomName;
+                        }
+                    </script>
 
                     <div>
                         <input type="hidden" name="teacher_id" class="form-control" value="<?php echo $_SESSION['id']; ?>">

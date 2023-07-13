@@ -3,6 +3,7 @@ if (
     isset($_POST['courses'])
     && isset($_POST['course_name'])
     && isset($_POST['rooms'])
+    && isset($_POST['room_name'])
     && isset($_POST['teacher_id'])
     && isset($_POST['name'])
     && isset($_POST['surname'])
@@ -12,15 +13,17 @@ if (
     $courses = $_POST['courses'];
     $course_name = $_POST['course_name'];
     $rooms = $_POST['rooms'];
+    $room_name = $_POST['room_name'];
     $teacherId = $_POST['teacher_id'];
     $name = $_POST['name'];
     $surname = $_POST['surname'];
 
-    $stmt = $conn->prepare("INSERT INTO tb_reg_courses (`courses`, `course_name`, `rooms`, `teacher_id`, `name`, `surname`)
-                            VALUES (:courses, :course_name, :rooms, :teacher_id, :name, :surname)");
+    $stmt = $conn->prepare("INSERT INTO tb_reg_courses (`courses`, `course_name`, `rooms`,`room_name`,`teacher_id`, `name`, `surname`)
+                            VALUES (:courses, :course_name, :rooms, :room_name, :teacher_id, :name, :surname)");
     $stmt->bindParam(':courses', $courses, PDO::PARAM_STR);
     $stmt->bindParam(':course_name', $course_name, PDO::PARAM_STR);
     $stmt->bindParam(':rooms', $rooms, PDO::PARAM_INT);
+    $stmt->bindParam(':room_name', $room_name, PDO::PARAM_STR);
     $stmt->bindParam(':teacher_id', $teacherId, PDO::PARAM_INT);
     $stmt->bindParam(':name', $name, PDO::PARAM_STR);
     $stmt->bindParam(':surname', $surname, PDO::PARAM_STR);

@@ -37,40 +37,44 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
         <div class="row">
             <div class="col-md-12"> <br>
             </div>
+            <?php
+            require_once 'connect.php';
+
+            if (isset($_SESSION['id'])) {
+                $teacherId = $_SESSION['id'];
+
+                $stmt = $conn->prepare("SELECT * FROM tb_main WHERE teacher_id = :teacherId");
+                $stmt->bindParam(':teacherId', $teacherId, PDO::PARAM_INT);
+                $stmt->execute();
+
+                if ($stmt->rowCount() > 0) {
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $teacherName = $row['name'];
+                }
+            }
+            ?>
             <div class="col-md-12">
                 <h5 class="text-center">สวัสดีคุณ <?= $_SESSION['name'] . ' ' . $_SESSION['surname']; ?></h5>
+                <h5><?= $row['name']; ?> <?= $row['surname']; ?></h5>
+                <h5><?= $row['time']; ?> <?= $row['period']; ?></h5>
+                <h5><?= $row['courses']; ?> <?= $row['course_name']; ?></h5>
             </div>
+
             <form method="post">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">First</th>
-                            <th scope="col">Last</th>
-                            <th scope="col">Handle</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="d-grid gap-2 col-sm-12 mb-3">
-                    <button type="submit" class="btn btn-primary">ยืนยัน</button>
-                    <?php
-                    require_once 'add_student_db.php';
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                        echo '<pre>';
-                        print_r($_POST);
-                        echo '</pre>';
-                    }
-                    ?>
-                </div>
+
+
             </form>
+            <div class="d-grid gap-2 col-sm-12 mb-3">
+                <button type="submit" class="btn btn-primary">ยืนยัน</button>
+                <?php
+                require_once 'add_student_db.php';
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    echo '<pre>';
+                    print_r($_POST);
+                    echo '</pre>';
+                }
+                ?>
+            </div>
         </div>
     </div>
 </body>
