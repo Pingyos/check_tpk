@@ -91,7 +91,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                             <?php
                             require_once 'connect.php';
 
-                            // ตรวจสอบว่ามีการเข้าสู่ระบบแล้วด้วย $_SESSION
                             if (isset($_SESSION['id'])) {
                                 $teacherId = $_SESSION['id'];
 
@@ -114,34 +113,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                         <select name="class" class="form-control">
                             <option value="">เลือกระดับชั้น</option>
                         </select>
-                        <script>
-                            function updateClassDropdown(selectedCourse) {
-                                var classDropdown = document.querySelector('select[name="class"]');
-                                classDropdown.innerHTML = '<option value="">กำลังโหลดข้อมูล...</option>';
-
-                                axios.get('get_rooms.php', {
-                                        params: {
-                                            course: selectedCourse
-                                        }
-                                    })
-                                    .then(function(response) {
-                                        // เมื่อรับข้อมูลสำเร็จ
-                                        classDropdown.innerHTML = ''; // เคลียร์ตัวเลือกเดิม
-
-                                        if (response.data.length > 0) {
-                                            // สร้างตัวเลือกห้องเรียนจากข้อมูลที่ได้รับ
-                                            response.data.forEach(function(room) {
-                                                classDropdown.innerHTML += '<option value="' + room + '">' + room + '</option>';
-                                            });
-                                        } else {
-                                            classDropdown.innerHTML = '<option value="">ไม่พบห้องเรียน</option>';
-                                        }
-                                    })
-                                    .catch(function(error) {
-                                        classDropdown.innerHTML = '<option value="">เกิดข้อผิดพลาดในการดึงข้อมูล</option>';
-                                    });
-                            }
-                        </script>
                     </div>
                 </div>
                 <div>

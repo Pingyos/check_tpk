@@ -43,7 +43,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
             <form method="post">
                 <div class="mb-2">
                     <div class="col-sm-9">
-                        <select name="courses" class="form-control">
+                        <select name="course_code" id="course_code" class="form-control" onchange="updateCourseName()" required>
                             <option value="">เลือกวิชา</option>
                             <?php
                             require_once 'connect.php';
@@ -51,19 +51,29 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                             $sql = "SELECT * FROM tb_courses";
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
+
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                $courseId = $row['tb_course_code'];
+                                $courseCode = $row['tb_course_code'];
                                 $courseName = $row['tb_course_name'];
-                                echo "<option value='$courseId'>$courseName</option>";
+                                echo "<option value='$courseCode'>$courseCode - $courseName</option>";
                             }
                             ?>
                         </select>
+                        <script>
+                            function updateCourseName() {
+                                var selectElement = document.getElementById("course_code");
+                                var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+                                var courseName = selectedOption.text;
+                                document.getElementById("course_name").value = courseName;
+                            }
+                        </script>
 
                     </div>
                 </div>
                 <div class="mb-2">
                     <div class="col-sm-9">
-                        <select name="rooms" class="form-control">
+                        <select name="degree" class="form-control" required>
                             <option value="">เลือกระดับชั้น</option>
                             <?php
                             require_once 'connect.php';
@@ -83,6 +93,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                 </div>
 
                 <div>
+                    <input type="hidden" name="course_name" id="course_name" class="form-control">
                     <input type="hidden" name="teacher_id" class="form-control" value="<?php echo $_SESSION['id']; ?>">
                     <input type="hidden" name="name" class="form-control" value="<?php echo $_SESSION['name']; ?>">
                     <input type="hidden" name="surname" class="form-control" value="<?php echo $_SESSION['surname']; ?>">
