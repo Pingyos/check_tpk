@@ -64,11 +64,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                 var selectElement = document.getElementById("course_code");
                                 var selectedOption = selectElement.options[selectElement.selectedIndex];
 
-                                var courseName = selectedOption.text;
+                                var courseName = selectedOption.text.split(" - ")[1].trim();
                                 document.getElementById("course_name").value = courseName;
                             }
                         </script>
-
                     </div>
                 </div>
                 <div class="mb-2">

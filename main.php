@@ -85,32 +85,35 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
                 <div class="mb-2">
                     <div class="col-sm-9">
-                        <!-- HTML -->
-                        <select name="courses" required class="form-control" onchange="updateClassDropdown(this.value)">
+                        <select name="courses" required class="form-control">
                             <option value="">เลือกวิชา</option>
                             <?php
                             require_once 'connect.php';
 
+                            // ตรวจสอบว่ามีค่า $_SESSION['id'] หรือไม่
                             if (isset($_SESSION['id'])) {
                                 $teacherId = $_SESSION['id'];
 
-                                $sql = "SELECT * FROM tb_reg_courses WHERE teacher_id = :teacherId";
+                                // สร้างคำสั่ง SQL เพื่อเรียกข้อมูล course_code จากตาราง tb_reg_courses
+                                $sql = "SELECT course_code FROM tb_reg_courses WHERE teacher_id = :teacherId";
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bindParam(':teacherId', $teacherId);
                                 $stmt->execute();
 
+                                // วนลูปแสดงผลตัวเลือก
                                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                    $course = $row['courses'];
-                                    echo "<option value='$course'>$course</option>";
+                                    $courseCode = $row['course_code'];
+                                    echo "<option value='$courseCode'>$courseCode</option>";
                                 }
                             }
                             ?>
                         </select>
                     </div>
+
                 </div>
-                <div class="mb-2">
+                <div class=" mb-2">
                     <div class="col-sm-9">
-                        <select name="class" class="form-control">
+                        <select name="degree" class="form-control">
                             <option value="">เลือกระดับชั้น</option>
                         </select>
                     </div>
