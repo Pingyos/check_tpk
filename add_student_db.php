@@ -1,26 +1,26 @@
 <?php
 if (
-    isset($_POST['course_code'])
+    isset($_POST['courses'])
     && isset($_POST['course_name'])
-    && isset($_POST['degree'])
+    && isset($_POST['rooms'])
     && isset($_POST['teacher_id'])
     && isset($_POST['name'])
     && isset($_POST['surname'])
 ) {
     require_once 'connect.php';
 
-    $course_code = $_POST['course_code'];
+    $courses = $_POST['courses'];
     $course_name = $_POST['course_name'];
-    $degree = $_POST['degree'];
+    $rooms = $_POST['rooms'];
     $teacherId = $_POST['teacher_id'];
     $name = $_POST['name'];
     $surname = $_POST['surname'];
 
-    $stmt = $conn->prepare("INSERT INTO tb_reg_courses (`course_code`, `course_name`, `degree`, `teacher_id`, `name`, `surname`)
-                            VALUES (:course_code, :course_name, :degree, :teacher_id, :name, :surname)");
-    $stmt->bindParam(':course_code', $course_code, PDO::PARAM_STR);
+    $stmt = $conn->prepare("INSERT INTO tb_reg_courses (`courses`, `course_name`, `rooms`, `teacher_id`, `name`, `surname`)
+                            VALUES (:courses, :course_name, :rooms, :teacher_id, :name, :surname)");
+    $stmt->bindParam(':courses', $courses, PDO::PARAM_STR);
     $stmt->bindParam(':course_name', $course_name, PDO::PARAM_STR);
-    $stmt->bindParam(':degree', $degree, PDO::PARAM_INT);
+    $stmt->bindParam(':rooms', $rooms, PDO::PARAM_INT);
     $stmt->bindParam(':teacher_id', $teacherId, PDO::PARAM_INT);
     $stmt->bindParam(':name', $name, PDO::PARAM_STR);
     $stmt->bindParam(':surname', $surname, PDO::PARAM_STR);

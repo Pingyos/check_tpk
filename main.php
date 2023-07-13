@@ -85,38 +85,114 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
                 <div class="mb-2">
                     <div class="col-sm-9">
-                        <select name="courses" required class="form-control">
+                        <!-- HTML -->
+                        <select name="courses" required class="form-control" onchange="updateClassDropdown(this.value)">
                             <option value="">เลือกวิชา</option>
                             <?php
                             require_once 'connect.php';
 
-                            // ตรวจสอบว่ามีค่า $_SESSION['id'] หรือไม่
+                            // ตรวจสอบว่ามีการเข้าสู่ระบบแล้วด้วย $_SESSION
                             if (isset($_SESSION['id'])) {
                                 $teacherId = $_SESSION['id'];
 
-                                // สร้างคำสั่ง SQL เพื่อเรียกข้อมูล course_code จากตาราง tb_reg_courses
-                                $sql = "SELECT course_code FROM tb_reg_courses WHERE teacher_id = :teacherId";
+                                $sql = "SELECT * FROM tb_reg_courses WHERE teacher_id = :teacherId";
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bindParam(':teacherId', $teacherId);
                                 $stmt->execute();
 
-                                // วนลูปแสดงผลตัวเลือก
                                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                    $courseCode = $row['course_code'];
-                                    echo "<option value='$courseCode'>$courseCode</option>";
+                                    $course = $row['courses'];
+                                    echo "<option value='$course'>$course</option>";
                                 }
                             }
                             ?>
                         </select>
                     </div>
-
                 </div>
-                <div class=" mb-2">
+                <div class="mb-2">
                     <div class="col-sm-9">
-                        <select name="degree" class="form-control">
+                        <select name="class" class="form-control">
                             <option value="">เลือกระดับชั้น</option>
                         </select>
+                        <script>
+                            function updateClassDropdown(selectedCourse) {
+                                var classDropdown = document.querySelector('select[name="class"]');
+                                classDropdown.innerHTML = '<option value="">กำลังโหลดข้อมูล...</option>';
+
+                                axios.get('get_rooms.php', {
+                                        params: {
+                                            course: selectedCourse
+                                        }
+                                    })
+                                    .then(function(response) {
+                                        // เมื่อรับข้อมูลสำเร็จ
+                                        classDropdown.innerHTML = ''; // เคลียร์ตัวเลือกเดิม
+
+                                        if (response.data.length > 0) {
+                                            // สร้างตัวเลือกห้องเรียนจากข้อมูลที่ได้รับ
+                                            response.data.forEach(function(room) {
+                                                classDropdown.innerHTML += '<option value="' + room + '">' + room + '</option>';
+                                            });
+                                        } else {
+                                            classDropdown.innerHTML = '<option value="">ไม่พบห้องเรียน</option>';
+                                        }
+                                    })
+                                    .catch(function(error) {
+                                        classDropdown.innerHTML = '<option value="">เกิดข้อผิดพลาดในการดึงข้อมูล</option>';
+                                    });
+                            }
+                        </script>
                     </div>
+                    <div>
+                        <h2>ข้อมูลนักเรียน</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>รหัสนักเรียน</th>
+                                    <th>ชื่อ</th>
+                                    <th>นามสกุล</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentTableBody"></tbody>
+                        </table>
+                    </div>
+                    <script>
+                        function updateStudentTable(selectedCourse, selectedClass) {
+                            var studentTableBody = document.getElementById('studentTableBody');
+                            studentTableBody.innerHTML = '<tr><td colspan="3">กำลังโหลดข้อมูล...</td></tr>';
+
+                            axios.get('get_students.php', {
+                                    params: {
+                                        course: selectedCourse,
+                                        class: selectedClass
+                                    }
+                                })
+                                .then(function(response) {
+                                    studentTableBody.innerHTML = '';
+
+                                    if (response.data.length > 0) {
+
+                                        response.data.forEach(function(student) {
+                                            var row = document.createElement('tr');
+                                            row.innerHTML = '<td>' + student.tb_student_code + '</td>' +
+                                                '<td>' + student.tb_student_name + '</td>' +
+                                                '<td>' + student.tb_student_sname + '</td>';
+                                            studentTableBody.appendChild(row);
+                                        });
+                                    } else {
+                                        var row = document.createElement('tr');
+                                        row.innerHTML = '<td colspan="3">ไม่พบข้อมูลนักเรียน</td>';
+                                        studentTableBody.appendChild(row);
+                                    }
+                                })
+                                .catch(function(error) {
+                                    studentTableBody.innerHTML = '<tr><td colspan="3">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>';
+                                    console.log('เกิดข้อผิดพลาดในการดึงข้อมูลนักเรียน');
+                                });
+
+                        }
+                    </script>
+
                 </div>
                 <div>
                     <input type="hidden" name="teacher_id" class="form-control" value="<?php echo $_SESSION['id']; ?>">
@@ -126,7 +202,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                 <div class="d-grid gap-2 col-sm-9 mb-3">
                     <button type="submit" class="btn btn-primary">แสดงรายชื่อ</button>
                     <?php
-                    require_once 'add_checking_db.php';
+                    // require_once 'add_checking_db.php';
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         echo '<pre>';
                         print_r($_POST);

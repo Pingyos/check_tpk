@@ -43,7 +43,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
             <form method="post">
                 <div class="mb-2">
                     <div class="col-sm-9">
-                        <select name="course_code" id="course_code" class="form-control" onchange="updateCourseName()" required>
+                        <select name="courses" id="courses" class="form-control" onchange="updateCourseName()" required>
                             <option value="">เลือกวิชา</option>
                             <?php
                             require_once 'connect.php';
@@ -59,9 +59,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                             }
                             ?>
                         </select>
+                        <input type="hidden" name="course_name" id="course_name" class="form-control">
                         <script>
                             function updateCourseName() {
-                                var selectElement = document.getElementById("course_code");
+                                var selectElement = document.getElementById("courses");
                                 var selectedOption = selectElement.options[selectElement.selectedIndex];
 
                                 var courseName = selectedOption.text.split(" - ")[1].trim();
@@ -69,45 +70,43 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                             }
                         </script>
                     </div>
-                </div>
-                <div class="mb-2">
-                    <div class="col-sm-9">
-                        <select name="degree" class="form-control" required>
-                            <option value="">เลือกระดับชั้น</option>
-                            <?php
-                            require_once 'connect.php';
+                    <div class="mb-2">
+                        <div class="col-sm-9">
+                            <select name="rooms" class="form-control" required>
+                                <option value="">เลือกระดับชั้น</option>
+                                <?php
+                                require_once 'connect.php';
 
-                            $sql = "SELECT * FROM tb_rooms";
-                            $stmt = $conn->prepare($sql);
-                            $stmt->execute();
-                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                $roomId = $row['tb_room_id'];
-                                $roomName = $row['tb_room_name'];
-                                echo "<option value='$roomId'>$roomName</option>";
-                            }
-                            ?>
-                        </select>
-
+                                $sql = "SELECT * FROM tb_rooms";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->execute();
+                                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                    $roomId = $row['tb_room_id'];
+                                    $roomName = $row['tb_room_name'];
+                                    echo "<option value='$roomId'>$roomName</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <div>
-                    <input type="hidden" name="course_name" id="course_name" class="form-control">
-                    <input type="hidden" name="teacher_id" class="form-control" value="<?php echo $_SESSION['id']; ?>">
-                    <input type="hidden" name="name" class="form-control" value="<?php echo $_SESSION['name']; ?>">
-                    <input type="hidden" name="surname" class="form-control" value="<?php echo $_SESSION['surname']; ?>">
-                </div>
-                <div class="d-grid gap-2 col-sm-9 mb-3">
-                    <button type="submit" class="btn btn-primary">ยืนยัน</button>
-                    <?php
-                    require_once 'add_student_db.php';
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                        echo '<pre>';
-                        print_r($_POST);
-                        echo '</pre>';
-                    }
-                    ?>
-                </div>
+
+                    <div>
+                        <input type="hidden" name="teacher_id" class="form-control" value="<?php echo $_SESSION['id']; ?>">
+                        <input type="hidden" name="name" class="form-control" value="<?php echo $_SESSION['name']; ?>">
+                        <input type="hidden" name="surname" class="form-control" value="<?php echo $_SESSION['surname']; ?>">
+                    </div>
+                    <div class="d-grid gap-2 col-sm-9 mb-3">
+                        <button type="submit" class="btn btn-primary">ยืนยัน</button>
+                        <?php
+                        require_once 'add_student_db.php';
+                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                            echo '<pre>';
+                            print_r($_POST);
+                            echo '</pre>';
+                        }
+                        ?>
+                    </div>
             </form>
         </div>
     </div>
