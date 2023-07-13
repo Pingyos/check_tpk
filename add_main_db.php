@@ -35,6 +35,8 @@ if (
 
 
     if ($stmt->execute()) {
+        $lastInsertedId = $conn->lastInsertId(); // รับค่า ID ที่เพิ่งถูกเพิ่มล่าสุด
+
         echo '<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>';
         echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>';
         echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">';
@@ -46,7 +48,7 @@ if (
             timer: 2000, 
             showConfirmButton: false 
         }, function(){
-            window.location.href = "data.php";
+            window.location.href = "data.php?id=" + ' . $lastInsertedId . ';
         });
         </script>';
     } else {
