@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 13, 2023 at 11:29 AM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 7.4.29
+-- Generation Time: Jul 15, 2023 at 08:58 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.0.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -32,22 +32,26 @@ CREATE TABLE `tb_checking` (
   `time` varchar(255) NOT NULL,
   `period` varchar(255) NOT NULL,
   `courses` varchar(255) NOT NULL,
-  `class` varchar(255) NOT NULL,
+  `course_name` varchar(255) NOT NULL,
+  `rooms` varchar(255) NOT NULL,
   `teacher_id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
   `absent` varchar(255) NOT NULL,
+  `cause` varchar(255) NOT NULL,
   `dateCreate` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'วันลงข้อมูล'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tb_checking`
 --
 
-INSERT INTO `tb_checking` (`id`, `time`, `period`, `courses`, `class`, `teacher_id`, `name`, `surname`, `absent`, `dateCreate`) VALUES
-(1, '2023-07-12', '1', 'ศ20202', '14', '21', 'ทดสอบ', 'ทดสอบ', '', '2023-07-12 09:32:13'),
-(2, '2023-07-12', '1', 'พ30205', '10', '21', 'ทดสอบ', 'ทดสอบ', '', '2023-07-12 09:32:40'),
-(4, '2023-07-13', '1, 2', 'ศ30211', '15', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 04:36:13');
+INSERT INTO `tb_checking` (`id`, `time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, `name`, `surname`, `absent`, `cause`, `dateCreate`) VALUES
+(1, '2023-07-15', '1, 2', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '7', '3', 'พิชญพงษ์', 'เพียรจริง', '07752', 'ลา', '2023-07-15 12:06:54'),
+(2, '2023-07-15', '1, 2', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '7', '3', 'พิชญพงษ์', 'เพียรจริง', '07743', 'ลา', '2023-07-15 12:06:54'),
+(3, '2023-07-15', '1, 2', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '7', '3', 'พิชญพงษ์', 'เพียรจริง', '07974', 'ลา', '2023-07-15 12:06:54'),
+(4, '2023-07-15', '5, 6', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '9', '3', 'พิชญพงษ์', 'เพียรจริง', '07693', '', '2023-07-15 12:07:31'),
+(5, '2023-07-15', '5, 6', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '9', '3', 'พิชญพงษ์', 'เพียรจริง', '07689', '', '2023-07-15 12:07:31');
 
 -- --------------------------------------------------------
 
@@ -62,7 +66,7 @@ CREATE TABLE `tb_courses` (
   `tb_teacher_id` int(5) NOT NULL,
   `tb_course_day` varchar(255) NOT NULL,
   `tb_course_time` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `tb_courses`
@@ -117,31 +121,17 @@ CREATE TABLE `tb_main` (
   `teacher_id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
-  `absent` varchar(255) NOT NULL,
   `dateCreate` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'วันลงข้อมูล'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tb_main`
 --
 
-INSERT INTO `tb_main` (`id`, `time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, `name`, `surname`, `absent`, `dateCreate`) VALUES
-(2, '2023-07-13', '1, 2', 'ง30264', 'งานกัดกระจก', '9', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:11:26'),
-(3, '2023-07-13', '3, 4', 'ศ30211', 'ทักษะการขับร้องและประสานเสียง', '15', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:28:00'),
-(4, '2023-07-13', '2, 3', 'ง30204', 'มนุษยสัมพันธ์ทางธุรกิจ', '11', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:31:56'),
-(5, '2023-07-13', '2, 3', 'ง30204', 'มนุษยสัมพันธ์ทางธุรกิจ', '11', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:34:28'),
-(6, '2023-07-13', '2, 3', 'ง30204', 'มนุษยสัมพันธ์ทางธุรกิจ', '11', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:34:41'),
-(7, '2023-07-13', '2, 3', 'ง30204', 'มนุษยสัมพันธ์ทางธุรกิจ', '11', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:39:13'),
-(8, '2023-07-13', '3, 4', 'ศ30211', 'ทักษะการขับร้องและประสานเสียง', '15', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:39:33'),
-(9, '2023-07-13', '2, 3', 'ศ30211', 'ทักษะการขับร้องและประสานเสียง', '15', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:41:22'),
-(10, '2023-07-13', '3, 4', 'ศ30211', 'ทักษะการขับร้องและประสานเสียง', '15', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:41:58'),
-(11, '2023-07-13', '1, 2', 'ง30204', 'มนุษยสัมพันธ์ทางธุรกิจ', '11', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:43:58'),
-(12, '2023-07-13', '5, 6', 'ง30264', 'งานกัดกระจก', '2', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:44:42'),
-(13, '2023-07-13', '5, 6', 'ง30264', 'งานกัดกระจก', '2', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:45:07'),
-(14, '2023-07-13', '7, 8', 'ศ30211', 'ทักษะการขับร้องและประสานเสียง', '15', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 07:47:14'),
-(15, '2023-07-13', '4, 5', 'ค22201', 'คณิตศาสตร์เพิ่มเติม (ม.2)', '5', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 08:07:34'),
-(16, '2023-07-13', '5, 6', 'ศ30211', 'ทักษะการขับร้องและประสานเสียง', '15', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 08:16:09'),
-(17, '2023-07-13', '4, 5', 'ค22201', 'คณิตศาสตร์เพิ่มเติม (ม.2)', '5', '20', 'พัชรพล', 'ปิงยศ', '', '2023-07-13 08:21:20');
+INSERT INTO `tb_main` (`id`, `time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, `name`, `surname`, `dateCreate`) VALUES
+(1, '2023-07-15', '1, 2', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '7', '3', 'พิชญพงษ์', 'เพียรจริง', '2023-07-15 12:06:38'),
+(2, '2023-07-15', '5, 6', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '9', '3', 'พิชญพงษ์', 'เพียรจริง', '2023-07-15 12:07:20'),
+(3, '2023-07-15', '2, 3', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '9', '3', 'พิชญพงษ์', 'เพียรจริง', '2023-07-15 12:08:45');
 
 -- --------------------------------------------------------
 
@@ -159,19 +149,16 @@ CREATE TABLE `tb_reg_courses` (
   `name` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
   `dateCreate` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'วันลงข้อมูล'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tb_reg_courses`
 --
 
 INSERT INTO `tb_reg_courses` (`id`, `courses`, `course_name`, `rooms`, `room_name`, `teacher_id`, `name`, `surname`, `dateCreate`) VALUES
-(25, 'ง30264', 'งานกัดกระจก', '9', 'ม. 3/3', '20', 'พัชรพล', 'ปิงยศ', '2023-07-13 03:38:33'),
-(26, 'ศ30211', 'ทักษะการขับร้องและประสานเสียง', '15', 'ม. 5/3', '20', 'พัชรพล', 'ปิงยศ', '2023-07-13 03:39:00'),
-(27, 'ง30204', 'มนุษยสัมพันธ์ทางธุรกิจ', '11', 'ม. 4/2', '20', 'พัชรพล', 'ปิงยศ', '2023-07-13 03:39:05'),
-(28, 'ง30264', 'งานกัดกระจก', '2', 'ม. 1/2', '20', 'พัชรพล', 'ปิงยศ', '2023-07-13 03:47:02'),
-(29, 'ง20262', 'การประกอบอาหารและการบริการอาหาร', '4', 'ม. 2/1', '21', 'ทดสอบ', 'ทดสอบ', '2023-07-13 06:40:03'),
-(30, 'ค22201', 'คณิตศาสตร์เพิ่มเติม (ม.2)', '5', 'ม. 2/2', '20', 'พัชรพล', 'ปิงยศ', '2023-07-13 08:07:22');
+(1, 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '7', 'ม. 3/1', '3', 'พิชญพงษ์', 'เพียรจริง', '2023-07-15 12:06:17'),
+(2, 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '8', 'ม. 3/2', '3', 'พิชญพงษ์', 'เพียรจริง', '2023-07-15 12:06:23'),
+(3, 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '9', 'ม. 3/3', '3', 'พิชญพงษ์', 'เพียรจริง', '2023-07-15 12:06:30');
 
 -- --------------------------------------------------------
 
@@ -185,7 +172,7 @@ CREATE TABLE `tb_rooms` (
   `tb_room_class` int(12) NOT NULL,
   `tb_room_status` int(1) NOT NULL DEFAULT 1,
   `tb_room_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `tb_rooms`
@@ -225,7 +212,7 @@ CREATE TABLE `tb_students` (
   `tb_student_sname` varchar(255) NOT NULL,
   `tb_student_degree` int(5) NOT NULL,
   `tb_course_code` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `tb_students`
@@ -665,6 +652,89 @@ INSERT INTO `tb_students` (`tb_student_id`, `tb_student_code`, `tb_student_tname
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tb_teachers`
+--
+
+CREATE TABLE `tb_teachers` (
+  `tb_teacher_id` int(12) NOT NULL,
+  `tb_teacher_idcard` varchar(50) NOT NULL,
+  `tb_teacher_name` varchar(255) NOT NULL,
+  `tb_teacher_position` int(100) NOT NULL,
+  `tb_teacher_number` varchar(50) NOT NULL,
+  `tb_teacher_type` varchar(255) NOT NULL,
+  `tb_teacher_date` datetime NOT NULL,
+  `tb_teacher_degree` varchar(20) NOT NULL,
+  `tb_teacher_phone` varchar(20) NOT NULL,
+  `tb_teacher_status` int(1) NOT NULL DEFAULT 1,
+  `tb_academic_id` int(12) NOT NULL,
+  `tb_teacher_time` int(12) NOT NULL,
+  `tb_department_id` int(12) NOT NULL,
+  `tb_teacher_edudown` varchar(255) NOT NULL,
+  `tb_teacher_majordown` varchar(255) NOT NULL,
+  `tb_teacher_edutee` varchar(255) NOT NULL,
+  `tb_teacher_majortee` varchar(255) NOT NULL,
+  `tb_teacher_edutro` varchar(255) NOT NULL,
+  `tb_teacher_majortro` varchar(255) NOT NULL,
+  `tb_teacher_eduek` varchar(255) NOT NULL,
+  `tb_teacher_majorek` varchar(255) NOT NULL,
+  `tb_teacher_eduother` varchar(255) NOT NULL,
+  `tb_teacher_majorother` varchar(255) NOT NULL,
+  `tb_teacher_money1` varchar(255) NOT NULL,
+  `tb_teacher_money2` varchar(255) NOT NULL,
+  `tb_teacher_money3` varchar(255) NOT NULL,
+  `tb_teacher_school1` text NOT NULL,
+  `tb_teacher_school2` text NOT NULL,
+  `tb_teacher_school3` text NOT NULL,
+  `tb_teacher_workother` text NOT NULL,
+  `tb_teacher_picture` varchar(255) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `tb_teachers`
+--
+
+INSERT INTO `tb_teachers` (`tb_teacher_id`, `tb_teacher_idcard`, `tb_teacher_name`, `tb_teacher_position`, `tb_teacher_number`, `tb_teacher_type`, `tb_teacher_date`, `tb_teacher_degree`, `tb_teacher_phone`, `tb_teacher_status`, `tb_academic_id`, `tb_teacher_time`, `tb_department_id`, `tb_teacher_edudown`, `tb_teacher_majordown`, `tb_teacher_edutee`, `tb_teacher_majortee`, `tb_teacher_edutro`, `tb_teacher_majortro`, `tb_teacher_eduek`, `tb_teacher_majorek`, `tb_teacher_eduother`, `tb_teacher_majorother`, `tb_teacher_money1`, `tb_teacher_money2`, `tb_teacher_money3`, `tb_teacher_school1`, `tb_teacher_school2`, `tb_teacher_school3`, `tb_teacher_workother`, `tb_teacher_picture`) VALUES
+(1, '', 'นายไพฑูรย์ คำดี', 10, '825', '-', '2023-05-22 09:45:23', '', '1', 1, 5, 0, 7, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(2, '', 'นางสาวสาวิตรี  คำต่อ', 10, '605', '-', '2022-05-23 11:11:08', '4', '1', 1, 5, 0, 4, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'teacher_7720200804013344.jpg'),
+(3, '', 'นายพิชญพงษ์ เพียรจริง', 10, '215', '-', '2020-08-04 13:35:02', '', '1', 1, 5, 0, 9, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'teacher_4520200804013502.jpg'),
+(46, '', 'นายภัทรพล แก้วจิโน', 10, '904', '', '2022-12-06 09:51:51', '1', '0861793282', 1, 0, 0, 7, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(5, '', 'นายจิระเดช ซองคำ', 6, '506', '-', '2020-08-04 13:36:01', '', '1', 1, 1, 0, 5, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'teacher_7020200804013601.jpg'),
+(6, '', 'ว่าที่ร้อยตรีเจษฎา แก้วจิโน', 5, '501', '-', '2020-08-04 13:36:23', '', '1', 1, 2, 0, 5, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'teacher_8620200804013623.jpg'),
+(7, '', 'นายฉัตรชัย ยะมา', 6, '301', '-', '2020-08-04 13:36:52', '', '1', 1, 1, 0, 8, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'teacher_7620200804013652.jpg'),
+(8, '', 'นางเดือนฉาย จินดา', 6, '813', '-', '2020-08-04 13:37:10', '', '1', 1, 1, 0, 7, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'teacher_4920200804013710.jpg'),
+(9, '', 'นายตาลเดี่ยว ไชยวุฒิ', 9, '451', '-', '2020-08-04 13:37:41', '', '1', 1, 5, 0, 10, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'teacher_3420200804013741.jpg'),
+(10, '', 'นางทัศนีย์ ชุ่มลือ', 5, '407', '-', '2020-08-04 13:38:18', '', '1', 1, 2, 0, 10, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'teacher_9420200804013818.jpg'),
+(12, '', 'นายนาวิน กาวี', 5, '708', '-', '2021-05-28 14:01:36', '15', '0861793282', 1, 2, 0, 8, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(14, '', 'นางผกากรอง อินดำรงค์', 0, '809', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(15, '', 'นางพิมพ์ลักษณ์ อินต๊ะวิชา', 5, '109', '-', '2021-05-30 15:30:52', '13', '1', 1, 2, 0, 11, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(17, '', 'นางมัลลิกา คำชุ่ม', 0, '304', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(18, '', 'นางสาวรัตติกาล ชำนาญยา', 0, '804', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(19, '', 'นางรุ่งทิวา กาวี', 5, '206', '-', '2021-05-28 20:15:49', '15', '0819601765', 1, 2, 0, 9, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(42, '', 'นายวรปรัชญ์  หลวงโย', 6, '707', '', '2020-11-22 11:04:10', '5', '0810361836', 1, 0, 0, 8, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(21, '', 'นางวรวรรณ ทิพย์รัตน์', 0, '701', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(22, '', 'นายวิศิษฏ์ ราชเนตร', 0, '307', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(23, '', 'นายวุฒิพงษ์ เทียมทอง', 0, '212', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(24, '', 'นางศรีไพร ไชยมงคล', 0, '705', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(26, '', 'นางศิริวรรณ ณน่าน', 0, '114', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(27, '', 'นายสมเกียรติ ถูกนึก', 0, '505', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(28, '', 'นายสมรัตน์ ปัญโญ', 0, '406', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(29, '', 'นายสังคม แก้วจินดา', 0, '302', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(30, '', 'นายสังคม อินต๊ะสาร', 0, '402', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(31, '', 'นางสายพิน อินต๊ะสาร', 6, '706', '-', '2021-05-30 14:58:24', '', '1', 1, 1, 0, 6, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(32, '', 'ว่าที่ ร.ต.สิทธิสิทธิ์ จินดา', 0, '719', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(33, '', 'นางสิริกัญญา ยะมา', 0, '306', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(34, '', 'นางสาวสุกัญญา เรือนสอน', 0, '401', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(35, '', 'นายสุวัตร กุสสลานุภาพ', 0, '403', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(36, '', 'นางสาวแสงเทียน ช่างคำ', 0, '209', '-', '0000-00-00 00:00:00', '-', '1', 1, 0, 0, 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(38, '', 'นายชานนท์  ทองหล่อ', 10, '602', '-', '2022-11-03 10:24:43', '7', '1', 1, 5, 0, 4, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(40, '', 'Mr. Munashe', 10, '827', '-', '2022-05-23 11:11:32', '', '1', 1, 0, 0, 7, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(41, '', 'Admin ทดสอบ', 8, '12345', '', '2020-08-04 09:25:18', '1', '0811914097', 1, 1, 0, 6, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'teacher_1720190706092243.jpg'),
+(45, '', 'นางสาวชรินทร์ทร  ไหมคำ', 10, '903', '', '2022-05-23 11:16:15', '1', '1', 1, 0, 0, 12, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''),
+(44, '', 'นางสาวภาณุมาศ  พุทธสอน', 10, '901', '', '2022-05-23 11:12:17', '12', '1', 1, 0, 0, 11, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tb_users`
 --
 
@@ -673,16 +743,25 @@ CREATE TABLE `tb_users` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `surname` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `surname` varchar(255) NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tb_users`
 --
 
-INSERT INTO `tb_users` (`id`, `email`, `password`, `name`, `surname`) VALUES
-(20, 'admin', '123', 'พัชรพล', 'ปิงยศ'),
-(21, '123', '123', 'ทดสอบ', 'ทดสอบ');
+INSERT INTO `tb_users` (`id`, `email`, `password`, `name`, `surname`, `status`) VALUES
+(1, '001', '001', 'ไพฑูรย์', 'คำดี', 0),
+(2, '002', '002', 'สาวิตรี', 'คำต่อ', 0),
+(3, '003', '003', 'พิชญพงษ์', 'เพียรจริง', 0),
+(5, '005', '005', 'จิระเดช', 'ซองคำ', 0),
+(6, '006', '006', 'เจษฎา', 'แก้วจิโน', 0),
+(7, '007', '007', 'ฉัตรชัย', 'ยะมา', 0),
+(8, '008', '008', 'เดือนฉาย', 'จินดา', 0),
+(9, '009', '009', 'ตาลเดี่ยว', 'ไชยวุฒิ', 0),
+(10, '010', '010', 'ทัศนีย์', 'ชุ่มลือ', 0),
+(11, 'admin', 'admin', 'ADMIN', 'ADMIN', 1);
 
 --
 -- Indexes for dumped tables
@@ -725,6 +804,12 @@ ALTER TABLE `tb_students`
   ADD PRIMARY KEY (`tb_student_id`);
 
 --
+-- Indexes for table `tb_teachers`
+--
+ALTER TABLE `tb_teachers`
+  ADD PRIMARY KEY (`tb_teacher_id`);
+
+--
 -- Indexes for table `tb_users`
 --
 ALTER TABLE `tb_users`
@@ -738,7 +823,7 @@ ALTER TABLE `tb_users`
 -- AUTO_INCREMENT for table `tb_checking`
 --
 ALTER TABLE `tb_checking`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `tb_courses`
@@ -750,13 +835,13 @@ ALTER TABLE `tb_courses`
 -- AUTO_INCREMENT for table `tb_main`
 --
 ALTER TABLE `tb_main`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tb_reg_courses`
 --
 ALTER TABLE `tb_reg_courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tb_rooms`
@@ -771,10 +856,16 @@ ALTER TABLE `tb_students`
   MODIFY `tb_student_id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11388;
 
 --
+-- AUTO_INCREMENT for table `tb_teachers`
+--
+ALTER TABLE `tb_teachers`
+  MODIFY `tb_teacher_id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+
+--
 -- AUTO_INCREMENT for table `tb_users`
 --
 ALTER TABLE `tb_users`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

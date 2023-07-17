@@ -42,10 +42,10 @@ if (
         echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">';
         echo '<script>
         swal({
-            title: "บันทึกข้อมูลสำเร็จ", 
+            title: "กำลังแสดงผลข้อมูลนักเรียน", 
             text: "กรุณารอสักครู่",
             type: "success", 
-            timer: 2000, 
+            timer: 1000, 
             showConfirmButton: false 
         }, function(){
             window.location.href = "data.php?id=" + ' . $lastInsertedId . ';
