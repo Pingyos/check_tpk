@@ -8,7 +8,7 @@ echo '
 // print_r($_SESSION);
 // exit();
 //สร้างเงื่อนไขตรวจสอบสิทธิ์การเข้าใช้งานจาก session
-if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surname'])&& empty($_SESSION['status'])) {
+if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surname']) && empty($_SESSION['status'])) {
     echo '<script>
                 setTimeout(function() {
                 swal({
@@ -192,7 +192,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <span>บันทึก</span>
                                         </button>
                                     </div>
-
                                 </form>
                             </div>
                         </div>
