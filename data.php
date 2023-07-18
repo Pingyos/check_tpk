@@ -69,6 +69,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                 ?>
                                 <div class="card-title">
                                     <h3 class="text-center">รายชื่อนักเรียน</h3>
+                                    <br>
                                     <h4 class="text-center"> <b>วิชา : </b> <?= $row['courses']; ?> <?= $row['course_name']; ?> <b>ระดับชั้น :</b> <?= getRoomLabel($row['rooms']); ?></h4>
                                     <h4 class="text-center"> <b>เวลา : </b> <?= $row['time']; ?> <b>คาบเรียนที่</b> <?= $row['period']; ?></h4>
                                     <h4 class="text-center"> <b>ครูประจำวิชา</b> <?= $row['name']; ?> <?= $row['surname']; ?></h4>

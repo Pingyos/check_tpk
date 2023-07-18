@@ -10,14 +10,17 @@
                     <li>
                         <a href="export.php"><i class="menu-icon fa fa-save (alias)"></i>Export</a>
                     </li>
+                    <li>
+                        <a href="import.php"><i class="menu-icon fa fa-plus-circle"></i>Import</a>
+                    </li>
                 <?php endif; ?>
                 <?php if ($_SESSION['status'] == 0) : ?>
                     <li class="active">
                         <a href="index.php"><i class="menu-icon fa fa-laptop"></i>หน้าหลัก </a>
                     </li>
-                    <li>
+                    <!-- <li>
                         <a href="add_student.php"> <i class="menu-icon fa fa-cloud-download"></i>ลงทะเบียนวิชา </a>
-                    </li>
+                    </li> -->
                     <li>
                         <a href="main.php"> <i class="menu-icon fa fa-pencil"></i>เช็คชื่อ </a>
                     </li>
