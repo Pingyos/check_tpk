@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 15, 2023 at 08:58 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.0.28
+-- Generation Time: Jul 18, 2023 at 08:10 AM
+-- Server version: 10.4.24-MariaDB
+-- PHP Version: 7.4.29
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -40,7 +40,7 @@ CREATE TABLE `tb_checking` (
   `absent` varchar(255) NOT NULL,
   `cause` varchar(255) NOT NULL,
   `dateCreate` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'วันลงข้อมูล'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tb_checking`
@@ -51,7 +51,10 @@ INSERT INTO `tb_checking` (`id`, `time`, `period`, `courses`, `course_name`, `ro
 (2, '2023-07-15', '1, 2', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '7', '3', 'พิชญพงษ์', 'เพียรจริง', '07743', 'ลา', '2023-07-15 12:06:54'),
 (3, '2023-07-15', '1, 2', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '7', '3', 'พิชญพงษ์', 'เพียรจริง', '07974', 'ลา', '2023-07-15 12:06:54'),
 (4, '2023-07-15', '5, 6', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '9', '3', 'พิชญพงษ์', 'เพียรจริง', '07693', '', '2023-07-15 12:07:31'),
-(5, '2023-07-15', '5, 6', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '9', '3', 'พิชญพงษ์', 'เพียรจริง', '07689', '', '2023-07-15 12:07:31');
+(5, '2023-07-15', '5, 6', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '9', '3', 'พิชญพงษ์', 'เพียรจริง', '07689', '', '2023-07-15 12:07:31'),
+(6, '2023-07-18', '7, 8', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '18', '3', 'พิชญพงษ์', 'เพียรจริง', '07407', '', '2023-07-18 01:41:20'),
+(7, '2023-07-18', '7, 8', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '18', '3', 'พิชญพงษ์', 'เพียรจริง', '07408', '', '2023-07-18 01:41:20'),
+(8, '2023-07-18', '7, 8', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '18', '3', 'พิชญพงษ์', 'เพียรจริง', '07422', '', '2023-07-18 01:41:20');
 
 -- --------------------------------------------------------
 
@@ -66,7 +69,7 @@ CREATE TABLE `tb_courses` (
   `tb_teacher_id` int(5) NOT NULL,
   `tb_course_day` varchar(255) NOT NULL,
   `tb_course_time` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `tb_courses`
@@ -122,7 +125,7 @@ CREATE TABLE `tb_main` (
   `name` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
   `dateCreate` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'วันลงข้อมูล'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tb_main`
@@ -131,7 +134,9 @@ CREATE TABLE `tb_main` (
 INSERT INTO `tb_main` (`id`, `time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, `name`, `surname`, `dateCreate`) VALUES
 (1, '2023-07-15', '1, 2', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '7', '3', 'พิชญพงษ์', 'เพียรจริง', '2023-07-15 12:06:38'),
 (2, '2023-07-15', '5, 6', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '9', '3', 'พิชญพงษ์', 'เพียรจริง', '2023-07-15 12:07:20'),
-(3, '2023-07-15', '2, 3', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '9', '3', 'พิชญพงษ์', 'เพียรจริง', '2023-07-15 12:08:45');
+(3, '2023-07-15', '2, 3', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '9', '3', 'พิชญพงษ์', 'เพียรจริง', '2023-07-15 12:08:45'),
+(4, '2023-07-18', '7, 8', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '18', '3', 'พิชญพงษ์', 'เพียรจริง', '2023-07-18 01:41:00'),
+(5, '2023-07-18', '2, 3', 'ค23201', 'คณิตศาสตร์เพิ่มเติม (ม.3)', '4', '3', 'พิชญพงษ์', 'เพียรจริง', '2023-07-18 01:41:36');
 
 -- --------------------------------------------------------
 
@@ -149,7 +154,7 @@ CREATE TABLE `tb_reg_courses` (
   `name` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
   `dateCreate` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'วันลงข้อมูล'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tb_reg_courses`
@@ -172,7 +177,7 @@ CREATE TABLE `tb_rooms` (
   `tb_room_class` int(12) NOT NULL,
   `tb_room_status` int(1) NOT NULL DEFAULT 1,
   `tb_room_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `tb_rooms`
@@ -212,7 +217,7 @@ CREATE TABLE `tb_students` (
   `tb_student_sname` varchar(255) NOT NULL,
   `tb_student_degree` int(5) NOT NULL,
   `tb_course_code` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `tb_students`
@@ -687,7 +692,7 @@ CREATE TABLE `tb_teachers` (
   `tb_teacher_school3` text NOT NULL,
   `tb_teacher_workother` text NOT NULL,
   `tb_teacher_picture` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `tb_teachers`
@@ -739,29 +744,34 @@ INSERT INTO `tb_teachers` (`tb_teacher_id`, `tb_teacher_idcard`, `tb_teacher_nam
 --
 
 CREATE TABLE `tb_users` (
+  `excel_id` int(11) NOT NULL,
   `id` int(10) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `name_title` varchar(55) NOT NULL,
   `name` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
+  `position` varchar(255) NOT NULL,
+  `groups` varchar(255) NOT NULL,
   `status` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tb_users`
 --
 
-INSERT INTO `tb_users` (`id`, `email`, `password`, `name`, `surname`, `status`) VALUES
-(1, '001', '001', 'ไพฑูรย์', 'คำดี', 0),
-(2, '002', '002', 'สาวิตรี', 'คำต่อ', 0),
-(3, '003', '003', 'พิชญพงษ์', 'เพียรจริง', 0),
-(5, '005', '005', 'จิระเดช', 'ซองคำ', 0),
-(6, '006', '006', 'เจษฎา', 'แก้วจิโน', 0),
-(7, '007', '007', 'ฉัตรชัย', 'ยะมา', 0),
-(8, '008', '008', 'เดือนฉาย', 'จินดา', 0),
-(9, '009', '009', 'ตาลเดี่ยว', 'ไชยวุฒิ', 0),
-(10, '010', '010', 'ทัศนีย์', 'ชุ่มลือ', 0),
-(11, 'admin', 'admin', 'ADMIN', 'ADMIN', 1);
+INSERT INTO `tb_users` (`excel_id`, `id`, `email`, `password`, `name_title`, `name`, `surname`, `position`, `groups`, `status`) VALUES
+(61, 999, 'admin', 'admin', 'นาย', 'พัชรพล', 'ปิงยศ', 'Dev.', 'IT', 1),
+(62, 1, '001', '001', '', 'ไพฑูรย์', 'คำดี', '', '', 0),
+(63, 2, '002', '002', '', 'สาวิตรี', 'คำต่อ', '', '', 0),
+(64, 3, '003', '003', '', 'พิชญพงษ์', 'เพียรจริง', '', '', 0),
+(65, 5, '005', '005', '', 'จิระเดช', 'ซองคำ', '', '', 0),
+(66, 6, '006', '006', '', 'เจษฎา', 'แก้วจิโน', '', '', 0),
+(67, 7, '007', '007', '', 'ฉัตรชัย', 'ยะมา', '', '', 0),
+(68, 8, '008', '008', '', 'เดือนฉาย', 'จินดา', '', '', 0),
+(69, 9, '009', '009', '', 'ตาลเดี่ยว', 'ไชยวุฒิ', '', '', 0),
+(70, 10, '010', '010', '', 'ทัศนีย์', 'ชุ่มลือ', '', '', 0),
+(74, 2147483647, 'nursecmu@gmail.com', '213123', 'นาย', 'patcharapon', 'pingyos', 'ผู้อำนวยการ', 'IT', 1);
 
 --
 -- Indexes for dumped tables
@@ -813,7 +823,7 @@ ALTER TABLE `tb_teachers`
 -- Indexes for table `tb_users`
 --
 ALTER TABLE `tb_users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`excel_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -823,7 +833,7 @@ ALTER TABLE `tb_users`
 -- AUTO_INCREMENT for table `tb_checking`
 --
 ALTER TABLE `tb_checking`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `tb_courses`
@@ -835,7 +845,7 @@ ALTER TABLE `tb_courses`
 -- AUTO_INCREMENT for table `tb_main`
 --
 ALTER TABLE `tb_main`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `tb_reg_courses`
@@ -865,7 +875,7 @@ ALTER TABLE `tb_teachers`
 -- AUTO_INCREMENT for table `tb_users`
 --
 ALTER TABLE `tb_users`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `excel_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
