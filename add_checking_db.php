@@ -31,7 +31,7 @@ if (
             $currentAbsent = $absent[$i];
             $currentCause = $cause[$i];
 
-            $stmt = $conn->prepare("INSERT INTO tb_checking (`time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, `name`, `surname`, `absent`, `cause`)
+            $stmt = $conn->prepare("INSERT INTO ck_checking (`time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, `name`, `surname`, `absent`, `cause`)
                                     VALUES (:time, :period, :courses, :course_name, :rooms, :teacher_id, :name, :surname, :absent, :cause)");
 
             $stmt->bindParam(':time', $time, PDO::PARAM_STR);
@@ -48,7 +48,7 @@ if (
             $stmt->execute();
         }
     } else {
-        $stmt = $conn->prepare("INSERT INTO tb_checking (`time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, `name`, `surname`, `absent`, `cause`)
+        $stmt = $conn->prepare("INSERT INTO ck_checking (`time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, `name`, `surname`, `absent`, `cause`)
                                 VALUES (:time, :period, :courses, :course_name, :rooms, :teacher_id, :name, :surname, :absent, :cause)");
 
         $stmt->bindParam(':time', $time, PDO::PARAM_STR);

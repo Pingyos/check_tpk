@@ -61,7 +61,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 require_once 'connect.php';
 
                                                 // ใช้ PDO เพื่อดึงข้อมูลวิชาจากฐานข้อมูล
-                                                $sql = "SELECT DISTINCT courses, course_name FROM tb_checking WHERE teacher_id = :id";
+                                                $sql = "SELECT DISTINCT courses, course_name FROM ck_checking WHERE teacher_id = :id";
                                                 $stmt = $conn->prepare($sql);
                                                 $stmt->bindParam(':id', $_SESSION['id']);
                                                 $stmt->execute();
@@ -107,7 +107,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
                                                     // ดึงข้อมูลนักเรียนตามวิชาและวันที่ที่เลือก
                                                     $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname, DATE(c.time) AS checking_date 
-                                                FROM tb_checking c 
+                                                FROM ck_checking c 
                                                 JOIN tb_students s ON c.absent = s.tb_student_code
                                                 WHERE c.teacher_id = :teacherId AND c.courses = :courseCode";
 

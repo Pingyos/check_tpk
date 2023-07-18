@@ -61,7 +61,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 require_once 'connect.php';
 
                                                 // ใช้ PDO เพื่อดึงข้อมูลวิชาจากฐานข้อมูล
-                                                $sql = "SELECT DISTINCT courses, course_name FROM tb_checking";
+                                                $sql = "SELECT DISTINCT courses, course_name FROM ck_checking";
                                                 $stmt = $conn->prepare($sql);
                                                 $stmt->execute();
                                                 $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -122,7 +122,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     // เชื่อมต่อฐานข้อมูลอีกครั้ง
                                                     require_once 'connect.php';
 
-                                                    $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname FROM tb_checking c 
+                                                    $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
                                                     JOIN tb_students s ON c.absent = s.tb_student_code
                                                     WHERE 1=1";
 
