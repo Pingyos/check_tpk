@@ -5,8 +5,8 @@ echo '
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">';
 //เช็คว่ามีตัวแปร session อะไรบ้าง
-// print_r($_SESSION);
-// exit();
+print_r($_SESSION);
+exit();
 //สร้างเงื่อนไขตรวจสอบสิทธิ์การเข้าใช้งานจาก session
 if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surname']) && empty($_SESSION['status'])) {
     echo '<script>
@@ -86,18 +86,17 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 echo '</select>';
                                                 echo '</div>';
 
-                                                // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
-                                                $selectedDate = date('Y-m-d');
-                                                if (isset($_POST['date'])) {
-                                                    $selectedDate = $_POST['date'];
-                                                }
-
                                                 // เพิ่ม input date สำหรับเลือกวันที่
                                                 echo '<div class="form-group col-12">';
                                                 echo '<label for="date" class="control-label mb-1">วันที่</label>';
                                                 echo '<input type="date" name="date" id="date" class="form-control" value="' . $selectedDate . '">';
                                                 echo '</div>';
 
+                                                // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
+                                                $selectedDate = date('Y-m-d');
+                                                if (isset($_POST['date'])) {
+                                                    $selectedDate = $_POST['date'];
+                                                }
                                                 // เมื่อกด submit
                                                 if (isset($_POST['course'])) {
                                                     $selectedCourse = $_POST['course'];
@@ -107,9 +106,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
                                                     // ดึงข้อมูลนักเรียนตามวิชาและวันที่ที่เลือก
                                                     $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname, DATE(c.time) AS checking_date 
-                                                FROM ck_checking c 
-                                                JOIN ck_students s ON c.absent = s.tb_student_code
-                                                WHERE c.teacher_id = :teacherId AND c.courses = :courseCode";
+                                                    FROM ck_checking c 
+                                                    JOIN ck_students s ON c.absent = s.tb_student_code
+                                                    WHERE c.teacher_id = :teacherId AND c.courses = :courseCode";
+
 
                                                     // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
                                                     if (isset($_POST['date'])) {
@@ -132,13 +132,13 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     if (count($students) > 0) {
                                                         echo '<table id="bootstrap-data-table" class="table table-striped table-bordered">';
                                                         echo '<thead><tr>
-                                                                <th>รหัสนักเรียน</th>
-                                                                <th>ชื่อ-สกุล</th>
-                                                                <th>สาเหตุ</th>
-                                                                <th>ระดับชั้น</th>
-                                                                <th>วิชา</th>
-                                                                <th>คาบเรียน/วันที่</th>
-                                                            </tr></thead>';
+                                                            <th>รหัสนักเรียน</th>
+                                                            <th>ชื่อ-สกุล</th>
+                                                            <th>สาเหตุ</th>
+                                                            <th>ระดับชั้น</th>
+                                                            <th>วิชา</th>
+                                                            <th>คาบเรียน/วันที่</th>
+                                                        </tr></thead>';
                                                         echo '<tbody>';
 
                                                         foreach ($students as $student) {

@@ -97,11 +97,27 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <input type="checkbox" class="checkbox" name="period[]" value="8" id="period8">
                                                         <label for="period8">คาบเรียนที่ 8</label>
                                                     </div>
+                                                    <script>
+                                                        const checkboxes = document.querySelectorAll('input[type="checkbox"][name="period[]"]');
+                                                        const maxChecked = 2;
+
+                                                        checkboxes.forEach(checkbox => {
+                                                            checkbox.addEventListener('change', function() {
+                                                                const checkedCount = document.querySelectorAll('input[type="checkbox"][name="period[]"]:checked').length;
+
+                                                                if (checkedCount > maxChecked) {
+                                                                    this.checked = false;
+                                                                }
+                                                            });
+                                                        });
+                                                    </script>
                                                     <?php
                                                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                         if (isset($_POST['period'])) {
                                                             $selectedPeriods = $_POST['period'];
                                                             if (count($selectedPeriods) >= 1 && count($selectedPeriods) <= 2) {
+                                                                // ตรวจสอบเลือกคาบเรียนที่ถูกต้อง
+                                                                // ดำเนินการต่อหรือเก็บข้อมูลที่ได้รับ
                                                             } else {
                                                                 echo '<span style="color: red;">กรุณาเลือกคาบเรียนอย่างน้อย 1 คาบเรียน และไม่เกิน 2 คาบเรียน</span>';
                                                             }
@@ -110,7 +126,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         }
                                                     }
                                                     ?>
-
                                                 </div>
                                             </div>
                                             <div class="row">

@@ -4,10 +4,9 @@ echo '
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">';
-
 //เช็คว่ามีตัวแปร session อะไรบ้าง
-//print_r($_SESSION);
-//exit();
+// print_r($_SESSION);
+// exit();
 //สร้างเงื่อนไขตรวจสอบสิทธิ์การเข้าใช้งานจาก session
 if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surname']) && empty($_SESSION['status'])) {
     echo '<script>
@@ -24,8 +23,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 }
 ?>
 
+
 <!doctype html>
 <html class="no-js" lang="">
+
 <?php require_once 'head.php'; ?>
 
 <body>
@@ -51,185 +52,141 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                 <div id="pay-invoice">
                                     <div class="card-body">
                                         <div class="card-title">
-                                            <h3 class="text-center">เช็คชื่อ</h3>
+                                            <h3 class="text-center">รายงานการขาดเรียน</h3>
                                         </div>
                                         <hr>
                                         <form action="#" method="post" novalidate="novalidate">
-                                            <div class="form-group">
-                                                <label for="date" class="control-label mb-1">วันที่</label>
-                                                <input type="date" name="time" id="time" class="form-control" required>
-                                                <script>
-                                                    var currentDateInput = document.getElementById('time');
-                                                    var currentDate = new Date();
-                                                    var year = currentDate.getFullYear();
-                                                    var month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
-                                                    var day = ("0" + currentDate.getDate()).slice(-2);
-                                                    currentDateInput.value = year + "-" + month + "-" + day;
-                                                </script>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="cc-name" class="control-label mb-1">คาบเรียน</label>
-                                                <div class="form-group has-success">
-                                                    <input type="checkbox" class="checkbox" name="period[]" value="1" id="period1">
-                                                    <label for="period1">คาบเรียนที่ 1 |</label>
-
-                                                    <input type="checkbox" class="checkbox" name="period[]" value="2" id="period2">
-                                                    <label for="period2">คาบเรียนที่ 2 |</label>
-
-                                                    <input type="checkbox" class="checkbox" name="period[]" value="3" id="period3">
-                                                    <label for="period3">คาบเรียนที่ 3 |</label>
-
-                                                    <input type="checkbox" class="checkbox" name="period[]" value="4" id="period4">
-                                                    <label for="period4">คาบเรียนที่ 4 |</label>
-
-                                                    <input type="checkbox" class="checkbox" name="period[]" value="5" id="period5">
-                                                    <label for="period5">คาบเรียนที่ 5 |</label>
-
-                                                    <input type="checkbox" class="checkbox" name="period[]" value="6" id="period6">
-                                                    <label for="period6">คาบเรียนที่ 6 |</label>
-
-                                                    <input type="checkbox" class="checkbox" name="period[]" value="7" id="period7">
-                                                    <label for="period7">คาบเรียนที่ 7 |</label>
-
-                                                    <input type="checkbox" class="checkbox" name="period[]" value="8" id="period8">
-                                                    <label for="period8">คาบเรียนที่ 8</label>
-                                                </div>
+                                            <div class="row">
                                                 <?php
-                                                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                                                    if (isset($_POST['period'])) {
-                                                        $selectedPeriods = $_POST['period'];
-                                                        if (count($selectedPeriods) >= 1 && count($selectedPeriods) <= 2) {
-                                                        } else {
-                                                            echo '<span style="color: red;">กรุณาเลือกคาบเรียนอย่างน้อย 1 คาบเรียน และไม่เกิน 2 คาบเรียน</span>';
-                                                        }
-                                                    } else {
-                                                        echo '<span style="color: red;">กรุณาเลือกคาบเรียนอย่างน้อย 1 คาบเรียน และไม่เกิน 2 คาบเรียน</span>';
+                                                require_once 'connect.php';
+
+                                                // เพิ่ม input date สำหรับเลือกวันที่
+                                                $selectedDate = date('Y-m-d');
+                                                if (isset($_POST['date'])) {
+                                                    $selectedDate = $_POST['date'];
+                                                }
+
+                                                // ใช้ PDO เพื่อดึงข้อมูลวิชาจากฐานข้อมูล
+                                                $sql = "SELECT DISTINCT courses, course_name FROM ck_checking WHERE teacher_id = :id";
+                                                $stmt = $conn->prepare($sql);
+                                                $stmt->bindParam(':id', $_SESSION['id']);
+                                                $stmt->execute();
+                                                $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                                // สร้าง dropdown สำหรับเลือกวิชา
+                                                echo '<div class="form-group col-12">';
+                                                echo '<label for="course" class="control-label mb-1">วิชา</label>';
+                                                echo '<select name="course" id="course" class="form-control">';
+                                                $selectedCourses = array(); // ตัวแปรเก็บรายการวิชาที่ถูกเลือกไว้แล้ว
+
+                                                foreach ($checkings as $checking) {
+                                                    $courseCode = $checking['courses'];
+                                                    $courseName = $checking['course_name'];
+
+                                                    // เพิ่มตัวเลือกเฉพาะเมื่อยังไม่มีรายการวิชานี้อยู่ในรายการที่ถูกเลือกไว้แล้ว
+                                                    if (!in_array($courseCode, $selectedCourses)) {
+                                                        echo '<option value="' . $courseCode . '">' . $courseName . '</option>';
+                                                        $selectedCourses[] = $courseCode; // เพิ่มรายการวิชาที่ถูกเลือกไว้ในรายการ
                                                     }
                                                 }
-                                                ?>
+                                                echo '</select>';
+                                                echo '</div>';
 
-                                            </div>
 
+                                                // เพิ่ม input date สำหรับเลือกวันที่
+                                                echo '<div class="form-group col-12">';
+                                                echo '<label for="date" class="control-label mb-1">วันที่</label>';
+                                                echo '<input type="date" name="date" id="date" class="form-control" value="' . $selectedDate . '">';
+                                                echo '</div>';
 
-                                            <style>
-                                                .error-message {
-                                                    color: red;
-                                                }
-                                            </style>
+                                                // เมื่อกด submit
+                                                if (isset($_POST['course'])) {
+                                                    $selectedCourse = $_POST['course'];
 
-                                            <div class="form-group">
-                                                <label for="cc-number" class="control-label mb-1">วิชา</label>
-                                                <select name="courses" required class="form-control">
-                                                    <option value="">เลือกวิชา</option>
-                                                    <?php
+                                                    // เชื่อมต่อฐานข้อมูลอีกครั้ง
                                                     require_once 'connect.php';
 
-                                                    // ตรวจสอบว่ามีการเข้าสู่ระบบแล้วด้วย $_SESSION
-                                                    if (isset($_SESSION['id'])) {
-                                                        $teacherId = $_SESSION['id'];
-
-                                                        $sql = "SELECT DISTINCT courses, course_name FROM tb_reg_courses WHERE teacher_id = :teacherId";
-                                                        $stmt = $conn->prepare($sql);
-                                                        $stmt->bindParam(':teacherId', $teacherId);
-                                                        $stmt->execute();
-
-                                                        $selectedCourses = array(); // ตัวแปรเก็บรายการวิชาที่ถูกเลือกไว้แล้ว
-
-                                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                                            $course = $row['courses'];
-                                                            $courseName = $row['course_name'];
-
-                                                            // เพิ่มตัวเลือกเฉพาะเมื่อยังไม่มีชื่อวิชานี้อยู่ในรายการที่ถูกเลือกไว้แล้ว
-                                                            if (!in_array($course, $selectedCourses)) {
-                                                                echo "<option value='$course' data-course-name='$courseName'>$course - $courseName</option>";
-                                                                $selectedCourses[] = $course; // เพิ่มรายการวิชาที่ถูกเลือกไว้ในรายการ
-                                                            }
-                                                        }
+                                                    // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
+                                                    $selectedDate = date('Y-m-d');
+                                                    if (isset($_POST['date'])) {
+                                                        $selectedDate = $_POST['date'];
                                                     }
-                                                    ?>
-                                                </select>
-                                                <input type="hidden" name="course_name" class="form-control" id="courseNameInput">
-                                                <script>
-                                                    var coursesDropdown = document.querySelector('select[name="courses"]');
-                                                    var courseNameInput = document.getElementById('courseNameInput');
 
-                                                    coursesDropdown.addEventListener('change', function() {
-                                                        var selectedOption = this.options[this.selectedIndex];
-                                                        var courseName = selectedOption.dataset.courseName;
-                                                        courseNameInput.value = courseName;
-                                                    });
-                                                </script>
-                                            </div>
+                                                    // ดึงข้อมูลนักเรียนตามวิชาและวันที่ที่เลือก
+                                                    $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname, DATE(c.time) AS checking_date 
+                                                            FROM ck_checking c 
+                                                            JOIN ck_students s ON c.absent = s.tb_student_code
+                                                            WHERE c.teacher_id = :teacherId AND c.courses = :courseCode";
 
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-group">
-                                                        <label for="cc-exp" class="control-label mb-1">ระดับชั้น</label>
-                                                        <select name="rooms" required class="form-control">
-                                                            <option value="">เลือกห้องเรียน</option>
-                                                        </select>
-                                                    </div>
-                                                    <script>
-                                                        var coursesDropdown = document.querySelector('select[name="courses"]');
-                                                        var roomsDropdown = document.querySelector('select[name="rooms"]');
+                                                    // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
+                                                    if (isset($_POST['date'])) {
+                                                        $sql .= " AND DATE(c.time) = :selectedDate";
+                                                    }
 
-                                                        coursesDropdown.addEventListener('change', function() {
-                                                            var selectedOption = this.options[this.selectedIndex];
-                                                            var courseName = selectedOption.dataset.courseName;
-                                                            var selectedCourse = this.value;
+                                                    $stmt = $conn->prepare($sql);
+                                                    $stmt->bindParam(':teacherId', $_SESSION['id']);
+                                                    $stmt->bindParam(':courseCode', $selectedCourse);
 
-                                                            // อัปเดตชื่อวิชาใน input course_name
-                                                            document.querySelector('input[name="course_name"]').value = courseName;
+                                                    // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
+                                                    if (isset($_POST['date'])) {
+                                                        $stmt->bindParam(':selectedDate', $selectedDate);
+                                                    }
 
-                                                            // อัปเดตตัวเลือกห้องเรียน
-                                                            updateRoomsDropdown(selectedCourse);
-                                                        });
+                                                    $stmt->execute();
+                                                    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                                                        function updateRoomsDropdown(selectedCourse) {
-                                                            roomsDropdown.innerHTML = '<option value="">กำลังโหลดข้อมูล...</option>';
+                                                    if (count($students) > 0) {
+                                                        echo '<table id="bootstrap-data-table" class="table table-striped table-bordered">';
+                                                        echo '<thead><tr>
+                                                                <th>รหัสนักเรียน</th>
+                                                                <th>ชื่อ-สกุล</th>
+                                                                <th>สาเหตุ</th>
+                                                                <th>ระดับชั้น</th>
+                                                                <th>วิชา</th>
+                                                                <th>คาบเรียน/วันที่</th>
+                                                            </tr></thead>';
+                                                        echo '<tbody>';
 
-                                                            axios.get('get_rooms.php', {
-                                                                    params: {
-                                                                        course: selectedCourse
-                                                                    }
-                                                                })
-                                                                .then(function(response) {
-                                                                    roomsDropdown.innerHTML = ''; // เคลียร์ตัวเลือกเดิม
+                                                        foreach ($students as $student) {
+                                                            echo '<tr>';
+                                                            echo '<td>' . $student['absent'] . '</td>';
+                                                            echo '<td>' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] . '</td>';
+                                                            echo '<td>' . $student['cause'] . '</td>';
+                                                            echo '<td>';
 
-                                                                    if (response.data.length > 0) {
-                                                                        response.data.forEach(function(room) {
-                                                                            var roomId = room.id;
-                                                                            var roomName = room.name;
-                                                                            roomsDropdown.innerHTML += '<option value="' + roomId + '">' + roomName + '</option>';
-                                                                        });
-                                                                    } else {
-                                                                        roomsDropdown.innerHTML = '<option value="">ไม่พบห้องเรียน</option>';
-                                                                    }
-                                                                })
-                                                                .catch(function(error) {
-                                                                    roomsDropdown.innerHTML = '<option value="">เกิดข้อผิดพลาดในการดึงข้อมูล</option>';
-                                                                });
+                                                            $level = $student['rooms'];
+                                                            $class = ($level - 1) % 3 + 1;
+                                                            $year = floor(($level - 1) / 3) + 1;
+                                                            echo 'ม.' . $year . '/' . $class;
+
+                                                            echo '</td>';
+                                                            echo '<td>' . $student['courses'] . ' - ' . $student['course_name'] . '</td>';
+                                                            echo '<td>' . $student['period'] . ' / ' . $student['checking_date'] . '</td>';
+                                                            echo '</tr>';
                                                         }
-                                                    </script>
-                                                </div>
-                                                <div class="col-6">
-                                                    <input type="hidden" name="teacher_id" class="form-control" value="<?php echo $_SESSION['id']; ?>">
-                                                    <input type="hidden" name="name" class="form-control" value="<?php echo $_SESSION['name']; ?>">
-                                                    <input type="hidden" name="surname" class="form-control" value="<?php echo $_SESSION['surname']; ?>">
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <?php
-                                                require_once 'add_main_db.php';
-                                                // if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                                                //     echo '<pre>';
-                                                //     print_r($_POST);
-                                                //     echo '</pre>';
-                                                // }
+
+                                                        echo '</tbody>';
+                                                        echo '</table>';
+                                                    } else {
+                                                        echo 'ไม่มีข้อมูลนักเรียนที่ขาดในวันที่ที่เลือก';
+                                                    }
+
+                                                    // ปิดการเชื่อมต่อฐานข้อมูล
+                                                    $conn = null;
+                                                }
                                                 ?>
-                                                <button id="payment-button" type="submit" class="btn btn-info">
-                                                    <span id="payment-button-amount">แสดงรายชื่อ</span>
-                                                </button>
+                                            </div>
+
+
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="row" style="margin-left : 0px">
+                                                        <button type="submit" class="btn btn-info">
+                                                            <span><i class="menu-icon fa fa-search"></i> แสดงรายชื่อ</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </form>
                                     </div>
@@ -237,7 +194,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
                             </div>
                         </div> <!-- .card -->
-
                     </div>
                 </div>
                 <!-- /Widgets -->
@@ -251,30 +207,31 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
     </div>
     <!-- /#right-panel -->
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.4/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
     <script src="assets/js/main.js"></script>
 
-    <!--  Chart js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
 
-    <!--Chartist Chart-->
-    <script src="https://cdn.jsdelivr.net/npm/chartist@0.11.0/dist/chartist.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartist-plugin-legend@0.6.2/chartist-plugin-legend.min.js"></script>
+    <script src="assets/js/lib/data-table/datatables.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/jszip.min.js"></script>
+    <script src="assets/js/lib/data-table/vfs_fonts.js"></script>
+    <script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
+    <script src="assets/js/init/datatables-init.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery.flot@0.8.3/jquery.flot.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flot-pie@1.0.0/src/jquery.flot.pie.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flot-spline@0.0.1/js/jquery.flot.spline.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/simpleweather@3.1.0/jquery.simpleWeather.min.js"></script>
-    <script src="assets/js/init/weather-init.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.9.0/dist/fullcalendar.min.js"></script>
-    <script src="assets/js/init/fullcalendar-init.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#bootstrap-data-table-export').DataTable();
+        });
+    </script>
 </body>
 
 </html>
