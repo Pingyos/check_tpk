@@ -86,7 +86,7 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                                             <div class="stat-heading">จำนวนคุณครู</div>
                                             <div class="stat-text"><span class="count"><?php echo $result['teachers']; ?></span> คน </div>
                                             <a href="#" data-toggle="modal" data-target="#teachersModal" class="small-box-footer">
-                                            รายละเอียด <i class="fa fa-arrow-circle-right"></i>
+                                                รายละเอียด <i class="fa fa-arrow-circle-right"></i>
                                             </a>
                                         </div>
                                     </div>

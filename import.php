@@ -57,27 +57,30 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                         <hr>
                                         <form action="#" method="post" novalidate="novalidate" enctype="multipart/form-data">
                                             <div class="row">
-                                                <div class="form-group col-lg-12 col-md-3 col-12">
+                                                <div class="form-group col-lg-6 col-md-3 col-12">
                                                     <div class="col col-md-3"><label for="excel" class=" form-control-label">เพิ่มไฟล์</label></div>
                                                     <div class="col-12 col-md-9"><input type="file" id="excel" name="excel" class="form-control-file"></div>
                                                 </div>
                                             </div>
-                                            <div class="form-group col-lg-12 col-md-3 col-12">
+                                            <div class="form-group col-lg-6 col-md-3 col-12">
                                                 <button name="import" type="submit" class="btn btn-info">
                                                     <span>อัพโหลด</span>
                                                 </button>
                                             </div>
                                         </form>
                                         <hr>
+                                        <div class="form-group col-lg-6 col-md-3 col-12">
+                                            <button type="button" class="btn btn-info ml-auto" data-toggle="modal" data-target="#teachersModal">
+                                                <i class="fa fa-plus-square-o"></i> เพิ่ม 1 คน
+                                            </button>
+                                        </div>
                                         <?php require 'config.php'; ?>
                                         <table id="bootstrap-data-table" class="table table-striped table-bordered">
                                             <tr>
                                                 <td>ลำดับ</td>
-                                                <td>เลขประจำตัว</td>
                                                 <td>Email</td>
                                                 <td>Password</td>
                                                 <td>ชื่อ-สกุล</td>
-                                                <td>สถานะ</td>
                                                 <td>รายละเอียด</td>
                                             </tr>
                                             <?php
@@ -87,12 +90,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             ?>
                                                 <tr>
                                                     <td> <?php echo $i++; ?> </td>
-                                                    <td> <?php echo $row["id"]; ?> </td>
                                                     <td> <?php echo $row["email"]; ?> </td>
                                                     <td> <?php echo $row["password"]; ?> </td>
-                                                    <td> <?php echo $row["name"]; ?> <?php echo $row["surname"]; ?> </td>
-                                                    <td> <?php echo $row["status"]; ?> </td>
-                                                    <td> <?php echo $row["status"]; ?> </td>
+                                                    <td> <?php echo $row["name_title"]; ?> <?php echo $row["name"]; ?> <?php echo $row["surname"]; ?> </td>
+                                                    <td> <a href="del.php?excel_id=<?= $row['excel_id']; ?>" class="btn btn-info"><i class="fa fa-trash-o"></i> Del</a>
+                                                    </td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         </table>
@@ -146,7 +148,80 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                         </div> <!-- .card -->
                     </div>
                 </div>
-                <!-- /Widgets -->
+                <div class="modal fade" id="teachersModal" tabindex="-1" role="dialog" aria-labelledby="teachersModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="teachersModalLabel">เพิ่มรายชื่อครู</h5>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" enctype="multipart/form-data">
+                                    <div class="row">
+                                        <div class="form-group col-lg-6 col-md-3 col-12">
+                                            <label for="id" class="control-label mb-1">รหัสประจำตัว</label>
+                                            <input type="text" name="id" id="id" class="form-control" required>
+                                        </div>
+                                        <div class="form-group col-lg-6 col-md-3 col-12">
+                                            <label for="email" class="control-label mb-1">Email</label>
+                                            <input type="text" name="email" id="email" class="form-control" required>
+                                        </div>
+                                        <div class="form-group col-lg-6 col-md-3 col-12">
+                                            <label for="password" class="control-label mb-1">Password</label>
+                                            <input type="text" name="password" id="password" class="form-control" required>
+                                        </div>
+                                        <div class="form-group col-lg-6 col-md-3 col-12">
+                                            <label for="name_title" class="control-label mb-1">คำนำหน้า</label>
+                                            <input type="text" name="name_title" id="name_title" class="form-control" required>
+                                        </div>
+                                        <div class="form-group col-lg-6 col-md-3 col-12">
+                                            <label for="name" class="control-label mb-1">ชื่อ</label>
+                                            <input type="text" name="name" id="name" class="form-control" required>
+                                        </div>
+                                        <div class="form-group col-lg-6 col-md-3 col-12">
+                                            <label for="surname" class="control-label mb-1">สกุส</label>
+                                            <input type="text" name="surname" id="surname" class="form-control" required>
+                                        </div>
+                                        <div class="form-group col-lg-6 col-md-3 col-12">
+                                            <label for="position" class="control-label mb-1">ตำแหน่ง</label>
+                                            <select name="position" id="position" class="form-control" required>
+                                                <option value="0">กรุณาเลือกตำแหน่ง</option>
+                                                <option value="ครูผู้ช่วย">ครูผู้ช่วย</option>
+                                                <option value="ครู">ครู</option>
+                                                <option value="ครูชำนาญการพิเศษ">ครูชำนาญการพิเศษ</option>
+                                                <option value="ครูเชี่ยวชาญ">ครูเชี่ยวชาญ</option>
+                                                <option value="ครูอัตราจ้าง">ครูอัตราจ้าง</option>
+                                                <option value="ผู้อำนวยการ">ผู้อำนวยการ</option>
+                                                <option value="รองผู้อำนวยการ">รองผู้อำนวยการ</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-lg-6 col-md-3 col-12">
+                                            <label for="groups" class="control-label mb-1">กลุ่มสาระการเรียนรู้</label>
+                                            <input type="text" name="groups" id="groups" class="form-control" required>
+                                        </div>
+                                        <div class="form-group col-lg-12 col-md-3 col-12">
+                                            <label for="status" class="control-label mb-1">ตำแหน่ง</label>
+                                            <select name="status" id="status" class="form-control" required>
+                                                <option value="0">ผู้ใช้งาน</option>
+                                                <option value="1">Admin</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <?php
+                                        require_once 'add_import_db.php';
+                                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                                            echo '<pre>';
+                                            print_r($_POST);
+                                            echo '</pre>';
+                                        }
+                                        ?>
+                                        <button type="submit" class="btn btn-info">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- /.content -->
@@ -182,6 +257,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
             $('#bootstrap-data-table-export').DataTable();
         });
     </script>
+
+
 </body>
 
 </html>

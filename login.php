@@ -30,12 +30,12 @@
                     if (isset($_POST['email']) && isset($_POST['password']) && isset($_POST['status'])) {
                         // sweet alert
                         echo '
-    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree&display=swap" rel="stylesheet">';
+                        <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">
+                        <link rel="preconnect" href="https://fonts.googleapis.com">
+                        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                        <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree&display=swap" rel="stylesheet">';
 
                         // ไฟล์เชื่อมต่อฐานข้อมูล
                         require_once 'connect.php';
@@ -45,7 +45,7 @@
                         $status = $_POST['status']; // เก็บรหัสผ่านในรูปแบบ sha1 
 
                         // check email & password
-                        $stmt = $conn->prepare("SELECT id, name, surname, status FROM tb_users WHERE email = :email AND password = :password");
+                        $stmt = $conn->prepare("SELECT id, name_title, name, surname, position, groups, status FROM tb_users WHERE email = :email AND password = :password");
                         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
                         $stmt->bindParam(':password', $password, PDO::PARAM_STR);
                         $stmt->execute();
@@ -60,17 +60,17 @@
                                 // เช็คหน้า mainadmin.php
                                 if (basename($_SERVER['PHP_SELF']) == 'mainadmin.php') {
                                     echo '
-                <script>
-                    setTimeout(function() {
-                        swal({
-                            title: "คุณไม่มีสิทธิ์ใช้งาน",
-                            text: "กรุณาติดต่อผู้ดูแลระบบ",
-                            type: "error"
-                        }, function() {
-                            window.location = "login.php"; // หน้าที่ต้องการให้กระโดดไป
-                        });
-                    }, 1000);
-                </script>';
+                                    <script>
+                                        setTimeout(function() {
+                                            swal({
+                                                title: "คุณไม่มีสิทธิ์ใช้งาน",
+                                                text: "กรุณาติดต่อผู้ดูแลระบบ",
+                                                type: "error"
+                                            }, function() {
+                                                window.location = "login.php"; // หน้าที่ต้องการให้กระโดดไป
+                                            });
+                                        }, 1000);
+                                    </script>';
                                     $conn = null; // ปิดการเชื่อมต่อฐานข้อมูล
                                     exit();
                                 } else {
@@ -86,40 +86,42 @@
 
                             // สร้างตัวแปร session
                             $_SESSION['id'] = $row['id'];
+                            $_SESSION['name_title'] = $row['name_title'];
                             $_SESSION['name'] = $row['name'];
                             $_SESSION['surname'] = $row['surname'];
+                            $_SESSION['position'] = $row['position'];
+                            $_SESSION['groups'] = $row['groups'];
                             $_SESSION['status'] = $row['status'];
 
                             echo '
-        <script>
-            swal({
-                title: "เข้าสู่ระบบสำเร็จ!",
-                text: "กรุณารอสักครู่",
-                type: "success",
-                timer: 2000,
-                showConfirmButton: false
-            }, function(){
-                window.location.href = "index.php";
-            });
-        </script>';
+                            <script>
+                                swal({
+                                    title: "เข้าสู่ระบบสำเร็จ!",
+                                    text: "กรุณารอสักครู่",
+                                    type: "success",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }, function(){
+                                    window.location.href = "index.php";
+                                });
+                            </script>';
                         } else {
                             echo '
-        <script>
-            setTimeout(function() {
-                swal({
-                    title: "เกิดข้อผิดพลาด",
-                    text: "email หรือ Password ไม่ถูกต้อง ลองใหม่อีกครั้ง",
-                    type: "warning"
-                }, function() {
-                    window.location = "login.php"; // หน้าที่ต้องการให้กระโดดไป
-                });
-            }, 1000);
-        </script>';
+                            <script>
+                                setTimeout(function() {
+                                    swal({
+                                        title: "เกิดข้อผิดพลาด",
+                                        text: "email หรือ Password ไม่ถูกต้อง ลองใหม่อีกครั้ง",
+                                        type: "warning"
+                                    }, function() {
+                                        window.location = "login.php"; // หน้าที่ต้องการให้กระโดดไป
+                                    });
+                                }, 1000);
+                            </script>';
                             $conn = null;
                         }
                     }
                     ?>
-
                 </div>
             </div>
         </div>
