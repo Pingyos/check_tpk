@@ -13,6 +13,9 @@
                     <li>
                         <a href="import_users.php"><i class="menu-icon fa fa-plus-circle"></i>Import Teacher</a>
                     </li>
+                    <li>
+                        <a href="import_student.php"><i class="menu-icon fa fa-plus-circle"></i>Import Student</a>
+                    </li>
                 <?php endif; ?>
                 <?php if ($_SESSION['status'] == 0) : ?>
                     <li class="active">

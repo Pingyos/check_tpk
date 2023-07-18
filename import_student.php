@@ -87,16 +87,12 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
                                             $reader = new SpreadsheetReader($targetDirectory);
                                             foreach ($reader as $key => $row) {
-                                                $id = $row[0];
-                                                $email = $row[1];
-                                                $password = $row[2];
-                                                $name_title = $row[3];
-                                                $name = $row[4];
-                                                $surname = $row[5];
-                                                $position = $row[6];
-                                                $groups = $row[7];
-                                                $status = $row[8];
-                                                mysqli_query($conn, "INSERT INTO ck_users VALUES('', '$id','$email', '$password','$name_title', '$name', '$surname', '$position', '$groups', '$status')");
+                                                $tb_student_id = $row[0];
+                                                $tb_student_code = $row[1];
+                                                $tb_student_name = $row[2];
+                                                $tb_student_sname = $row[3];
+                                                $tb_student_degree = $row[4];
+                                                mysqli_query($conn, "INSERT INTO ck_students VALUES('$tb_student_id','$tb_student_code', '$tb_student_name', '$tb_student_sname', '$tb_student_degree')");
                                             }
                                             echo '<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>';
                                             echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>';
@@ -110,7 +106,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     timer: 2000,
                                                     showConfirmButton: false
                                                 }, function(){
-                                                    window.location.href = "import_users.php";
+                                                    window.location.href = "import_student.php";
                                                 });
                                             });
                                         </script>';
@@ -139,16 +135,16 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <thead>
                                                 <tr>
                                                     <td>ลำดับ</td>
-                                                    <td>Email</td>
-                                                    <td>Password</td>
+                                                    <td>รหัสนักเรียน</td>
                                                     <td>ชื่อ-สกุล</td>
+                                                    <td>ระดับชั้น</td>
                                                     <td>รายละเอียด</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <?php
                                                 require_once 'connect.php';
-                                                $stmt = $conn->prepare("SELECT * FROM ck_users");
+                                                $stmt = $conn->prepare("SELECT * FROM ck_students");
                                                 $stmt->execute();
                                                 $result = $stmt->fetchAll();
                                                 $countrow = 1;
@@ -156,10 +152,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 ?>
                                                     <tr>
                                                         <td><?= $countrow ?></td>
-                                                        <td> <?php echo $t1["email"]; ?> </td>
-                                                        <td> <?php echo $t1["password"]; ?> </td>
-                                                        <td> <?php echo $t1["name_title"]; ?> <?php echo $t1["name"]; ?> <?php echo $t1["surname"]; ?> </td>
-                                                        <td> <a href="del_users?excel_id=<?= $t1['excel_id']; ?>" class="btn btn-info"><i class="fa fa-trash-o"></i> Del</a>
+                                                        <td> <?php echo $t1["tb_student_code"]; ?> </td>
+                                                        <td> <?php echo $t1["tb_student_name"]; ?> <?php echo $t1["tb_student_sname"]; ?></td>
+                                                        <td> <?php echo $t1["tb_student_degree"]; ?> </td>
+                                                        <td> <a href="del_student?tb_student_id=<?= $t1['tb_student_id']; ?>" class="btn btn-info"><i class="fa fa-trash-o"></i> Del</a>
                                                         </td>
                                                     </tr>
                                                 <?php
@@ -178,63 +174,51 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="teachersModalLabel">เพิ่มรายชื่อครู</h5>
+                                <h5 class="modal-title" id="teachersModalLabel">เพิ่มรายชื่อนักเรียน</h5>
                             </div>
                             <div class="modal-body">
                                 <form method="post" enctype="multipart/form-data">
                                     <div class="row">
                                         <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="id" class="control-label mb-1">รหัสประจำตัว</label>
-                                            <input type="text" name="id" id="id" class="form-control" required>
+                                            <label for="tb_student_code" class="control-label mb-1">รหัสประจำตัว</label>
+                                            <input type="text" name="tb_student_code" id="tb_student_code" class="form-control" required>
                                         </div>
                                         <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="email" class="control-label mb-1">Email</label>
-                                            <input type="text" name="email" id="email" class="form-control" required>
+                                            <label for="tb_student_name" class="control-label mb-1">ชื่อ</label>
+                                            <input type="text" name="tb_student_name" id="tb_student_name" class="form-control" required>
                                         </div>
                                         <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="password" class="control-label mb-1">Password</label>
-                                            <input type="text" name="password" id="password" class="form-control" required>
+                                            <label for="tb_student_sname" class="control-label mb-1">สกุล</label>
+                                            <input type="text" name="tb_student_sname" id="tb_student_sname" class="form-control" required>
                                         </div>
                                         <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="name_title" class="control-label mb-1">คำนำหน้า</label>
-                                            <input type="text" name="name_title" id="name_title" class="form-control" required>
-                                        </div>
-                                        <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="name" class="control-label mb-1">ชื่อ</label>
-                                            <input type="text" name="name" id="name" class="form-control" required>
-                                        </div>
-                                        <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="surname" class="control-label mb-1">สกุส</label>
-                                            <input type="text" name="surname" id="surname" class="form-control" required>
-                                        </div>
-                                        <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="position" class="control-label mb-1">ตำแหน่ง</label>
-                                            <select name="position" id="position" class="form-control" required>
-                                                <option value="0">กรุณาเลือกตำแหน่ง</option>
-                                                <option value="ครูผู้ช่วย">ครูผู้ช่วย</option>
-                                                <option value="ครู">ครู</option>
-                                                <option value="ครูชำนาญการพิเศษ">ครูชำนาญการพิเศษ</option>
-                                                <option value="ครูเชี่ยวชาญ">ครูเชี่ยวชาญ</option>
-                                                <option value="ครูอัตราจ้าง">ครูอัตราจ้าง</option>
-                                                <option value="ผู้อำนวยการ">ผู้อำนวยการ</option>
-                                                <option value="รองผู้อำนวยการ">รองผู้อำนวยการ</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="groups" class="control-label mb-1">กลุ่มสาระการเรียนรู้</label>
-                                            <input type="text" name="groups" id="groups" class="form-control" required>
-                                        </div>
-                                        <div class="form-group col-lg-12 col-md-3 col-12">
-                                            <label for="status" class="control-label mb-1">ตำแหน่ง</label>
-                                            <select name="status" id="status" class="form-control" required>
-                                                <option value="0">ผู้ใช้งาน</option>
-                                                <option value="1">Admin</option>
+                                            <label for="tb_student_degree" class="control-label mb-1">ระดับชั้น</label>
+                                            <select name="tb_student_degree" id="tb_student_degree" class="form-control" required>
+                                                <option value="0">กรุณาเลือกระดับชั้น</option>
+                                                <option value="1">ม.1/1</option>
+                                                <option value="2">ม.1/2</option>
+                                                <option value="3">ม.1/3</option>
+                                                <option value="4">ม.2/1</option>
+                                                <option value="5">ม.2/2</option>
+                                                <option value="6">ม.2/3</option>
+                                                <option value="7">ม.3/1</option>
+                                                <option value="8">ม.3/2</option>
+                                                <option value="9">ม.3/3</option>
+                                                <option value="10">ม.4/1</option>
+                                                <option value="11">ม.4/2</option>
+                                                <option value="12">ม.4/3</option>
+                                                <option value="13">ม.5/1</option>
+                                                <option value="14">ม.5/2</option>
+                                                <option value="15">ม.5/3</option>
+                                                <option value="16">ม.6/1</option>
+                                                <option value="17">ม.6/2</option>
+                                                <option value="18">ม.6/3</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div>
                                         <?php
-                                        require_once 'import_users_db.php';
+                                        require_once 'import_student_db.php';
                                         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             echo '<pre>';
                                             print_r($_POST);
