@@ -3,7 +3,7 @@ if (isset($_GET['excel_id'])) {
     require_once 'connect.php';
     //ประกาศตัวแปรรับค่าจาก param method get
     $excel_id = $_GET['excel_id'];
-    $stmt = $conn->prepare('DELETE FROM tb_users WHERE excel_id=:excel_id');
+    $stmt = $conn->prepare('DELETE FROM ck_users WHERE excel_id=:excel_id');
     $stmt->bindParam(':excel_id', $excel_id, PDO::PARAM_INT);
     $stmt->execute();
 

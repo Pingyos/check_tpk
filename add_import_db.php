@@ -22,7 +22,7 @@ if (
     $groups = $_POST['groups'];
     $status = $_POST['status'];
 
-    $stmt = $conn->prepare("INSERT INTO tb_users (`id`, `email`, `password`,`name_title`,`name`, `surname`, `position`, `groups`, `status`)
+    $stmt = $conn->prepare("INSERT INTO ck_users (`id`, `email`, `password`,`name_title`,`name`, `surname`, `position`, `groups`, `status`)
                             VALUES (:id, :email, :password, :name_title, :name, :surname, :position, :groups, :status)");
     $stmt->bindParam(':id', $id, PDO::PARAM_STR);
     $stmt->bindParam(':email', $email, PDO::PARAM_STR);

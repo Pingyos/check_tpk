@@ -85,7 +85,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             </tr>
                                             <?php
                                             $i = 1;
-                                            $rows = mysqli_query($conn, "SELECT * FROM tb_users");
+                                            $rows = mysqli_query($conn, "SELECT * FROM ck_users");
                                             foreach ($rows as $row) :
                                             ?>
                                                 <tr>
@@ -122,7 +122,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $name = $row[3];
                                                 $surname = $row[4];
                                                 $status = $row[5];
-                                                mysqli_query($conn, "INSERT INTO tb_users VALUES('', '$id','$email', '$password', '$name', '$surname', '$status')");
+                                                mysqli_query($conn, "INSERT INTO ck_users VALUES('', '$id','$email', '$password', '$name', '$surname', '$status')");
                                             }
                                             echo '<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>';
                                             echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>';

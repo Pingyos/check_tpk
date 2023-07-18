@@ -45,7 +45,7 @@
                         $status = $_POST['status']; // เก็บรหัสผ่านในรูปแบบ sha1 
 
                         // check email & password
-                        $stmt = $conn->prepare("SELECT id, name_title, name, surname, position, groups, status FROM tb_users WHERE email = :email AND password = :password");
+                        $stmt = $conn->prepare("SELECT id, name_title, name, surname, position, groups, status FROM ck_users WHERE email = :email AND password = :password");
                         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
                         $stmt->bindParam(':password', $password, PDO::PARAM_STR);
                         $stmt->execute();
