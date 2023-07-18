@@ -128,7 +128,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     if (isset($_SESSION['id'])) {
                                                         $teacherId = $_SESSION['id'];
 
-                                                        $sql = "SELECT DISTINCT courses, course_name FROM ck_reg_courses WHERE teacher_id = :teacherId";
+                                                        $sql = "SELECT DISTINCT courses, course_name FROM tb_reg_courses WHERE teacher_id = :teacherId";
                                                         $stmt = $conn->prepare($sql);
                                                         $stmt->bindParam(':teacherId', $teacherId);
                                                         $stmt->execute();

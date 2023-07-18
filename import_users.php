@@ -119,10 +119,13 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $id = $row[0];
                                                 $email = $row[1];
                                                 $password = $row[2];
-                                                $name = $row[3];
-                                                $surname = $row[4];
-                                                $status = $row[5];
-                                                mysqli_query($conn, "INSERT INTO ck_users VALUES('', '$id','$email', '$password', '$name', '$surname', '$status')");
+                                                $name_title = $row[3];
+                                                $name = $row[4];
+                                                $surname = $row[5];
+                                                $position = $row[6];
+                                                $groups = $row[7];
+                                                $status = $row[8];
+                                                mysqli_query($conn, "INSERT INTO ck_users VALUES('', '$id','$email', '$password','$name_title', '$name', '$surname', '$position', '$groups', '$status')");
                                             }
                                             echo '<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>';
                                             echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>';

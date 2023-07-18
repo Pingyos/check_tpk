@@ -70,7 +70,7 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                     </div>
                     <?php
                     require_once 'connect.php';
-                    $stmt = $conn->prepare("SELECT COUNT(*) AS teachers FROM ck_teachers");
+                    $stmt = $conn->prepare("SELECT COUNT(*) AS teachers FROM ck_users");
                     $stmt->execute();
                     $result = $stmt->fetch();
                     ?>
@@ -169,7 +169,7 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                                 <h5 class="modal-title" id="teachersModalLabel">รายชื่อนักเรียน</h5>
                             </div>
                             <div class="modal-body">
-                                <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                                <table id="bootstrap-data-table1" class="table table-striped table-bordered">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -180,7 +180,7 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                                     <tbody>
                                         <?php
                                         require_once 'connect.php';
-                                        $stmt = $conn->prepare("SELECT * FROM ck_teachers");
+                                        $stmt = $conn->prepare("SELECT * FROM ck_users");
                                         $stmt->execute();
                                         $result = $stmt->fetchAll();
                                         $countrow = 1;
@@ -188,8 +188,8 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                                         ?>
                                             <tr>
                                                 <td><?= $countrow ?></td>
-                                                <td><?= $t1['tb_teacher_id']; ?></td>
-                                                <td><?= $t1['tb_teacher_name']; ?></td>
+                                                <td><?= $t1['id']; ?></td>
+                                                <td><?= $t1['name_title']; ?> <?= $t1['name']; ?> <?= $t1['surname']; ?></td>
                                             </tr>
                                         <?php
                                             $countrow++;
@@ -235,6 +235,11 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#bootstrap-data-table-export').DataTable();
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#bootstrap-data-table1-export').DataTable();
             });
         </script>
 </body>

@@ -11,7 +11,7 @@
                         <a href="export.php"><i class="menu-icon fa fa-save (alias)"></i>Export</a>
                     </li>
                     <li>
-                        <a href="import.php"><i class="menu-icon fa fa-plus-circle"></i>Import</a>
+                        <a href="import_users.php"><i class="menu-icon fa fa-plus-circle"></i>Import Teacher</a>
                     </li>
                 <?php endif; ?>
                 <?php if ($_SESSION['status'] == 0) : ?>
