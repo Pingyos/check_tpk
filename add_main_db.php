@@ -22,7 +22,7 @@ if (
 
     $period = implode(", ", $period);
 
-    $stmt = $conn->prepare("INSERT INTO tb_main (`time`, `period`, `course_name`, `courses`, `rooms`, `teacher_id` , `name`, `surname`)
+    $stmt = $conn->prepare("INSERT INTO ck_main (`time`, `period`, `course_name`, `courses`, `rooms`, `teacher_id` , `name`, `surname`)
     VALUES (:time, :period, :course_name, :courses, :rooms , :teacher_id, :name, :surname)");
     $stmt->bindParam(':time', $time, PDO::PARAM_STR);
     $stmt->bindParam(':period', $period, PDO::PARAM_STR);

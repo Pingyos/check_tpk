@@ -67,7 +67,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     if (isset($_SESSION['id'])) {
                                                         $teacherId = $_SESSION['id'];
 
-                                                        $sql = "SELECT * FROM tb_courses WHERE tb_teacher_id = :teacherId";
+                                                        $sql = "SELECT * FROM ck_courses WHERE tb_teacher_id = :teacherId";
                                                         $stmt = $conn->prepare($sql);
                                                         $stmt->bindParam(':teacherId', $teacherId);
                                                         $stmt->execute();
@@ -99,7 +99,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     <?php
                                                     require_once 'connect.php';
 
-                                                    $sql = "SELECT * FROM tb_rooms";
+                                                    $sql = "SELECT * FROM ck_rooms";
                                                     $stmt = $conn->prepare($sql);
                                                     $stmt->execute();
                                                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {

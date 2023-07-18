@@ -4,10 +4,10 @@ require_once 'connect.php';
 if (isset($_GET['course'])) {
     $selectedCourse = $_GET['course'];
 
-    $sql = "SELECT tb_rooms.tb_room_id, tb_rooms.tb_room_name
-    FROM tb_reg_courses
-    INNER JOIN tb_rooms ON tb_reg_courses.rooms = tb_rooms.tb_room_id
-    WHERE tb_reg_courses.courses = :selectedCourse";
+    $sql = "SELECT ck_rooms.tb_room_id, ck_rooms.tb_room_name
+    FROM ck_reg_courses
+    INNER JOIN ck_rooms ON ck_reg_courses.rooms = ck_rooms.tb_room_id
+    WHERE ck_reg_courses.courses = :selectedCourse";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':selectedCourse', $selectedCourse);

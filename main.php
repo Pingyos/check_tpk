@@ -121,7 +121,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <?php
                                                         require_once 'connect.php';
 
-                                                        $selectCoursesQuery = "SELECT DISTINCT tb_course_code, tb_course_name FROM tb_courses WHERE tb_teacher_id = :teacherId";
+                                                        $selectCoursesQuery = "SELECT DISTINCT tb_course_code, tb_course_name FROM ck_courses WHERE tb_teacher_id = :teacherId";
                                                         $stmt = $conn->prepare($selectCoursesQuery);
                                                         $stmt->bindParam(':teacherId', $_SESSION['id']);
                                                         $stmt->execute();
@@ -153,7 +153,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <?php
                                                         require_once 'connect.php';
 
-                                                        $selectRoomsQuery = "SELECT tb_room_id, tb_room_name FROM tb_rooms";
+                                                        $selectRoomsQuery = "SELECT tb_room_id, tb_room_name FROM ck_rooms";
                                                         $stmt = $conn->prepare($selectRoomsQuery);
                                                         $stmt->execute();
 

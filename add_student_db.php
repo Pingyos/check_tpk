@@ -18,7 +18,7 @@ if (
     $name = $_POST['name'];
     $surname = $_POST['surname'];
 
-    $stmt = $conn->prepare("INSERT INTO tb_reg_courses (`courses`, `course_name`, `rooms`,`room_name`,`teacher_id`, `name`, `surname`)
+    $stmt = $conn->prepare("INSERT INTO ck_reg_courses (`courses`, `course_name`, `rooms`,`room_name`,`teacher_id`, `name`, `surname`)
                             VALUES (:courses, :course_name, :rooms, :room_name, :teacher_id, :name, :surname)");
     $stmt->bindParam(':courses', $courses, PDO::PARAM_STR);
     $stmt->bindParam(':course_name', $course_name, PDO::PARAM_STR);

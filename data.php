@@ -55,7 +55,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                     if (isset($_GET['id'])) {
                                         $id = $_GET['id'];
 
-                                        $stmt = $conn->prepare("SELECT * FROM tb_main WHERE teacher_id = :teacherId AND id = :id");
+                                        $stmt = $conn->prepare("SELECT * FROM ck_main WHERE teacher_id = :teacherId AND id = :id");
                                         $stmt->bindParam(':teacherId', $teacherId, PDO::PARAM_INT);
                                         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
                                         $stmt->execute();
@@ -91,7 +91,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                         $teacherId = $_SESSION['id'];
                                         $id = $_GET['id'];
 
-                                        $stmt = $conn->prepare("SELECT * FROM tb_main WHERE teacher_id = :teacherId AND id = :id");
+                                        $stmt = $conn->prepare("SELECT * FROM ck_main WHERE teacher_id = :teacherId AND id = :id");
                                         $stmt->bindParam(':teacherId', $teacherId, PDO::PARAM_INT);
                                         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
                                         $stmt->execute();
@@ -100,7 +100,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             $row = $stmt->fetch(PDO::FETCH_ASSOC);
                                             $rooms = $row['rooms'];
 
-                                            $stmt2 = $conn->prepare("SELECT * FROM tb_students WHERE tb_student_degree = :rooms");
+                                            $stmt2 = $conn->prepare("SELECT * FROM ck_students WHERE tb_student_degree = :rooms");
                                             $stmt2->bindParam(':rooms', $rooms, PDO::PARAM_INT);
                                             $stmt2->execute();
 

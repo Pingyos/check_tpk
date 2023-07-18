@@ -108,7 +108,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     // ดึงข้อมูลนักเรียนตามวิชาและวันที่ที่เลือก
                                                     $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname, DATE(c.time) AS checking_date 
                                                 FROM ck_checking c 
-                                                JOIN tb_students s ON c.absent = s.tb_student_code
+                                                JOIN ck_students s ON c.absent = s.tb_student_code
                                                 WHERE c.teacher_id = :teacherId AND c.courses = :courseCode";
 
                                                     // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่

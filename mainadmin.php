@@ -43,7 +43,7 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                 <div class="row">
                     <?php
                     require_once 'connect.php';
-                    $stmt = $conn->prepare("SELECT COUNT(*) AS students FROM tb_students");
+                    $stmt = $conn->prepare("SELECT COUNT(*) AS students FROM ck_students");
                     $stmt->execute();
                     $result = $stmt->fetch();
                     ?>
@@ -70,7 +70,7 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                     </div>
                     <?php
                     require_once 'connect.php';
-                    $stmt = $conn->prepare("SELECT COUNT(*) AS teachers FROM tb_teachers");
+                    $stmt = $conn->prepare("SELECT COUNT(*) AS teachers FROM ck_teachers");
                     $stmt->execute();
                     $result = $stmt->fetch();
                     ?>
@@ -96,7 +96,7 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                     </div>
                     <?php
                     require_once 'connect.php';
-                    $stmt = $conn->prepare("SELECT COUNT(*) AS courses FROM tb_courses");
+                    $stmt = $conn->prepare("SELECT COUNT(*) AS courses FROM ck_courses");
                     $stmt->execute();
                     $result = $stmt->fetch();
                     ?>
@@ -140,7 +140,7 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                                     <tbody>
                                         <?php
                                         require_once 'connect.php';
-                                        $stmt = $conn->prepare("SELECT * FROM tb_students");
+                                        $stmt = $conn->prepare("SELECT * FROM ck_students");
                                         $stmt->execute();
                                         $result = $stmt->fetchAll();
                                         $countrow = 1;
@@ -180,7 +180,7 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                                     <tbody>
                                         <?php
                                         require_once 'connect.php';
-                                        $stmt = $conn->prepare("SELECT * FROM tb_teachers");
+                                        $stmt = $conn->prepare("SELECT * FROM ck_teachers");
                                         $stmt->execute();
                                         $result = $stmt->fetchAll();
                                         $countrow = 1;

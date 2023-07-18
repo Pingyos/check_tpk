@@ -123,7 +123,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     require_once 'connect.php';
 
                                                     $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
-                                                    JOIN tb_students s ON c.absent = s.tb_student_code
+                                                    JOIN ck_students s ON c.absent = s.tb_student_code
                                                     WHERE 1=1";
 
                                                     if ($selectedCourse) {
