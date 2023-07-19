@@ -70,6 +70,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 echo '<div class="form-group col-12">';
                                                 echo '<label for="course" class="control-label mb-1">วิชา</label>';
                                                 echo '<select name="course" id="course" class="form-control">';
+                                                echo '<option value="" selected>แสดงทั้งหมด</option>'; // เพิ่มตัวเลือก "แสดงทั้งหมด"
+
                                                 $selectedCourses = array(); // ตัวแปรเก็บรายการวิชาที่ถูกเลือกไว้แล้ว
 
                                                 foreach ($checkings as $checking) {
@@ -91,6 +93,16 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
                                                 // เช็คว่ามีค่าวันที่สิ้นสุดที่ส่งมาหรือไม่ ถ้าไม่มีกำหนดให้เป็นวันที่ปัจจุบัน
                                                 $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
+
+                                                // แปลงวันที่เริ่มต้นและวันที่สิ้นสุดเป็นวัตถุ DateTime
+                                                $startDateObj = new DateTime($startDate);
+                                                $endDateObj = new DateTime($endDate);
+
+                                                // ลดวันที่เริ่มต้นลง 1 วัน
+                                                $startDateObj->modify('-1 day');
+
+                                                // แปลงกลับเป็นรูปแบบของวันที่
+                                                $startDate = $startDateObj->format('Y-m-d');
 
                                                 // เช็คว่ามีค่ารหัสนักเรียนที่ส่งมาหรือไม่
                                                 $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
@@ -123,8 +135,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     require_once 'connect.php';
 
                                                     $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
-                                                    JOIN ck_students s ON c.absent = s.tb_student_code
-                                                    WHERE 1=1";
+                JOIN ck_students s ON c.absent = s.tb_student_code
+                WHERE 1=1";
 
                                                     if ($selectedCourse) {
                                                         $sql .= " AND c.courses = :courseCode";
@@ -159,13 +171,13 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     if (count($students) > 0) {
                                                         echo '<table id="bootstrap-data-table" class="table table-striped table-bordered">';
                                                         echo '<thead><tr>
-                                                        <th>รหัสนักเรียน</th>
-                                                        <th>ชื่อ-สกุล</th>
-                                                        <th>สาเหตุ</th>
-                                                        <th>ระดับชั้น</th>
-                                                        <th>วิชา</th>
-                                                        <th>ตาบเรียน/วันที่</th>
-                                                    </tr></thead>';
+                                                            <th>รหัสนักเรียน</th>
+                                                            <th>ชื่อ-สกุล</th>
+                                                            <th>สาเหตุ</th>
+                                                            <th>ระดับชั้น</th>
+                                                            <th>วิชา</th>
+                                                            <th>ตาบเรียน/วันที่</th>
+                                                        </tr></thead>';
                                                         echo '<tbody>';
 
                                                         foreach ($students as $student) {
@@ -197,7 +209,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 }
                                                 ?>
                                             </div>
-
                                             <hr>
                                             <div class="col-lg-12">
                                                 <div class="row">
