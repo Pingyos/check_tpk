@@ -22,8 +22,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
     exit();
 }
 ?>
-
-
 <!doctype html>
 <html class="no-js" lang="">
 
@@ -45,155 +43,176 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
             <div class="animated fadeIn">
                 <!-- Widgets  -->
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <!-- Credit Card -->
-                                <div id="pay-invoice">
-                                    <div class="card-body">
-                                        <div class="card-title">
-                                            <h3 class="text-center">รายงานการขาดเรียน</h3>
-                                        </div>
-                                        <hr>
-                                        <form action="#" method="post" novalidate="novalidate">
-                                            <div class="row">
-                                                <?php
-                                                require_once 'connect.php';
+                                <?php
+                                require_once 'connect.php';
 
-                                                // เพิ่ม input date สำหรับเลือกวันที่
-                                                $selectedDate = date('Y-m-d');
-                                                if (isset($_POST['date'])) {
-                                                    $selectedDate = $_POST['date'];
-                                                }
+                                if (isset($_SESSION['id'])) {
+                                    $teacherId = $_SESSION['id'];
 
-                                                // ใช้ PDO เพื่อดึงข้อมูลวิชาจากฐานข้อมูล
-                                                $sql = "SELECT DISTINCT courses, course_name FROM ck_checking WHERE teacher_id = :id";
-                                                $stmt = $conn->prepare($sql);
-                                                $stmt->bindParam(':id', $_SESSION['id']);
-                                                $stmt->execute();
-                                                $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                    if (isset($_GET['id'])) {
+                                        $id = $_GET['id'];
 
-                                                // สร้าง dropdown สำหรับเลือกวิชา
-                                                echo '<div class="form-group col-12">';
-                                                echo '<label for="course" class="control-label mb-1">วิชา</label>';
-                                                echo '<select name="course" id="course" class="form-control">';
-                                                $selectedCourses = array(); // ตัวแปรเก็บรายการวิชาที่ถูกเลือกไว้แล้ว
+                                        $stmt = $conn->prepare("SELECT * FROM ck_main WHERE teacher_id = :teacherId AND id = :id");
+                                        $stmt->bindParam(':teacherId', $teacherId, PDO::PARAM_INT);
+                                        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                                        $stmt->execute();
 
-                                                foreach ($checkings as $checking) {
-                                                    $courseCode = $checking['courses'];
-                                                    $courseName = $checking['course_name'];
-
-                                                    // เพิ่มตัวเลือกเฉพาะเมื่อยังไม่มีรายการวิชานี้อยู่ในรายการที่ถูกเลือกไว้แล้ว
-                                                    if (!in_array($courseCode, $selectedCourses)) {
-                                                        echo '<option value="' . $courseCode . '">' . $courseName . '</option>';
-                                                        $selectedCourses[] = $courseCode; // เพิ่มรายการวิชาที่ถูกเลือกไว้ในรายการ
-                                                    }
-                                                }
-                                                echo '</select>';
-                                                echo '</div>';
-
-
-                                                // เพิ่ม input date สำหรับเลือกวันที่
-                                                echo '<div class="form-group col-12">';
-                                                echo '<label for="date" class="control-label mb-1">วันที่</label>';
-                                                echo '<input type="date" name="date" id="date" class="form-control" value="' . $selectedDate . '">';
-                                                echo '</div>';
-
-                                                // เมื่อกด submit
-                                                if (isset($_POST['course'])) {
-                                                    $selectedCourse = $_POST['course'];
-
-                                                    // เชื่อมต่อฐานข้อมูลอีกครั้ง
-                                                    require_once 'connect.php';
-
-                                                    // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
-                                                    $selectedDate = date('Y-m-d');
-                                                    if (isset($_POST['date'])) {
-                                                        $selectedDate = $_POST['date'];
-                                                    }
-
-                                                    // ดึงข้อมูลนักเรียนตามวิชาและวันที่ที่เลือก
-                                                    $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname, DATE(c.time) AS checking_date 
-                                                            FROM ck_checking c 
-                                                            JOIN ck_students s ON c.absent = s.tb_student_code
-                                                            WHERE c.teacher_id = :teacherId AND c.courses = :courseCode";
-
-                                                    // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
-                                                    if (isset($_POST['date'])) {
-                                                        $sql .= " AND DATE(c.time) = :selectedDate";
-                                                    }
-
-                                                    $stmt = $conn->prepare($sql);
-                                                    $stmt->bindParam(':teacherId', $_SESSION['id']);
-                                                    $stmt->bindParam(':courseCode', $selectedCourse);
-
-                                                    // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
-                                                    if (isset($_POST['date'])) {
-                                                        $stmt->bindParam(':selectedDate', $selectedDate);
-                                                    }
-
-                                                    $stmt->execute();
-                                                    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                                                    if (count($students) > 0) {
-                                                        echo '<table id="bootstrap-data-table" class="table table-striped table-bordered">';
-                                                        echo '<thead><tr>
-                                                                <th>รหัสนักเรียน</th>
-                                                                <th>ชื่อ-สกุล</th>
-                                                                <th>สาเหตุ</th>
-                                                                <th>ระดับชั้น</th>
-                                                                <th>วิชา</th>
-                                                                <th>คาบเรียน/วันที่</th>
-                                                            </tr></thead>';
-                                                        echo '<tbody>';
-
-                                                        foreach ($students as $student) {
-                                                            echo '<tr>';
-                                                            echo '<td>' . $student['absent'] . '</td>';
-                                                            echo '<td>' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] . '</td>';
-                                                            echo '<td>' . $student['cause'] . '</td>';
-                                                            echo '<td>';
-
-                                                            $level = $student['rooms'];
-                                                            $class = ($level - 1) % 3 + 1;
-                                                            $year = floor(($level - 1) / 3) + 1;
-                                                            echo 'ม.' . $year . '/' . $class;
-
-                                                            echo '</td>';
-                                                            echo '<td>' . $student['courses'] . ' - ' . $student['course_name'] . '</td>';
-                                                            echo '<td>' . $student['period'] . ' / ' . $student['checking_date'] . '</td>';
-                                                            echo '</tr>';
-                                                        }
-
-                                                        echo '</tbody>';
-                                                        echo '</table>';
-                                                    } else {
-                                                        echo 'ไม่มีข้อมูลนักเรียนที่ขาดในวันที่ที่เลือก';
-                                                    }
-
-                                                    // ปิดการเชื่อมต่อฐานข้อมูล
-                                                    $conn = null;
-                                                }
-                                                ?>
-                                            </div>
-
-
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <div class="row" style="margin-left : 0px">
-                                                        <button type="submit" class="btn btn-info">
-                                                            <span><i class="menu-icon fa fa-search"></i> แสดงรายชื่อ</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
+                                        if ($stmt->rowCount() > 0) {
+                                            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                                            $teacherName = $row['name'];
+                                        }
+                                    }
+                                }
+                                ?>
+                                <div class="card-title">
+                                    <h3 class="text-center">รายชื่อนักเรียน</h3>
+                                    <br>
+                                    <h4 class="text-center"> <b>วิชา : </b> <?= $row['courses']; ?> <?= $row['course_name']; ?> <b>ระดับชั้น :</b> <?= getRoomLabel($row['rooms']); ?></h4>
+                                    <h4 class="text-center"> <b>เวลา : </b> <?= $row['time']; ?> <b>คาบเรียนที่</b> <?= $row['period']; ?></h4>
+                                    <h4 class="text-center"> <b>ครูประจำวิชา</b> <?= $row['name']; ?> <?= $row['surname']; ?></h4>
                                 </div>
+                                <?php
+                                function getRoomLabel($roomNumber)
+                                {
+                                    $class = ($roomNumber - 1) % 3 + 1;
+                                    $year = floor(($roomNumber - 1) / 3) + 1;
+                                    return 'ม.' . $year . '/' . $class;
+                                }
+                                ?>
 
+                                <form method="post">
+                                    <?php
+                                    require_once 'connect.php';
+
+                                    if (isset($_SESSION['id']) && isset($_GET['id'])) {
+                                        $teacherId = $_SESSION['id'];
+                                        $id = $_GET['id'];
+
+                                        $stmt = $conn->prepare("SELECT * FROM ck_main WHERE teacher_id = :teacherId AND id = :id");
+                                        $stmt->bindParam(':teacherId', $teacherId, PDO::PARAM_INT);
+                                        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                                        $stmt->execute();
+
+                                        if ($stmt->rowCount() > 0) {
+                                            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                                            $rooms = $row['rooms'];
+
+                                            $stmt2 = $conn->prepare("SELECT * FROM ck_students WHERE tb_student_degree = :rooms");
+                                            $stmt2->bindParam(':rooms', $rooms, PDO::PARAM_INT);
+                                            $stmt2->execute();
+
+                                            if ($stmt2->rowCount() > 0) {
+                                                $countrow = 1;
+                                                if (empty($_POST['absent'])) {
+                                                    $_POST['absent'] = array();
+                                                }
+
+                                                if (empty($_POST['cause'])) {
+                                                    $_POST['cause'] = array();
+                                                }
+
+                                                $selectedStudents = array(); // เก็บรายชื่อนักเรียนที่ถูกเลือก
+
+                                    ?>
+                                                <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ลำดับ</th>
+                                                            <th>รหัสนักเรียน</th>
+                                                            <th>ชื่อ-สกุล</th>
+                                                            <th>ขาดเรียน</th>
+                                                            <th>สาเหตุ</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php while ($row2 = $stmt2->fetch(PDO::FETCH_ASSOC)) {
+                                                            $studentCode = $row2['tb_student_code'];
+                                                            $isChecked = in_array($studentCode, $_POST['absent']);
+                                                            $causeIndex = array_search($studentCode, $_POST['absent']);
+                                                            $causeValue = ($causeIndex !== false) ? $_POST['cause'][$causeIndex] : '';
+
+                                                            // ตรวจสอบว่าถ้านักเรียนถูกเลือกแล้วให้เก็บชื่อและสกุลลงในตัวแปร $selectedStudents
+                                                            if ($isChecked) {
+                                                                $selectedStudents['student_name'][] = $row2['tb_student_name'];
+                                                                $selectedStudents['student_sname'][] = $row2['tb_student_sname'];
+                                                            }
+                                                        ?>
+                                                            <tr>
+                                                                <td><?= $countrow ?></td>
+                                                                <td><?= $studentCode ?></td>
+                                                                <td><?= $row2['tb_student_name'] ?> <?= $row2['tb_student_sname'] ?></td>
+                                                                <td>
+                                                                    <input type="checkbox" name="absent[]" value="<?= $studentCode ?>" <?php if ($isChecked) echo 'checked'; ?> onchange="handleCheckbox(this)">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="cause[]" value="<?= $causeValue ?>" <?php if (!$isChecked) echo 'disabled'; ?>>
+                                                                </td>
+                                                            </tr>
+                                                        <?php
+                                                            $countrow++;
+                                                        } ?>
+                                                    </tbody>
+                                                </table>
+
+
+                                                <input type="hidden" name="student_name" value="<?= implode(',', $selectedStudents['student_name']) ?>">
+                                                <input type="hidden" name="student_sname" value="<?= implode(',', $selectedStudents['student_sname']) ?>">
+
+
+                                                <script>
+                                                    function handleCheckbox(checkbox) {
+                                                        var inputText = checkbox.parentNode.nextElementSibling.querySelector('input[type="text"]');
+                                                        inputText.disabled = !checkbox.checked;
+                                                        if (!checkbox.checked) {
+                                                            inputText.value = '';
+                                                        }
+                                                    }
+                                                </script>
+                                    <?php } else {
+                                                echo 'No student data found.';
+                                            }
+                                        } else {
+                                            echo 'No data found.';
+                                        }
+                                    }
+                                    ?>
+                                    <div>
+                                        <input type="hidden" name="time" class="form-control" value="<?php echo $row['time']; ?>">
+                                        <input type="hidden" name="period" class="form-control" value="<?php echo $row['period']; ?>">
+                                        <input type="hidden" name="courses" class="form-control" value="<?php echo $row['courses']; ?>">
+                                        <input type="hidden" name="course_name" class="form-control" value="<?php echo $row['course_name']; ?>">
+                                        <input type="hidden" name="rooms" class="form-control" value="<?php echo $row['rooms']; ?>">
+                                        <input type="hidden" name="teacher_id" class="form-control" value="<?php echo $row['teacher_id']; ?>">
+                                        <input type="hidden" name="name" class="form-control" value="<?php echo $row['name']; ?>">
+                                        <input type="hidden" name="surname" class="form-control" value="<?php echo $row['surname']; ?>">
+                                    </div>
+                                    <div>
+                                        <?php
+
+                                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                                            if (empty($_POST['absent'])) {
+                                                $_POST['absent'] = [0];
+                                            }
+
+                                            if (empty($_POST['cause'])) {
+                                                $_POST['cause'] = array_fill(0, $stmt2->rowCount(), "");
+                                            }
+
+                                            echo '<pre>';
+                                            print_r($_POST);
+                                            echo '</pre>';
+                                        }
+                                        ?>
+                                        <button type="submit" class="btn btn-info">
+                                            <span>บันทึก</span>
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                        </div> <!-- .card -->
+                        </div>
                     </div>
                 </div>
                 <!-- /Widgets -->

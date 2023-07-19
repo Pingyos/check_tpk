@@ -131,10 +131,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                 <td><?= $row2['tb_student_code']; ?></td>
                                                                 <td><?= $row2['tb_student_name']; ?> <?= $row2['tb_student_sname']; ?></td>
                                                                 <td>
-                                                                    <input type="checkbox" name="absent[]" value="<?= $row2['tb_student_code']; ?>" onchange="handleCheckbox(this)">
+                                                                    <input class="form-control" type="checkbox" name="absent[]" value="<?= $row2['tb_student_code']['tb_student_name']; ?>" onchange="handleCheckbox(this)">
                                                                 </td>
                                                                 <td>
-                                                                    <input type="text" name="cause[]" value="<?= $_POST['cause'][$countrow - 1]; ?>" disabled>
+                                                                    <input class="form-control" type="text" name="cause[]" value="<?= $_POST['cause'][$countrow - 1]; ?>" disabled>
                                                                 </td>
                                                             </tr>
 
@@ -184,9 +184,9 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $_POST['cause'] = array_fill(0, $stmt2->rowCount(), "");
                                             }
 
-                                            // echo '<pre>';
-                                            // print_r($_POST);
-                                            // echo '</pre>';
+                                            echo '<pre>';
+                                            print_r($_POST);
+                                            echo '</pre>';
                                         }
                                         ?>
                                         <button type="submit" class="btn btn-info">

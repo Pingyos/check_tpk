@@ -60,12 +60,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 <?php
                                                 require_once 'connect.php';
 
-                                                // เพิ่ม input date สำหรับเลือกวันที่
-                                                $selectedDate = date('Y-m-d');
-                                                if (isset($_POST['date'])) {
-                                                    $selectedDate = $_POST['date'];
-                                                }
-
                                                 // ใช้ PDO เพื่อดึงข้อมูลวิชาจากฐานข้อมูล
                                                 $sql = "SELECT DISTINCT courses, course_name FROM ck_checking WHERE teacher_id = :id";
                                                 $stmt = $conn->prepare($sql);
@@ -92,6 +86,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 echo '</select>';
                                                 echo '</div>';
 
+                                                // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
+                                                $selectedDate = date('Y-m-d');
+                                                if (isset($_POST['date'])) {
+                                                    $selectedDate = $_POST['date'];
+                                                }
 
                                                 // เพิ่ม input date สำหรับเลือกวันที่
                                                 echo '<div class="form-group col-12">';
@@ -106,20 +105,15 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     // เชื่อมต่อฐานข้อมูลอีกครั้ง
                                                     require_once 'connect.php';
 
-                                                    // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
-                                                    $selectedDate = date('Y-m-d');
-                                                    if (isset($_POST['date'])) {
-                                                        $selectedDate = $_POST['date'];
-                                                    }
-
                                                     // ดึงข้อมูลนักเรียนตามวิชาและวันที่ที่เลือก
                                                     $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname, DATE(c.time) AS checking_date 
-                                                            FROM ck_checking c 
-                                                            JOIN ck_students s ON c.absent = s.tb_student_code
-                                                            WHERE c.teacher_id = :teacherId AND c.courses = :courseCode";
+                                                FROM ck_checking c 
+                                                JOIN ck_students s ON c.absent = s.tb_student_code
+                                                WHERE c.teacher_id = :teacherId AND c.courses = :courseCode";
 
                                                     // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
                                                     if (isset($_POST['date'])) {
+                                                        $selectedDate = $_POST['date'];
                                                         $sql .= " AND DATE(c.time) = :selectedDate";
                                                     }
 
@@ -146,11 +140,18 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                 <th>คาบเรียน/วันที่</th>
                                                             </tr></thead>';
                                                         echo '<tbody>';
-
                                                         foreach ($students as $student) {
                                                             echo '<tr>';
                                                             echo '<td>' . $student['absent'] . '</td>';
-                                                            echo '<td>' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] . '</td>';
+
+                                                            // ค้นหาข้อมูลนักเรียนจากรหัสนักเรียนในตาราง ck_students
+                                                            $stmt = $conn->prepare("SELECT tb_student_name, tb_student_sname FROM ck_students WHERE tb_student_code = :studentCode");
+                                                            $stmt->bindParam(':studentCode', $student['absent']);
+                                                            $stmt->execute();
+                                                            $studentInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                                                            // แสดงชื่อและนามสกุลของนักเรียน
+                                                            echo '<td>' . $studentInfo['tb_student_name'] . ' ' . $studentInfo['tb_student_sname'] . '</td>';
                                                             echo '<td>' . $student['cause'] . '</td>';
                                                             echo '<td>';
 
@@ -160,11 +161,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             echo 'ม.' . $year . '/' . $class;
 
                                                             echo '</td>';
+
                                                             echo '<td>' . $student['courses'] . ' - ' . $student['course_name'] . '</td>';
                                                             echo '<td>' . $student['period'] . ' / ' . $student['checking_date'] . '</td>';
                                                             echo '</tr>';
                                                         }
-
                                                         echo '</tbody>';
                                                         echo '</table>';
                                                     } else {
@@ -176,7 +177,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 }
                                                 ?>
                                             </div>
-
 
                                             <hr>
                                             <div class="row">
