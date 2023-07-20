@@ -131,10 +131,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                 <td><?= $row2['tb_student_code']; ?></td>
                                                                 <td><?= $row2['tb_student_name']; ?> <?= $row2['tb_student_sname']; ?></td>
                                                                 <td>
-                                                                    <input class="form-control" type="checkbox" name="absent[]" value="<?= $row2['tb_student_code']['tb_student_name']; ?>" onchange="handleCheckbox(this)">
+                                                                    <input type="checkbox" name="absent[]" value="<?= $row2['tb_student_code']; ?>" onchange="handleCheckbox(this)">
                                                                 </td>
                                                                 <td>
-                                                                    <input class="form-control" type="text" name="cause[]" value="<?= $_POST['cause'][$countrow - 1]; ?>" disabled>
+                                                                    <input type="text" name="cause[]" value="<?= $_POST['cause'][$countrow - 1]; ?>" disabled>
                                                                 </td>
                                                             </tr>
 

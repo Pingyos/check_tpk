@@ -8,7 +8,7 @@
                         <a href="mainadmin.php"><i class="menu-icon fa fa-user"></i>หน้าหลักแอดมิน</a>
                     </li>
                     <li>
-                        <a href="export.php"><i class="menu-icon fa fa-save (alias)"></i>Export</a>
+                        <a href="export_date.php"><i class="menu-icon fa fa-save (alias)"></i>Export</a>
                     </li>
                     <li>
                         <a href="import_users.php"><i class="menu-icon fa fa-plus-circle"></i>Import Teacher</a>

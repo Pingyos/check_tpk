@@ -1,11 +1,4 @@
 <?php
-function getRoomLabel($roomNumber)
-{
-    $class = ($roomNumber - 1) % 3 + 1;
-    $year = floor(($roomNumber - 1) / 3) + 1;
-    return 'ม.' . $year . '/' . $class;
-}
-
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // ติดต่อกับฐานข้อมูลเหมือนในหน้าฟอร์มหลักเพื่อเลือกตัวกรองข้อมูล
     require_once 'connect.php';
@@ -54,33 +47,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // ปิดการเชื่อมต่อฐานข้อมูล
     $conn = null;
 
-    // กำหนดหัวข้อสำหรับ CSV
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename=data.csv');
+    // แสดงตารางข้อมูล
+    if (count($students) > 0) {
+        echo '<table>';
+        echo '<tr><th>รหัสนักเรียน</th><th>ชื่อ-สกุล</th><th>สาเหตุ</th><th>ระดับชั้น</th><th>วิชา</th><th>คาบเรียน/วันที่</th></tr>';
 
-    // เปิดสตรีมข้อมูลออก
-    $output = fopen('php://output', 'w');
+        foreach ($students as $student) {
+            echo '<tr>';
+            echo '<td>' . $student['absent'] . '</td>';
+            echo '<td>' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] . '</td>';
+            echo '<td>' . $student['cause'] . '</td>';
+            echo '<td>' . $student['rooms'] . '</td>';
+            echo '<td>' . $student['courses'] . ' ' . $student['course_name'] . '</td>';
+            echo '<td>' . $student['period'] . ' ' . $student['time'] . '</td>';
+            echo '</tr>';
+        }
 
-    // เขียนหัวข้อ CSV
-    fputcsv($output, ['รหัสนักเรียน', 'ชื่อ-สกุล', 'สาเหตุ', 'ระดับชั้น', 'วิชา', 'ครูผู้สอน', 'คาบเรียน/วันที่']);
-
-    // เขียนข้อมูลแถว
-    foreach ($students as $student) {
-        // แทนที่ 'absent', 'tb_student_name' ฯลฯ ด้วยชื่อคอลัมน์จริงจากตารางฐานข้อมูล
-        $rowData = [
-            $student['absent'],
-            $student['tb_student_name'] . ' ' . $student['tb_student_sname'],
-            $student['cause'],
-            getRoomLabel($student['rooms']),
-            $student['courses'] . ' ' . $student['course_name'],
-            $student['name'] . ' ' . $student['surname'],
-            $student['period'] . ' ' . $student['time'],
-            // ...
-        ];
-
-        fputcsv($output, $rowData);
+        echo '</table>';
+    } else {
+        echo 'ไม่พบข้อมูลนักเรียนที่ตรงกับเงื่อนไข';
     }
-
-    // ปิดสตรีมข้อมูลออก
-    fclose($output);
 }
