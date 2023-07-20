@@ -140,6 +140,14 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                                     <tbody>
                                         <?php
                                         require_once 'connect.php';
+                                        // กำหนดฟังก์ชัน getRoomLabel
+                                        function getRoomLabel($roomNumber)
+                                        {
+                                            $class = ($roomNumber - 1) % 3 + 1;
+                                            $year = floor(($roomNumber - 1) / 3) + 1;
+                                            return 'ม.' . $year . '/' . $class;
+                                        }
+
                                         $stmt = $conn->prepare("SELECT * FROM ck_students");
                                         $stmt->execute();
                                         $result = $stmt->fetchAll();
@@ -150,13 +158,14 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                                                 <td><?= $countrow ?></td>
                                                 <td><?= $t1['tb_student_code']; ?></td>
                                                 <td><?= $t1['tb_student_name']; ?><?= $t1['tb_student_sname']; ?></td>
-                                                <td><?= $t1['tb_student_degree']; ?></td>
+                                                <td><?= getRoomLabel($t1['tb_student_degree']); ?></td><!-- เรียกใช้ฟังก์ชันเพื่อแปลงค่าในคอลัมน์ tb_student_degree -->
                                             </tr>
                                         <?php
                                             $countrow++;
                                         }
                                         ?>
                                     </tbody>
+
                                 </table>
                             </div>
                         </div>
@@ -173,7 +182,6 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>รหัสคุณครู</th>
                                             <th>ชื่อ-สกุล</th>
                                         </tr>
                                     </thead>
@@ -188,7 +196,6 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                                         ?>
                                             <tr>
                                                 <td><?= $countrow ?></td>
-                                                <td><?= $t1['id']; ?></td>
                                                 <td><?= $t1['name_title']; ?> <?= $t1['name']; ?> <?= $t1['surname']; ?></td>
                                             </tr>
                                         <?php

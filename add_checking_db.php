@@ -6,6 +6,7 @@ if (
     && isset($_POST['course_name'])
     && isset($_POST['rooms'])
     && isset($_POST['teacher_id'])
+    && isset($_POST['name_title'])
     && isset($_POST['name'])
     && isset($_POST['surname'])
     && isset($_POST['absent'])
@@ -19,6 +20,7 @@ if (
     $course_name = $_POST['course_name'];
     $rooms = $_POST['rooms'];
     $teacher_id = $_POST['teacher_id'];
+    $name_title = $_POST['name_title'];
     $name = $_POST['name'];
     $surname = $_POST['surname'];
     $absent = $_POST['absent'];
@@ -31,8 +33,8 @@ if (
             $currentAbsent = $absent[$i];
             $currentCause = $cause[$i];
 
-            $stmt = $conn->prepare("INSERT INTO ck_checking (`time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, `name`, `surname`, `absent`, `cause`)
-                                    VALUES (:time, :period, :courses, :course_name, :rooms, :teacher_id, :name, :surname, :absent, :cause)");
+            $stmt = $conn->prepare("INSERT INTO ck_checking (`time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`,`name_title`, `name`, `surname`, `absent`, `cause`)
+                                    VALUES (:time, :period, :courses, :course_name, :rooms, :teacher_id, :name_title, :name, :surname, :absent, :cause)");
 
             $stmt->bindParam(':time', $time, PDO::PARAM_STR);
             $stmt->bindParam(':period', $period, PDO::PARAM_STR);
@@ -40,6 +42,7 @@ if (
             $stmt->bindParam(':course_name', $course_name, PDO::PARAM_STR);
             $stmt->bindParam(':rooms', $rooms, PDO::PARAM_INT);
             $stmt->bindParam(':teacher_id', $teacher_id, PDO::PARAM_INT);
+            $stmt->bindParam(':name_title', $name_title, PDO::PARAM_STR);
             $stmt->bindParam(':name', $name, PDO::PARAM_STR);
             $stmt->bindParam(':surname', $surname, PDO::PARAM_STR);
             $stmt->bindParam(':absent', $currentAbsent, PDO::PARAM_STR);
@@ -48,8 +51,8 @@ if (
             $stmt->execute();
         }
     } else {
-        $stmt = $conn->prepare("INSERT INTO ck_checking (`time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, `name`, `surname`, `absent`, `cause`)
-                                VALUES (:time, :period, :courses, :course_name, :rooms, :teacher_id, :name, :surname, :absent, :cause)");
+        $stmt = $conn->prepare("INSERT INTO ck_checking (`time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, ``name_title,`name`, `surname`, `absent`, `cause`)
+                                VALUES (:time, :period, :courses, :course_name, :rooms, :teacher_id, :name_title, :name, :surname, :absent, :cause)");
 
         $stmt->bindParam(':time', $time, PDO::PARAM_STR);
         $stmt->bindParam(':period', $period, PDO::PARAM_STR);
@@ -57,6 +60,7 @@ if (
         $stmt->bindParam(':course_name', $course_name, PDO::PARAM_STR);
         $stmt->bindParam(':rooms', $rooms, PDO::PARAM_INT);
         $stmt->bindParam(':teacher_id', $teacher_id, PDO::PARAM_INT);
+        $stmt->bindParam(':name_title', $name_title, PDO::PARAM_STR);
         $stmt->bindParam(':name', $name, PDO::PARAM_STR);
         $stmt->bindParam(':surname', $surname, PDO::PARAM_STR);
         $stmt->bindParam(':absent', $absent, PDO::PARAM_STR);

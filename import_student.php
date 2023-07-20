@@ -219,11 +219,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                     <div>
                                         <?php
                                         require_once 'import_student_db.php';
-                                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                                            echo '<pre>';
-                                            print_r($_POST);
-                                            echo '</pre>';
-                                        }
+                                        // if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                                        //     echo '<pre>';
+                                        //     print_r($_POST);
+                                        //     echo '</pre>';
+                                        // }
                                         ?>
                                         <button type="submit" class="btn btn-info">Submit</button>
                                     </div>

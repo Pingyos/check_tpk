@@ -131,7 +131,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <div class="row">
                                                 <div class="form-group col-lg-6 col-md-3 col-12">
                                                     <label for="courses" class="control-label mb-1">วิชา</label>
-                                                    <select name="courses" class="form-control" required>
+                                                    <select name="courses" class="form-control">
                                                         <option value="">เลือกวิชา</option>
                                                         <?php
                                                         require_once 'connect.php';
@@ -202,11 +202,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <div>
                                                 <?php
                                                 require_once 'add_main_db.php';
-                                                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                                                    echo '<pre>';
-                                                    print_r($_POST);
-                                                    echo '</pre>';
-                                                }
+                                                // if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                                                //     echo '<pre>';
+                                                //     print_r($_POST);
+                                                //     echo '</pre>';
+                                                // }
                                                 ?>
                                                 <button id="payment-button" type="submit" class="btn btn-info">
                                                     <span>แสดงรายชื่อ</span>

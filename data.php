@@ -72,7 +72,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                     <br>
                                     <h4 class="text-center"> <b>วิชา : </b> <?= $row['courses']; ?> <?= $row['course_name']; ?> <b>ระดับชั้น :</b> <?= getRoomLabel($row['rooms']); ?></h4>
                                     <h4 class="text-center"> <b>เวลา : </b> <?= $row['time']; ?> <b>คาบเรียนที่</b> <?= $row['period']; ?></h4>
-                                    <h4 class="text-center"> <b>ครูประจำวิชา</b> <?= $row['name']; ?> <?= $row['surname']; ?></h4>
+                                    <h4 class="text-center"> <b>ครูประจำวิชา</b> <?= $_SESSION['name_title']; ?> <?= $row['name']; ?> <?= $row['surname']; ?></h4>
                                 </div>
                                 <?php
                                 function getRoomLabel($roomNumber)
@@ -131,10 +131,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                 <td><?= $row2['tb_student_code']; ?></td>
                                                                 <td><?= $row2['tb_student_name']; ?> <?= $row2['tb_student_sname']; ?></td>
                                                                 <td>
-                                                                    <input type="checkbox" name="absent[]" value="<?= $row2['tb_student_code']; ?>" onchange="handleCheckbox(this)">
+                                                                    <input type="checkbox" class="form-control" name="absent[]" value="<?= $row2['tb_student_code']; ?>" onchange="handleCheckbox(this)">
                                                                 </td>
                                                                 <td>
-                                                                    <input type="text" name="cause[]" value="<?= $_POST['cause'][$countrow - 1]; ?>" disabled>
+                                                                    <input type="text" class="form-control" name="cause[]" value="<?= $_POST['cause'][$countrow - 1]; ?>" disabled>
                                                                 </td>
                                                             </tr>
 
@@ -169,6 +169,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                         <input type="hidden" name="course_name" class="form-control" value="<?php echo $row['course_name']; ?>">
                                         <input type="hidden" name="rooms" class="form-control" value="<?php echo $row['rooms']; ?>">
                                         <input type="hidden" name="teacher_id" class="form-control" value="<?php echo $row['teacher_id']; ?>">
+                                        <input type="hidden" name="name_title" class="form-control" value="<?php echo $_SESSION['name_title']; ?>">
                                         <input type="hidden" name="name" class="form-control" value="<?php echo $row['name']; ?>">
                                         <input type="hidden" name="surname" class="form-control" value="<?php echo $row['surname']; ?>">
                                     </div>
@@ -184,9 +185,9 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $_POST['cause'] = array_fill(0, $stmt2->rowCount(), "");
                                             }
 
-                                            echo '<pre>';
-                                            print_r($_POST);
-                                            echo '</pre>';
+                                            // echo '<pre>';
+                                            // print_r($_POST);
+                                            // echo '</pre>';
                                         }
                                         ?>
                                         <button type="submit" class="btn btn-info">
