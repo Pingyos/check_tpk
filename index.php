@@ -55,7 +55,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <h3 class="text-center">รายงานการขาดเรียน</h3>
                                         </div>
                                         <hr>
-                                        <form action="#" method="post" novalidate="novalidate">
+                                        <form action="#" method="post" novalidate="novalidate" onsubmit="return validateForm()">
                                             <div class="row">
                                                 <div class="form-group col-lg-6 col-md-3 col-12">
                                                     <label for="date" class="control-label mb-1">วันที่</label>
@@ -211,6 +211,39 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 <button id="payment-button" type="submit" class="btn btn-info">
                                                     <span>แสดงรายชื่อ</span>
                                                 </button>
+                                                <script>
+                                                    function validateForm() {
+                                                        // ตรวจสอบว่ามีข้อมูลใน input ที่ต้องการบังคับให้กรอกหรือไม่
+                                                        var timeInput = document.getElementById('time');
+                                                        var courseDropdown = document.querySelector('select[name="courses"]');
+                                                        var roomsDropdown = document.querySelector('select[name="rooms"]');
+
+                                                        if (timeInput.value === '') {
+                                                            alert('กรุณาเลือกวันที่');
+                                                            return false;
+                                                        }
+
+                                                        if (courseDropdown.value === '') {
+                                                            alert('กรุณาเลือกวิชา');
+                                                            return false;
+                                                        }
+
+                                                        if (roomsDropdown.value === '') {
+                                                            alert('กรุณาเลือกระดับชั้น');
+                                                            return false;
+                                                        }
+
+                                                        // ตรวจสอบจำนวนคาบเรียนที่ถูกเลือก
+                                                        var checkboxes = document.querySelectorAll('input[type="checkbox"][name="period[]"]:checked');
+                                                        if (checkboxes.length < 1 || checkboxes.length > 2) {
+                                                            alert('กรุณาเลือกคาบเรียนอย่างน้อย 1 คาบเรียน และไม่เกิน 2 คาบเรียน');
+                                                            return false;
+                                                        }
+
+                                                        // หากผ่านการตรวจสอบทั้งหมด return true เพื่อให้ฟอร์มส่งข้อมูล
+                                                        return true;
+                                                    }
+                                                </script>
                                             </div>
                                         </form>
                                     </div>
