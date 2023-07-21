@@ -59,7 +59,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <div class="row">
                                                 <div class="form-group col-lg-6 col-md-3 col-12">
                                                     <div class="col col-md-3"><label for="excel" class=" form-control-label">เพิ่มไฟล์</label></div>
-                                                    <div class="col-12 col-md-9"><input type="file" id="excel" name="excel" class="form-control-file"></div>
+                                                    <div class="col-12 col-md-9"><input type="file" id="excel" name="excel" class="form-control-file" required></div>
                                                 </div>
                                             </div>
                                             <div class="form-group col-lg-6 col-md-3 col-12">
@@ -87,12 +87,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
                                             $reader = new SpreadsheetReader($targetDirectory);
                                             foreach ($reader as $key => $row) {
-                                                $tb_student_id = $row[0];
-                                                $tb_student_code = $row[1];
-                                                $tb_student_name = $row[2];
-                                                $tb_student_sname = $row[3];
-                                                $tb_student_degree = $row[4];
-                                                mysqli_query($conn, "INSERT INTO ck_students VALUES('$tb_student_id','$tb_student_code', '$tb_student_name', '$tb_student_sname', '$tb_student_degree')");
+                                                $tb_course_id = $row[0];
+                                                $tb_course_code = $row[1];
+                                                $tb_course_name = $row[2];
+                                                $tb_teacher_id = $row[3];
+                                                mysqli_query($conn, "INSERT INTO ck_courses VALUES('$tb_course_id','$tb_course_code', '$tb_course_name', '$tb_teacher_id')");
                                             }
                                             echo '<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>';
                                             echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>';
@@ -106,7 +105,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     timer: 2000,
                                                     showConfirmButton: false
                                                 }, function(){
-                                                    window.location.href = "import_student.php";
+                                                    window.location.href = "import_courses.php";
                                                 });
                                             });
                                         </script>';

@@ -89,10 +89,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             foreach ($reader as $key => $row) {
                                                 $tb_student_id = $row[0];
                                                 $tb_student_code = $row[1];
-                                                $tb_student_name = $row[2];
-                                                $tb_student_sname = $row[3];
-                                                $tb_student_degree = $row[4];
-                                                mysqli_query($conn, "INSERT INTO ck_students VALUES('$tb_student_id','$tb_student_code', '$tb_student_name', '$tb_student_sname', '$tb_student_degree')");
+                                                $tb_student_tname = $row[2];
+                                                $tb_student_name = $row[3];
+                                                $tb_student_sname = $row[4];
+                                                $tb_student_degree = $row[5];
+                                                mysqli_query($conn, "INSERT INTO ck_students VALUES('$tb_student_id','$tb_student_code', '$tb_student_tname','$tb_student_name', '$tb_student_sname', '$tb_student_degree')");
                                             }
                                             echo '<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>';
                                             echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>';
