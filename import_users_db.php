@@ -46,7 +46,7 @@ if (
             timer: 2000, 
             showConfirmButton: false 
         }, function(){
-            window.location.href = "import.php";
+            window.location.href = "import_users.php";
         });
         </script>';
     } else {

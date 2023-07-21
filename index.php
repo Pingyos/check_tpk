@@ -8,7 +8,7 @@ echo '
 // print_r($_SESSION);
 // exit();
 //สร้างเงื่อนไขตรวจสอบสิทธิ์การเข้าใช้งานจาก session
-if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surname'])&& empty($_SESSION['status'])) {
+if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surname']) && empty($_SESSION['status'])) {
     echo '<script>
                 setTimeout(function() {
                 swal({
@@ -22,8 +22,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
     exit();
 }
 ?>
+
+
 <!doctype html>
-<html class="no-js" lang=""> <!--<![endif]-->
+<html class="no-js" lang="">
 
 <?php require_once 'head.php'; ?>
 
@@ -43,7 +45,180 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
             <div class="animated fadeIn">
                 <!-- Widgets  -->
                 <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- Credit Card -->
+                                <div id="pay-invoice">
+                                    <div class="card-body">
+                                        <div class="card-title">
+                                            <h3 class="text-center">รายงานการขาดเรียน</h3>
+                                        </div>
+                                        <hr>
+                                        <form action="#" method="post" novalidate="novalidate">
+                                            <div class="row">
+                                                <div class="form-group col-lg-6 col-md-3 col-12">
+                                                    <label for="date" class="control-label mb-1">วันที่</label>
+                                                    <input type="date" name="time" id="time" class="form-control" required>
+                                                    <script>
+                                                        var currentDateInput = document.getElementById('time');
+                                                        var currentDate = new Date();
+                                                        var year = currentDate.getFullYear();
+                                                        var month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+                                                        var day = ("0" + currentDate.getDate()).slice(-2);
+                                                        currentDateInput.value = year + "-" + month + "-" + day;
+                                                    </script>
+                                                </div>
 
+                                                <div class="form-group col-lg-6 col-md-3 col-12">
+                                                    <label for="cc-name" class="control-label mb-1">คาบเรียน</label>
+                                                    <div class="form-group has-success">
+                                                        <input type="checkbox" class="checkbox" name="period[]" value="1" id="period1">
+                                                        <label for="period1">คาบเรียนที่ 1 |</label>
+
+                                                        <input type="checkbox" class="checkbox" name="period[]" value="2" id="period2">
+                                                        <label for="period2">คาบเรียนที่ 2 |</label>
+
+                                                        <input type="checkbox" class="checkbox" name="period[]" value="3" id="period3">
+                                                        <label for="period3">คาบเรียนที่ 3 |</label>
+
+                                                        <input type="checkbox" class="checkbox" name="period[]" value="4" id="period4">
+                                                        <label for="period4">คาบเรียนที่ 4 |</label>
+
+                                                        <input type="checkbox" class="checkbox" name="period[]" value="5" id="period5">
+                                                        <label for="period5">คาบเรียนที่ 5 |</label>
+
+                                                        <input type="checkbox" class="checkbox" name="period[]" value="6" id="period6">
+                                                        <label for="period6">คาบเรียนที่ 6 |</label>
+
+                                                        <input type="checkbox" class="checkbox" name="period[]" value="7" id="period7">
+                                                        <label for="period7">คาบเรียนที่ 7 |</label>
+
+                                                        <input type="checkbox" class="checkbox" name="period[]" value="8" id="period8">
+                                                        <label for="period8">คาบเรียนที่ 8</label>
+                                                    </div>
+                                                    <script>
+                                                        const checkboxes = document.querySelectorAll('input[type="checkbox"][name="period[]"]');
+                                                        const maxChecked = 2;
+
+                                                        checkboxes.forEach(checkbox => {
+                                                            checkbox.addEventListener('change', function() {
+                                                                const checkedCount = document.querySelectorAll('input[type="checkbox"][name="period[]"]:checked').length;
+
+                                                                if (checkedCount > maxChecked) {
+                                                                    this.checked = false;
+                                                                }
+                                                            });
+                                                        });
+                                                    </script>
+                                                    <?php
+                                                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                                                        if (isset($_POST['period'])) {
+                                                            $selectedPeriods = $_POST['period'];
+                                                            if (count($selectedPeriods) >= 1 && count($selectedPeriods) <= 2) {
+                                                                // ตรวจสอบเลือกคาบเรียนที่ถูกต้อง
+                                                                // ดำเนินการต่อหรือเก็บข้อมูลที่ได้รับ
+                                                            } else {
+                                                                echo '<span style="color: red;">กรุณาเลือกคาบเรียนอย่างน้อย 1 คาบเรียน และไม่เกิน 2 คาบเรียน</span>';
+                                                            }
+                                                        } else {
+                                                            echo '<span style="color: red;">กรุณาเลือกคาบเรียนอย่างน้อย 1 คาบเรียน และไม่เกิน 2 คาบเรียน</span>';
+                                                        }
+                                                    }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group col-lg-6 col-md-3 col-12">
+                                                    <label for="courses" class="control-label mb-1">วิชา</label>
+                                                    <select name="courses" class="form-control">
+                                                        <option value="">เลือกวิชา</option>
+                                                        <?php
+                                                        require_once 'connect.php';
+
+                                                        $selectCoursesQuery = "SELECT DISTINCT tb_course_code, tb_course_name FROM ck_courses WHERE tb_teacher_id = :teacherId";
+                                                        $stmt = $conn->prepare($selectCoursesQuery);
+                                                        $stmt->bindParam(':teacherId', $_SESSION['id']);
+                                                        $stmt->execute();
+
+                                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                                            $course = $row['tb_course_code'];
+                                                            $courseName = $row['tb_course_name'];
+
+                                                            echo "<option value='$course' data-course-name='$courseName'>$course - $courseName</option>";
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                                <input type="hidden" name="course_name" class="form-control" id="courseNameInput">
+                                                <script>
+                                                    var coursesDropdown = document.querySelector('select[name="courses"]');
+                                                    var courseNameInput = document.getElementById('courseNameInput');
+
+                                                    coursesDropdown.addEventListener('change', function() {
+                                                        var selectedOption = this.options[this.selectedIndex];
+                                                        var courseName = selectedOption.dataset.courseName;
+                                                        courseNameInput.value = courseName;
+                                                    });
+                                                </script>
+                                                <div class="form-group col-lg-6 col-md-3 col-12">
+                                                    <label for="rooms" class="control-label mb-1">ระดับชั้น</label>
+                                                    <select name="rooms" required class="form-control">
+                                                        <option value="">เลือกระดับชั้น</option>
+                                                        <?php
+                                                        require_once 'connect.php';
+
+                                                        $selectRoomsQuery = "SELECT tb_room_id, tb_room_name FROM ck_rooms";
+                                                        $stmt = $conn->prepare($selectRoomsQuery);
+                                                        $stmt->execute();
+
+                                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                                            $roomId = $row['tb_room_id'];
+                                                            $roomName = $row['tb_room_name'];
+
+                                                            echo "<option value='$roomId' data-roomname='$roomName'>$roomName</option>";
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                                <input type="hidden" name="room_name" class="form-control" id="roomNameInput">
+                                                <script>
+                                                    var roomsDropdown = document.querySelector('select[name="rooms"]');
+                                                    var roomNameInput = document.getElementById('roomNameInput');
+
+                                                    roomsDropdown.addEventListener('change', function() {
+                                                        var selectedOption = this.options[this.selectedIndex];
+                                                        var roomName = selectedOption.getAttribute('data-roomname');
+                                                        roomNameInput.value = roomName;
+                                                    });
+                                                </script>
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="hidden" name="teacher_id" class="form-control" value="<?php echo $_SESSION['id']; ?>">
+                                                <input type="hidden" name="name" class="form-control" value="<?php echo $_SESSION['name']; ?>">
+                                                <input type="hidden" name="surname" class="form-control" value="<?php echo $_SESSION['surname']; ?>">
+                                            </div>
+                                            <hr>
+                                            <div>
+                                                <?php
+                                                require_once 'add_main_db.php';
+                                                // if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                                                //     echo '<pre>';
+                                                //     print_r($_POST);
+                                                //     echo '</pre>';
+                                                // }
+                                                ?>
+                                                <button id="payment-button" type="submit" class="btn btn-info">
+                                                    <span>แสดงรายชื่อ</span>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div> <!-- .card -->
+                    </div>
                 </div>
                 <!-- /Widgets -->
             </div>
@@ -55,275 +230,30 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
         <!-- /.site-footer -->
     </div>
     <!-- /#right-panel -->
-
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.4/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
     <script src="assets/js/main.js"></script>
 
-    <!--  Chart js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
 
-    <!--Chartist Chart-->
-    <script src="https://cdn.jsdelivr.net/npm/chartist@0.11.0/dist/chartist.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartist-plugin-legend@0.6.2/chartist-plugin-legend.min.js"></script>
+    <script src="assets/js/lib/data-table/datatables.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/jszip.min.js"></script>
+    <script src="assets/js/lib/data-table/vfs_fonts.js"></script>
+    <script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
+    <script src="assets/js/init/datatables-init.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery.flot@0.8.3/jquery.flot.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flot-pie@1.0.0/src/jquery.flot.pie.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flot-spline@0.0.1/js/jquery.flot.spline.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/simpleweather@3.1.0/jquery.simpleWeather.min.js"></script>
-    <script src="assets/js/init/weather-init.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.9.0/dist/fullcalendar.min.js"></script>
-    <script src="assets/js/init/fullcalendar-init.js"></script>
-
-    <!--Local Stuff-->
-    <script>
-        jQuery(document).ready(function($) {
-            "use strict";
-
-            // Pie chart flotPie1
-            var piedata = [{
-                    label: "Desktop visits",
-                    data: [
-                        [1, 32]
-                    ],
-                    color: '#5c6bc0'
-                },
-                {
-                    label: "Tab visits",
-                    data: [
-                        [1, 33]
-                    ],
-                    color: '#ef5350'
-                },
-                {
-                    label: "Mobile visits",
-                    data: [
-                        [1, 35]
-                    ],
-                    color: '#66bb6a'
-                }
-            ];
-
-            $.plot('#flotPie1', piedata, {
-                series: {
-                    pie: {
-                        show: true,
-                        radius: 1,
-                        innerRadius: 0.65,
-                        label: {
-                            show: true,
-                            radius: 2 / 3,
-                            threshold: 1
-                        },
-                        stroke: {
-                            width: 0
-                        }
-                    }
-                },
-                grid: {
-                    hoverable: true,
-                    clickable: true
-                }
-            });
-            // Pie chart flotPie1  End
-            // cellPaiChart
-            var cellPaiChart = [{
-                    label: "Direct Sell",
-                    data: [
-                        [1, 65]
-                    ],
-                    color: '#5b83de'
-                },
-                {
-                    label: "Channel Sell",
-                    data: [
-                        [1, 35]
-                    ],
-                    color: '#00bfa5'
-                }
-            ];
-            $.plot('#cellPaiChart', cellPaiChart, {
-                series: {
-                    pie: {
-                        show: true,
-                        stroke: {
-                            width: 0
-                        }
-                    }
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    hoverable: true,
-                    clickable: true
-                }
-
-            });
-            // cellPaiChart End
-            // Line Chart  #flotLine5
-            var newCust = [
-                [0, 3],
-                [1, 5],
-                [2, 4],
-                [3, 7],
-                [4, 9],
-                [5, 3],
-                [6, 6],
-                [7, 4],
-                [8, 10]
-            ];
-
-            var plot = $.plot($('#flotLine5'), [{
-                data: newCust,
-                label: 'New Data Flow',
-                color: '#fff'
-            }], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineColor: '#fff',
-                        lineWidth: 2
-                    },
-                    points: {
-                        show: true,
-                        fill: true,
-                        fillColor: "#ffffff",
-                        symbol: "circle",
-                        radius: 3
-                    },
-                    shadowSize: 0
-                },
-                points: {
-                    show: true,
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    show: false
-                }
-            });
-            // Line Chart  #flotLine5 End
-            // Traffic Chart using chartist
-            if ($('#traffic-chart').length) {
-                var chart = new Chartist.Line('#traffic-chart', {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    series: [
-                        [0, 18000, 35000, 25000, 22000, 0],
-                        [0, 33000, 15000, 20000, 15000, 300],
-                        [0, 15000, 28000, 15000, 30000, 5000]
-                    ]
-                }, {
-                    low: 0,
-                    showArea: true,
-                    showLine: false,
-                    showPoint: false,
-                    fullWidth: true,
-                    axisX: {
-                        showGrid: true
-                    }
-                });
-
-                chart.on('draw', function(data) {
-                    if (data.type === 'line' || data.type === 'area') {
-                        data.element.animate({
-                            d: {
-                                begin: 2000 * data.index,
-                                dur: 2000,
-                                from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
-                                to: data.path.clone().stringify(),
-                                easing: Chartist.Svg.Easing.easeOutQuint
-                            }
-                        });
-                    }
-                });
-            }
-            // Traffic Chart using chartist End
-            //Traffic chart chart-js
-            if ($('#TrafficChart').length) {
-                var ctx = document.getElementById("TrafficChart");
-                ctx.height = 150;
-                var myChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-                        datasets: [{
-                                label: "Visit",
-                                borderColor: "rgba(4, 73, 203,.09)",
-                                borderWidth: "1",
-                                backgroundColor: "rgba(4, 73, 203,.5)",
-                                data: [0, 2900, 5000, 3300, 6000, 3250, 0]
-                            },
-                            {
-                                label: "Bounce",
-                                borderColor: "rgba(245, 23, 66, 0.9)",
-                                borderWidth: "1",
-                                backgroundColor: "rgba(245, 23, 66,.5)",
-                                pointHighlightStroke: "rgba(245, 23, 66,.5)",
-                                data: [0, 4200, 4500, 1600, 4200, 1500, 4000]
-                            },
-                            {
-                                label: "Targeted",
-                                borderColor: "rgba(40, 169, 46, 0.9)",
-                                borderWidth: "1",
-                                backgroundColor: "rgba(40, 169, 46, .5)",
-                                pointHighlightStroke: "rgba(40, 169, 46,.5)",
-                                data: [1000, 5200, 3600, 2600, 4200, 5300, 0]
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        tooltips: {
-                            mode: 'index',
-                            intersect: false
-                        },
-                        hover: {
-                            mode: 'nearest',
-                            intersect: true
-                        }
-
-                    }
-                });
-            }
-            //Traffic chart chart-js  End
-            // Bar Chart #flotBarChart
-            $.plot("#flotBarChart", [{
-                data: [
-                    [0, 18],
-                    [2, 8],
-                    [4, 5],
-                    [6, 13],
-                    [8, 5],
-                    [10, 7],
-                    [12, 4],
-                    [14, 6],
-                    [16, 15],
-                    [18, 9],
-                    [20, 17],
-                    [22, 7],
-                    [24, 4],
-                    [26, 9],
-                    [28, 11]
-                ],
-                bars: {
-                    show: true,
-                    lineWidth: 0,
-                    fillColor: '#ffffff8a'
-                }
-            }], {
-                grid: {
-                    show: false
-                }
-            });
-            // Bar Chart #flotBarChart End
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#bootstrap-data-table-export').DataTable();
         });
     </script>
 </body>

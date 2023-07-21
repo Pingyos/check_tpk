@@ -74,11 +74,10 @@
                                     $conn = null; // ปิดการเชื่อมต่อฐานข้อมูล
                                     exit();
                                 } else {
-                                    // สถานะเป็น 0 แต่ไม่ได้อยู่ที่หน้า mainadmin.php
+
                                     echo '<script>window.location.href = "index.php";</script>';
                                 }
                             }
-
                             // สถานะเป็น 1
                             if ($row['status'] == 1) {
                                 echo '<script>window.location.href = "mainadmin.php";</script>';

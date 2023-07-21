@@ -106,7 +106,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     require_once 'connect.php';
 
                                                     // ดึงข้อมูลนักเรียนตามวิชาและวันที่ที่เลือก
-                                                    $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname, DATE(c.time) AS checking_date 
+                                                    $sql = "SELECT c.*, s.tb_student_tname, s.tb_student_name, s.tb_student_sname, DATE(c.time) AS checking_date 
                                                 FROM ck_checking c 
                                                 JOIN ck_students s ON c.absent = s.tb_student_code
                                                 WHERE c.teacher_id = :teacherId AND c.courses = :courseCode";
@@ -145,13 +145,13 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             echo '<td>' . $student['absent'] . '</td>';
 
                                                             // ค้นหาข้อมูลนักเรียนจากรหัสนักเรียนในตาราง ck_students
-                                                            $stmt = $conn->prepare("SELECT tb_student_name, tb_student_sname FROM ck_students WHERE tb_student_code = :studentCode");
+                                                            $stmt = $conn->prepare("SELECT tb_student_tname, tb_student_name, tb_student_sname FROM ck_students WHERE tb_student_code = :studentCode");
                                                             $stmt->bindParam(':studentCode', $student['absent']);
                                                             $stmt->execute();
                                                             $studentInfo = $stmt->fetch(PDO::FETCH_ASSOC);
 
                                                             // แสดงชื่อและนามสกุลของนักเรียน
-                                                            echo '<td>' . $studentInfo['tb_student_name'] . ' ' . $studentInfo['tb_student_sname'] . '</td>';
+                                                            echo '<td>' . $studentInfo['tb_student_tname'] . ' ' . $studentInfo['tb_student_name'] . ' ' . $studentInfo['tb_student_sname'] . '</td>';
                                                             echo '<td>' . $student['cause'] . '</td>';
                                                             echo '<td>';
 

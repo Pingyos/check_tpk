@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
 
     // ดึงข้อมูลนักเรียนจากฐานข้อมูล
-    $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
+    $sql = "SELECT c.*, s.tb_student_tname, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
             JOIN ck_students s ON c.absent = s.tb_student_code
             WHERE 1=1";
 
@@ -66,10 +66,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // เขียนข้อมูลแถว
     foreach ($students as $student) {
-        // แทนที่ 'absent', 'tb_student_name' ฯลฯ ด้วยชื่อคอลัมน์จริงจากตารางฐานข้อมูล
         $rowData = [
             $student['absent'],
-            $student['tb_student_name'] . ' ' . $student['tb_student_sname'],
+            $student['tb_student_tname'] . ' ' . $student['tb_student_name'].' '. $student['tb_student_sname'],
             $student['cause'],
             getRoomLabel($student['rooms']),
             $student['courses'] . ' ' . $student['course_name'],

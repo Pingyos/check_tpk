@@ -19,14 +19,14 @@
                 <?php endif; ?>
                 <?php if ($_SESSION['status'] == 0) : ?>
                     <li class="active">
-                        <a href="index.php"><i class="menu-icon fa fa-laptop"></i>หน้าหลัก </a>
+                        <a href="index.php"><i class="menu-icon fa fa-pencil"></i>เช็คชื่อ </a>
                     </li>
                     <!-- <li>
                         <a href="add_student.php"> <i class="menu-icon fa fa-cloud-download"></i>ลงทะเบียนวิชา </a>
                     </li> -->
-                    <li>
+                    <!-- <li>
                         <a href="main.php"> <i class="menu-icon fa fa-pencil"></i>เช็คชื่อ </a>
-                    </li>
+                    </li> -->
                     <li>
                         <a href="report.php"> <i class="menu-icon fa fa-paste (alias)"></i>รายงาน </a>
                     </li>

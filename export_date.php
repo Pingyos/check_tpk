@@ -134,7 +134,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     // เชื่อมต่อฐานข้อมูลอีกครั้ง
                                                     require_once 'connect.php';
 
-                                                    $sql = "SELECT c.*, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
+                                                    $sql = "SELECT c.*, s.tb_student_tname, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
                                                     JOIN ck_students s ON c.absent = s.tb_student_code
                                                     WHERE 1=1";
 
@@ -183,7 +183,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         foreach ($students as $student) {
                                                             echo '<tr>';
                                                             echo '<td>' . $student['absent'] . '</td>';
-                                                            echo '<td>' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] . '</td>';
+                                                            echo '<td>' . $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] . '</td>';
                                                             echo '<td>' . $student['cause'] . '</td>';
                                                             echo '<td>';
 
