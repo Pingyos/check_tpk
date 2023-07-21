@@ -1,10 +1,10 @@
 <?php
-if (isset($_GET['tb_student_id'])) {
+if (isset($_GET['tb_course_id'])) {
     require_once 'connect.php';
     //ประกาศตัวแปรรับค่าจาก param method get
-    $tb_student_id = $_GET['tb_student_id'];
-    $stmt = $conn->prepare('DELETE FROM ck_students WHERE tb_student_id=:tb_student_id');
-    $stmt->bindParam(':tb_student_id', $tb_student_id, PDO::PARAM_INT);
+    $tb_course_id = $_GET['tb_course_id'];
+    $stmt = $conn->prepare('DELETE FROM ck_courses WHERE tb_course_id=:tb_course_id');
+    $stmt->bindParam(':tb_course_id', $tb_course_id, PDO::PARAM_INT);
     $stmt->execute();
 
     //  sweet alert 
@@ -20,7 +20,7 @@ if (isset($_GET['tb_student_id'])) {
                   title: "Del Data Success",
                   type: "success"
               }, function() {
-                  window.location = "import_student.php";
+                  window.location = "import_courses.php";
               });
             }, 200);
         </script>';
@@ -31,7 +31,7 @@ if (isset($_GET['tb_student_id'])) {
                   title: "Del Data Error",
                   type: "error"
               }, function() {
-                  window.location = "import_student.php";
+                  window.location = "import_courses.php";
               });
             }, 200);
         </script>';

@@ -55,7 +55,7 @@ if (
             title: "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
             type: "error"
         }, function() {
-            window.location = "index.php";
+            window.location = "import_users.php";
         });
         </script>';
     }

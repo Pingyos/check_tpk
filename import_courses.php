@@ -126,7 +126,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                         <form action="#" method="post" novalidate="novalidate" enctype="multipart/form-data">
                                             <div class="form-group col-lg-6 col-md-3 col-12">
                                                 <button type="button" class="btn btn-info ml-auto" data-toggle="modal" data-target="#teachersModal">
-                                                    <i class="fa fa-plus-square-o"></i> เพิ่ม 1 คน
+                                                    <i class="fa fa-plus-square-o"></i> เพิ่ม 1 วิชา
                                                 </button>
                                             </div>
                                         </form>
@@ -135,16 +135,15 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <thead>
                                                 <tr>
                                                     <td>ลำดับ</td>
-                                                    <td>รหัสนักเรียน</td>
-                                                    <td>ชื่อ-สกุล</td>
-                                                    <td>ระดับชั้น</td>
+                                                    <td>รหัสวิชา-ชื่อวิชา</td>
+                                                    <td>รหัสผู้สอน</td>
                                                     <td>รายละเอียด</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <?php
                                                 require_once 'connect.php';
-                                                $stmt = $conn->prepare("SELECT * FROM ck_students ORDER BY tb_student_id");
+                                                $stmt = $conn->prepare("SELECT * FROM ck_courses ORDER BY tb_course_id");
                                                 $stmt->execute();
                                                 $result = $stmt->fetchAll();
                                                 $countrow = 1;
@@ -152,10 +151,9 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 ?>
                                                     <tr>
                                                         <td><?= $countrow ?></td>
-                                                        <td> <?php echo $t1["tb_student_code"]; ?> </td>
-                                                        <td> <?php echo $t1["tb_student_tname"]; ?> <?php echo $t1["tb_student_name"]; ?> <?php echo $t1["tb_student_sname"]; ?></td>
-                                                        <td> <?php echo $t1["tb_student_degree"]; ?> </td>
-                                                        <td> <a href="del_student?tb_student_id=<?= $t1['tb_student_id']; ?>" class="btn btn-info"><i class="fa fa-trash-o"></i> Del</a>
+                                                        <td> <?php echo $t1["tb_course_code"]; ?> - <?php echo $t1["tb_course_name"]; ?> </td>
+                                                        <td> <?php echo $t1["tb_teacher_id"]; ?> </td>
+                                                        <td> <a href="del_course.php?tb_course_id=<?= $t1['tb_course_id']; ?>" class="btn btn-info"><i class="fa fa-trash-o"></i> Del</a>
                                                         </td>
                                                     </tr>
                                                 <?php
@@ -180,49 +178,21 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                 <form method="post" enctype="multipart/form-data">
                                     <div class="row">
                                         <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="tb_student_code" class="control-label mb-1">รหัสประจำตัว</label>
-                                            <input type="text" name="tb_student_code" id="tb_student_code" class="form-control" required>
+                                            <label for="tb_course_code" class="control-label mb-1">รหัสวิชา</label>
+                                            <input type="text" name="tb_course_code" id="tb_course_code" class="form-control" required>
                                         </div>
                                         <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="tb_student_tname" class="control-label mb-1">คำนำหน้า</label>
-                                            <input type="text" name="tb_student_tname" id="tb_student_tname" class="form-control" required>
-                                        </div>
-                                        <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="tb_student_name" class="control-label mb-1">ชื่อ</label>
-                                            <input type="text" name="tb_student_name" id="tb_student_name" class="form-control" required>
-                                        </div>
-                                        <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="tb_student_sname" class="control-label mb-1">สกุล</label>
-                                            <input type="text" name="tb_student_sname" id="tb_student_sname" class="form-control" required>
+                                            <label for="tb_course_name" class="control-label mb-1">ชื่อวิชา</label>
+                                            <input type="text" name="tb_course_name" id="tb_course_name" class="form-control" required>
                                         </div>
                                         <div class="form-group col-lg-12 col-md-3 col-12">
-                                            <label for="tb_student_degree" class="control-label mb-1">ระดับชั้น</label>
-                                            <select name="tb_student_degree" id="tb_student_degree" class="form-control" required>
-                                                <option value="0">กรุณาเลือกระดับชั้น</option>
-                                                <option value="1">ม.1/1</option>
-                                                <option value="2">ม.1/2</option>
-                                                <option value="3">ม.1/3</option>
-                                                <option value="4">ม.2/1</option>
-                                                <option value="5">ม.2/2</option>
-                                                <option value="6">ม.2/3</option>
-                                                <option value="7">ม.3/1</option>
-                                                <option value="8">ม.3/2</option>
-                                                <option value="9">ม.3/3</option>
-                                                <option value="10">ม.4/1</option>
-                                                <option value="11">ม.4/2</option>
-                                                <option value="12">ม.4/3</option>
-                                                <option value="13">ม.5/1</option>
-                                                <option value="14">ม.5/2</option>
-                                                <option value="15">ม.5/3</option>
-                                                <option value="16">ม.6/1</option>
-                                                <option value="17">ม.6/2</option>
-                                                <option value="18">ม.6/3</option>
-                                            </select>
+                                            <label for="tb_teacher_id" class="control-label mb-1">รหัสผู้สอน</label>
+                                            <input type="text" name="tb_teacher_id" id="tb_teacher_id" class="form-control" required>
                                         </div>
                                     </div>
                                     <div>
                                         <?php
-                                        require_once 'import_student_db.php';
+                                        require_once 'import_courses_db.php';
                                         // if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         //     echo '<pre>';
                                         //     print_r($_POST);

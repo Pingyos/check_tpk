@@ -20,7 +20,7 @@ if (isset($_GET['excel_id'])) {
                   title: "Del Data Success",
                   type: "success"
               }, function() {
-                  window.location = "import.php";
+                  window.location = "import_users.php";
               });
             }, 200);
         </script>';
@@ -31,7 +31,7 @@ if (isset($_GET['excel_id'])) {
                   title: "Del Data Error",
                   type: "error"
               }, function() {
-                  window.location = "index.php";
+                  window.location = "import_users.php";
               });
             }, 200);
         </script>';
