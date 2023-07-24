@@ -1,2 +1,2 @@
-<?php $conn = mysqli_connect("localhost", "root", "", "tbl_tpk");
+<?php $conn = mysqli_connect("localhost", "root", "", "studentcheck");
 // stdcheck Alohomora007 studentcheck

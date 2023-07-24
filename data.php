@@ -125,6 +125,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+                                                        <?php $index = 0; ?>
                                                         <?php while ($row2 = $stmt2->fetch(PDO::FETCH_ASSOC)) { ?>
                                                             <tr>
                                                                 <td><?= $countrow ?></td>
@@ -134,23 +135,48 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                     <input type="checkbox" class="form-control" name="absent[]" value="<?= $row2['tb_student_code']; ?>" onchange="handleCheckbox(this)">
                                                                 </td>
                                                                 <td>
-                                                                    <input type="text" class="form-control" name="cause[]" value="<?= $_POST['cause'][$countrow - 1]; ?>" disabled>
+                                                                    <select class="form-control" name="cause[]" disabled onchange="handleCauseSelect(this, <?= $index ?>)">
+                                                                        <option value="">โปรดเลือก</option>
+                                                                        <option value="ลาป่วย" <?php if ($_POST['cause'][$index] === 'ลาป่วย') echo 'selected'; ?>>ลาป่วย</option>
+                                                                        <option value="ลากิจ" <?php if ($_POST['cause'][$index] === 'ลากิจ') echo 'selected'; ?>>ลากิจ</option>
+                                                                        <option value="หนีเรียน" <?php if ($_POST['cause'][$index] === 'หนีเรียน') echo 'selected'; ?>>หนีเรียน</option>
+                                                                        <option value="ขออนุญาตเวลาเรียน" <?php if ($_POST['cause'][$index] === 'ขออนุญาตเวลาเรียน') echo 'selected'; ?>>ขออนุญาตเวลาเรียน</option>
+                                                                        <option value="อื่นๆ" <?php if ($_POST['cause'][$index] === 'อื่นๆ') echo 'selected'; ?>>อื่นๆ</option>
+                                                                    </select>
+                                                                    <input type="text" class="form-control" name="custom_cause[]" disabled placeholder="โปรดระบุ" style="display: none;">
                                                                 </td>
                                                             </tr>
 
                                                             <script>
                                                                 function handleCheckbox(checkbox) {
-                                                                    var inputText = checkbox.parentNode.nextElementSibling.querySelector('input[type="text"]');
+                                                                    var selectCause = checkbox.parentNode.nextElementSibling.querySelector('select[name="cause[]"]');
+                                                                    var inputText = checkbox.parentNode.nextElementSibling.querySelector('input[name="custom_cause[]"]');
                                                                     if (checkbox.checked) {
-                                                                        inputText.disabled = false;
+                                                                        selectCause.disabled = false;
+                                                                        handleCauseSelect(selectCause, <?= $index ?>);
                                                                     } else {
-                                                                        inputText.disabled = true;
+                                                                        selectCause.disabled = true;
+                                                                        selectCause.value = '';
+                                                                        inputText.style.display = 'none';
                                                                         inputText.value = '';
+                                                                    }
+                                                                }
+
+                                                                function handleCauseSelect(selectCause, index) {
+                                                                    var inputText = selectCause.nextElementSibling;
+                                                                    if (selectCause.value === 'อื่นๆ') {
+                                                                        inputText.style.display = 'block';
+                                                                        inputText.disabled = false;
+                                                                        cause[index] = inputText.value; // เก็บค่า custom_cause ที่ผู้ใช้กรอกเข้ามาในตัวแปร cause ตามตำแหน่ง index
+                                                                    } else {
+                                                                        inputText.style.display = 'none';
+                                                                        inputText.value = '';
+                                                                        cause[index] = selectCause.value; // เก็บค่าที่เลือกใน dropdown ในตัวแปร cause ตามตำแหน่ง index
                                                                     }
                                                                 }
                                                             </script>
 
-                                                        <?php $countrow++;
+                                                        <?php $index++;
                                                         } ?>
                                                     </tbody>
                                                 </table>
@@ -185,9 +211,9 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $_POST['cause'] = array_fill(0, $stmt2->rowCount(), "");
                                             }
 
-                                            // echo '<pre>';
-                                            // print_r($_POST);
-                                            // echo '</pre>';
+                                            echo '<pre>';
+                                            print_r($_POST);
+                                            echo '</pre>';
                                         }
                                         ?>
                                         <button type="submit" class="btn btn-info">

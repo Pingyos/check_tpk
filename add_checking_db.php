@@ -11,6 +11,7 @@ if (
     && isset($_POST['surname'])
     && isset($_POST['absent'])
     && isset($_POST['cause'])
+    && isset($_POST['custom_cause'])
 ) {
     require_once 'connect.php'; // เชื่อมต่อฐานข้อมูล
 
@@ -25,17 +26,20 @@ if (
     $surname = $_POST['surname'];
     $absent = $_POST['absent'];
     $cause = $_POST['cause'];
+    $custom_cause = $_POST['custom_cause'];
 
-    if (is_array($absent) && is_array($cause)) {
+    if (is_array($absent) && is_array($cause) && is_array($custom_cause)) {
         $numRows = count($absent);
 
         for ($i = 0; $i < $numRows; $i++) {
             $currentAbsent = $absent[$i];
             $currentCause = $cause[$i];
 
-            $stmt = $conn->prepare("INSERT INTO ck_checking (`time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`,`name_title`, `name`, `surname`, `absent`, `cause`)
-                                    VALUES (:time, :period, :courses, :course_name, :rooms, :teacher_id, :name_title, :name, :surname, :absent, :cause)");
+            // Use the ternary operator to handle empty custom_cause
+            $currentCustomCause = !empty($custom_cause[$i]) ? $custom_cause[$i] : '';
 
+            $stmt = $conn->prepare("INSERT INTO ck_checking (`time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, `name_title`, `name`, `surname`, `absent`, `cause`, `custom_cause`)
+                                    VALUES (:time, :period, :courses, :course_name, :rooms, :teacher_id, :name_title, :name, :surname, :absent, :cause, :custom_cause)");
             $stmt->bindParam(':time', $time, PDO::PARAM_STR);
             $stmt->bindParam(':period', $period, PDO::PARAM_STR);
             $stmt->bindParam(':courses', $courses, PDO::PARAM_STR);
@@ -47,26 +51,10 @@ if (
             $stmt->bindParam(':surname', $surname, PDO::PARAM_STR);
             $stmt->bindParam(':absent', $currentAbsent, PDO::PARAM_STR);
             $stmt->bindParam(':cause', $currentCause, PDO::PARAM_STR);
+            $stmt->bindParam(':custom_cause', $currentCustomCause, PDO::PARAM_STR);
 
             $stmt->execute();
         }
-    } else {
-        $stmt = $conn->prepare("INSERT INTO ck_checking (`time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, ``name_title,`name`, `surname`, `absent`, `cause`)
-                                VALUES (:time, :period, :courses, :course_name, :rooms, :teacher_id, :name_title, :name, :surname, :absent, :cause)");
-
-        $stmt->bindParam(':time', $time, PDO::PARAM_STR);
-        $stmt->bindParam(':period', $period, PDO::PARAM_STR);
-        $stmt->bindParam(':courses', $courses, PDO::PARAM_STR);
-        $stmt->bindParam(':course_name', $course_name, PDO::PARAM_STR);
-        $stmt->bindParam(':rooms', $rooms, PDO::PARAM_INT);
-        $stmt->bindParam(':teacher_id', $teacher_id, PDO::PARAM_INT);
-        $stmt->bindParam(':name_title', $name_title, PDO::PARAM_STR);
-        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-        $stmt->bindParam(':surname', $surname, PDO::PARAM_STR);
-        $stmt->bindParam(':absent', $absent, PDO::PARAM_STR);
-        $stmt->bindParam(':cause', $cause, PDO::PARAM_STR);
-
-        $stmt->execute();
     }
 
     if ($stmt->rowCount() > 0) {

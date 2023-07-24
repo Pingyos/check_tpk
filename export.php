@@ -1,4 +1,6 @@
 <?php
+require_once 'TCPDF/tcpdf.php'; // Adjust the path to the TCPDF library
+
 function getRoomLabel($roomNumber)
 {
     $class = ($roomNumber - 1) % 3 + 1;
@@ -7,68 +9,43 @@ function getRoomLabel($roomNumber)
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // ติดต่อกับฐานข้อมูลเหมือนในหน้าฟอร์มหลักเพื่อเลือกตัวกรองข้อมูล
-    require_once 'connect.php';
+    // ... (existing code)
 
-    // ตรวจสอบค่าที่เลือกจากฟอร์ม
-    $selectedCourse = isset($_POST['course']) ? $_POST['course'] : '';
-    $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : '';
-    $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : '';
-    $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
+    // Set PDF Headers
+    header("Content-type: application/pdf");
+    header("Content-Disposition: attachment; filename=data.pdf");
 
-    // ดึงข้อมูลนักเรียนจากฐานข้อมูล
-    $sql = "SELECT c.*, s.tb_student_tname, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
-            JOIN ck_students s ON c.absent = s.tb_student_code
-            WHERE 1=1";
+    // Create new TCPDF object
+    $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
 
-    if ($selectedCourse) {
-        $sql .= " AND c.courses = :courseCode";
-    }
+    // Set document information
+    $pdf->SetCreator(PDF_CREATOR);
+    $pdf->SetAuthor('Your Name');
+    $pdf->SetTitle('Data PDF');
+    $pdf->SetSubject('Data Export');
+    $pdf->SetKeywords('Data, Export, PDF');
 
-    if ($startDate && $endDate) {
-        $sql .= " AND DATE(c.time) BETWEEN :startDate AND :endDate";
-    }
+    // Remove default header/footer
+    $pdf->setPrintHeader(false);
+    $pdf->setPrintFooter(false);
 
-    if ($studentCode) {
-        $sql .= " AND c.absent = :studentCode";
-    }
+    // Set default font
+    $pdf->SetFont('helvetica', '', 10);
 
-    $stmt = $conn->prepare($sql);
+    // Add a page
+    $pdf->AddPage();
 
-    if ($selectedCourse) {
-        $stmt->bindParam(':courseCode', $selectedCourse);
-    }
+    // Add your content here
 
-    if ($startDate && $endDate) {
-        $stmt->bindParam(':startDate', $startDate);
-        $stmt->bindParam(':endDate', $endDate);
-    }
+    // Write the header row
+    $headerRow = ['รหัสนักเรียน', 'ชื่อ-สกุล', 'สาเหตุ', 'ระดับชั้น', 'วิชา', 'ครูผู้สอน', 'คาบเรียน/วันที่'];
+    $pdf->Write(0, implode("\t", $headerRow), '', 0, 'L', true, 0, false, false, 0);
 
-    if ($studentCode) {
-        $stmt->bindParam(':studentCode', $studentCode);
-    }
-
-    $stmt->execute();
-    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // ปิดการเชื่อมต่อฐานข้อมูล
-    $conn = null;
-
-    // กำหนดหัวข้อสำหรับ CSV
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename=data.csv');
-
-    // เปิดสตรีมข้อมูลออก
-    $output = fopen('php://output', 'w');
-
-    // เขียนหัวข้อ CSV
-    fputcsv($output, ['รหัสนักเรียน', 'ชื่อ-สกุล', 'สาเหตุ', 'ระดับชั้น', 'วิชา', 'ครูผู้สอน', 'คาบเรียน/วันที่']);
-
-    // เขียนข้อมูลแถว
+    // Write the data rows
     foreach ($students as $student) {
         $rowData = [
             $student['absent'],
-            $student['tb_student_tname'] . ' ' . $student['tb_student_name'].' '. $student['tb_student_sname'],
+            $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'],
             $student['cause'],
             getRoomLabel($student['rooms']),
             $student['courses'] . ' ' . $student['course_name'],
@@ -76,10 +53,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $student['period'] . ' ' . $student['time'],
             // ...
         ];
-
-        fputcsv($output, $rowData);
+        $pdf->Write(0, implode("\t", $rowData), '', 0, 'L', true, 0, false, false, 0);
     }
 
-    // ปิดสตรีมข้อมูลออก
-    fclose($output);
+    // Close and output the PDF
+    $pdf->Output('data.pdf', 'I');
 }

@@ -125,6 +125,68 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 echo '<input type="text" name="studentCode" id="studentCode" class="form-control" value="' . $studentCode . '">';
                                                 echo '</div>';
 
+                                                require_once __DIR__ . '/vendor/autoload.php';
+
+                                                $defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
+                                                $fontDirs = $defaultConfig['fontDir'];
+
+                                                $defaultFontConfig = (new Mpdf\Config\FontVariables())->getDefaults();
+                                                $fontData = $defaultFontConfig['fontdata'];
+
+                                                $mpdf = new \Mpdf\Mpdf([
+                                                    'fontDir' => array_merge($fontDirs, [
+                                                        __DIR__ . '/tmp',
+                                                    ]),
+                                                    'fontdata' => $fontData + [ // lowercase letters only in font key
+                                                        'sarabun' => [
+                                                            'R' => 'THSarabunNew.ttf',
+                                                            'I' => 'THSarabunNew Italic.ttf',
+                                                            'B' => 'THSarabunNew BoldItalic.ttf'
+                                                        ]
+                                                    ],
+                                                    'default_font' => 'sarabun'
+                                                ]);
+                                                $style = "
+                                                <style>
+                                                    .center {
+                                                        text-align: center;
+                                                        margin: 0;
+                                                        padding: 0;
+                                                    }
+                                                </style>
+                                            ";
+
+                                                $mpdf->WriteHTML($style);
+                                                $mpdf->WriteHTML('<div class="center"><img src="../check_tpk/images/logo2.png" style="width: 100px; height: 100px;"></div>');
+                                                $mpdf->WriteHTML('<div class="center"><h2>รายงานการขาดเรียน</h2></div>');
+
+                                                $style = "
+                                                    <style>
+                                                        th:nth-child(1) { /* คอลัมน์ที่ 1 (รหัสนักเรียน) */
+                                                            width: 100px; /* เปลี่ยนค่าเป็นขนาดที่ต้องการในหน่วยที่คุณต้องการ */
+                                                        }
+                                                        th:nth-child(2) { /* คอลัมน์ที่ 2 (ชื่อ-สกุล) */
+                                                            width: 150px; /* เปลี่ยนค่าเป็นขนาดที่ต้องการในหน่วยที่คุณต้องการ */
+                                                        }
+                                                        th:nth-child(3) { /* คอลัมน์ที่ 3 (สาเหตุ) */
+                                                            width: 130px; /* เปลี่ยนค่าเป็นขนาดที่ต้องการในหน่วยที่คุณต้องการ */
+                                                        }
+                                                        th:nth-child(4) { /* คอลัมน์ที่ 4 (ระดับชั้น) */
+                                                            width: 80px; /* เปลี่ยนค่าเป็นขนาดที่ต้องการในหน่วยที่คุณต้องการ */
+                                                        }
+                                                        th:nth-child(5) { /* คอลัมน์ที่ 5 (วิชา) */
+                                                            width: 120px; /* เปลี่ยนค่าเป็นขนาดที่ต้องการในหน่วยที่คุณต้องการ */
+                                                        }
+                                                        th:nth-child(6) { /* คอลัมน์ที่ 6 (ตาบเรียน/วันที่) */
+                                                            width: 150px; /* เปลี่ยนค่าเป็นขนาดที่ต้องการในหน่วยที่คุณต้องการ */
+                                                        }
+                                                    </style>
+                                                ";
+
+                                                $mpdf->WriteHTML($style);
+
+                                                ob_start();
+
                                                 if (isset($_POST['course']) || isset($_POST['startDate']) || isset($_POST['endDate']) || isset($_POST['studentCode'])) {
                                                     $selectedCourse = $_POST['course'];
                                                     $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
@@ -167,7 +229,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
                                                     $stmt->execute();
                                                     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
                                                     if (count($students) > 0) {
                                                         echo '<table id="bootstrap-data-table" class="table table-striped table-bordered">';
                                                         echo '<thead><tr>
@@ -184,7 +245,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             echo '<tr>';
                                                             echo '<td>' . $student['absent'] . '</td>';
                                                             echo '<td>' . $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] . '</td>';
-                                                            echo '<td>' . $student['cause'] . '</td>';
+                                                            echo '<td>' . $student['cause'] . '  ' . ($student['custom_cause'] ? '* ' . $student['custom_cause'] : '') . '</td>';
                                                             echo '<td>';
 
                                                             $level = $student['rooms'];
@@ -209,6 +270,12 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 }
                                                 ?>
                                             </div>
+                                            <?php
+                                            $html = ob_get_contents();
+                                            $mpdf->WriteHTML($html);
+                                            $mpdf->Output("report.pdf");
+                                            ob_end_flush();
+                                            ?>
                                             <hr>
                                             <div class="col-lg-12">
                                                 <div class="row">
@@ -218,58 +285,16 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         </button>
                                                         &nbsp;
                                                         <button type="button" class="btn btn-secondary" onclick="clearForm()">
-                                                        <i class="menu-icon fa fa-reset"></i><span>ล้างข้อมูล</span>
+                                                            <i class="menu-icon fa fa-reset"></i><span>ล้างข้อมูล</span>
                                                         </button>
                                                         &nbsp;
                                                         <!-- เพิ่มปุ่ม export -->
-                                                        <button type="button" class="btn btn-primary" onclick="exportToCSV()">
-                                                        <i class="menu-icon fa fa-print"> </i> <span>ส่งออก</span>
-                                                        </button>
+                                                        <a href="report.pdf" class="btn btn-primary" target="_blank"><i class="menu-icon fa fa-print"></i> ส่งออก PDF</a>
+
+                                                        <!-- <button href="report.pdf" type="button" class="btn btn-primary">
+                                                            <i class="menu-icon fa fa-print"></i><span>ส่งออกเป็น PDF</span>
+                                                        </button> -->
                                                     </div>
-                                                    <script>
-                                                        function clearForm() {
-                                                            document.getElementById('course').selectedIndex = 0;
-                                                            document.getElementById('startDate').value = '';
-                                                            document.getElementById('endDate').value = '';
-                                                            document.getElementById('studentCode').value = '';
-                                                        }
-
-                                                        // ฟังก์ชันสำหรับทำการ CSV export
-                                                        function exportToCSV() {
-                                                            // สร้างฟอร์มที่ซ่อนไว้เพื่อส่งข้อมูลไปทำการ CSV export
-                                                            const form = document.createElement('form');
-                                                            form.method = 'post';
-                                                            form.action = 'export.php'; // แทนที่ 'export.php' ด้วยชื่อไฟล์ที่จัดการกระบวนการทำ CSV export
-
-                                                            // เพิ่ม input fields ที่จำเป็นสำหรับส่งตัวกรองที่เลือก
-                                                            const courseInput = document.createElement('input');
-                                                            courseInput.type = 'hidden';
-                                                            courseInput.name = 'course';
-                                                            courseInput.value = document.getElementById('course').value;
-                                                            form.appendChild(courseInput);
-
-                                                            const startDateInput = document.createElement('input');
-                                                            startDateInput.type = 'hidden';
-                                                            startDateInput.name = 'startDate';
-                                                            startDateInput.value = document.getElementById('startDate').value;
-                                                            form.appendChild(startDateInput);
-
-                                                            const endDateInput = document.createElement('input');
-                                                            endDateInput.type = 'hidden';
-                                                            endDateInput.name = 'endDate';
-                                                            endDateInput.value = document.getElementById('endDate').value;
-                                                            form.appendChild(endDateInput);
-
-                                                            const studentCodeInput = document.createElement('input');
-                                                            studentCodeInput.type = 'hidden';
-                                                            studentCodeInput.name = 'studentCode';
-                                                            studentCodeInput.value = document.getElementById('studentCode').value;
-                                                            form.appendChild(studentCodeInput);
-
-                                                            document.body.appendChild(form);
-                                                            form.submit();
-                                                        }
-                                                    </script>
                                                 </div>
                                             </div>
                                         </form>

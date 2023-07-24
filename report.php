@@ -152,7 +152,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
                                                             // แสดงชื่อและนามสกุลของนักเรียน
                                                             echo '<td>' . $studentInfo['tb_student_tname'] . ' ' . $studentInfo['tb_student_name'] . ' ' . $studentInfo['tb_student_sname'] . '</td>';
-                                                            echo '<td>' . $student['cause'] . '</td>';
+                                                            echo '<td>' . $student['cause'] . '  ' . ($student['custom_cause'] ? '* ' . $student['custom_cause'] : '') . '</td>';
                                                             echo '<td>';
 
                                                             $level = $student['rooms'];
