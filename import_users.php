@@ -63,8 +63,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 </div>
                                             </div>
                                             <div class="form-group col-lg-6 col-md-3 col-12">
-                                                <button name="import" type="submit" class="btn btn-info">
-                                                    <span>อัพโหลด</span>
+                                                <button name="import" type="submit" class="btn btn-success">
+                                                <i class="fa fa-upload"></i> <span>อัปโหลด</span>
                                                 </button>
                                             </div>
                                         </form>
@@ -139,16 +139,18 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <thead>
                                                 <tr>
                                                     <td>ลำดับ</td>
-                                                    <td>Email</td>
+                                                    <td>Username</td>
                                                     <td>Password</td>
                                                     <td>ชื่อ-สกุล</td>
-                                                    <td>รายละเอียด</td>
+                                                    <td>กลุ่มสาระการเรียนรู้</td>
+                                                    <td></td>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <?php
                                                 require_once 'connect.php';
-                                                $stmt = $conn->prepare("SELECT * FROM ck_users");
+                                                $stmt = $conn->prepare("SELECT * FROM ck_users b
+                                                LEFT JOIN ck_departments c ON b.groups = c.tb_department_id");
                                                 $stmt->execute();
                                                 $result = $stmt->fetchAll();
                                                 $countrow = 1;
@@ -159,7 +161,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <td> <?php echo $t1["email"]; ?> </td>
                                                         <td> <?php echo $t1["password"]; ?> </td>
                                                         <td> <?php echo $t1["name_title"]; ?> <?php echo $t1["name"]; ?> <?php echo $t1["surname"]; ?> </td>
-                                                        <td> <a href="del_users?excel_id=<?= $t1['excel_id']; ?>" class="btn btn-info"><i class="fa fa-trash-o"></i> Del</a>
+                                                        <td> <?php echo $t1["tb_department_name"]; ?> </td>
+                                                        <td> <a href="del_users.php?excel_id=<?= $t1['excel_id']; ?>" class="btn btn-danger"><i class="fa fa-trash-o"></i> ลบ</a>
                                                         </td>
                                                     </tr>
                                                 <?php
@@ -188,7 +191,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <input type="text" name="id" id="id" class="form-control" required>
                                         </div>
                                         <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="email" class="control-label mb-1">Email</label>
+                                            <label for="email" class="control-label mb-1">Username</label>
                                             <input type="text" name="email" id="email" class="form-control" required>
                                         </div>
                                         <div class="form-group col-lg-6 col-md-3 col-12">
@@ -204,13 +207,13 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <input type="text" name="name" id="name" class="form-control" required>
                                         </div>
                                         <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="surname" class="control-label mb-1">สกุส</label>
+                                            <label for="surname" class="control-label mb-1">สกุล</label>
                                             <input type="text" name="surname" id="surname" class="form-control" required>
                                         </div>
                                         <div class="form-group col-lg-6 col-md-3 col-12">
                                             <label for="position" class="control-label mb-1">ตำแหน่ง</label>
                                             <select name="position" id="position" class="form-control" required>
-                                                <option value="0">กรุณาเลือกตำแหน่ง</option>
+                                                <option value="0">กรุณาระบุตำแหน่ง</option>
                                                 <option value="ครูผู้ช่วย">ครูผู้ช่วย</option>
                                                 <option value="ครู">ครู</option>
                                                 <option value="ครูชำนาญการพิเศษ">ครูชำนาญการพิเศษ</option>
@@ -222,7 +225,23 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                         </div>
                                         <div class="form-group col-lg-6 col-md-3 col-12">
                                             <label for="groups" class="control-label mb-1">กลุ่มสาระการเรียนรู้</label>
-                                            <input type="text" name="groups" id="groups" class="form-control" required>
+                                            <select name="groups" id="groups" class="form-control" required>
+                                            <option value="0">กรุณาระบุกลุ่มสาระการเรียนรู้</option>
+                                                <option value="1">ผู้บริหารสถานศึกษา</option>
+                                                <option value="2">เจ้าหน้าที่สำนักงานฯ</option>
+                                                <option value="3">กิจกรรมพัฒนาผู้เรียน</option>
+                                                <option value="4">กลุ่มสาระการเรียนรู้ศิลปะ</option>
+                                                <option value="5">กลุ่มสาระการเรียนรู้สุขศึกษา และพลศึกษา</option>
+                                                <option value="6">กลุ่มสาระการเรียนรู้การงานอาชีพและเทคโนโลยี</option>
+                                                <option value="7">กลุ่มสาระการเรียนรู้ภาษาต่างประเทศ</option>
+                                                <option value="8">กลุ่มสาระการเรียนรู้วิทยาศาสตร์</option>
+                                                <option value="9">กลุ่มสาระการเรียนรู้คณิตศาสตร์</option>
+                                                <option value="10">กลุ่มสาระการเรียนรู้สังคม ศาสนา และวัฒนธรรม</option>
+                                                <option value="11">กลุ่มสาระการเรียนรู้ภาษาไทย</option>
+                                                <option value="12">ลูกจ้างประจำ</option>
+                                                <option value="13">พนักงานจ้างเหมา	</option>
+                                                <option value="14">แม่บ้าน คนสวน</option>
+                                            </select>
                                         </div>
                                         <div class="form-group col-lg-12 col-md-3 col-12">
                                             <label for="status" class="control-label mb-1">ตำแหน่ง</label>
@@ -241,7 +260,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                         //     echo '</pre>';
                                         // }
                                         ?>
-                                        <button type="submit" class="btn btn-info">Submit</button>
+                                        <button type="submit" class="btn btn-info">ยันยืน</button>
                                     </div>
                                 </form>
                             </div>

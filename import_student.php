@@ -63,8 +63,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 </div>
                                             </div>
                                             <div class="form-group col-lg-6 col-md-3 col-12">
-                                                <button name="import" type="submit" class="btn btn-info">
-                                                    <span>อัพโหลด</span>
+                                                <button name="import" type="submit" class="btn btn-success">
+                                                <i class="fa fa-upload"></i> <span>อัปโหลด</span>
                                                 </button>
                                             </div>
                                         </form>
@@ -139,7 +139,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     <td>รหัสนักเรียน</td>
                                                     <td>ชื่อ-สกุล</td>
                                                     <td>ระดับชั้น</td>
-                                                    <td>รายละเอียด</td>
+                                                    <td></td>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -155,8 +155,62 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <td><?= $countrow ?></td>
                                                         <td> <?php echo $t1["tb_student_code"]; ?> </td>
                                                         <td> <?php echo $t1["tb_student_tname"]; ?> <?php echo $t1["tb_student_name"]; ?> <?php echo $t1["tb_student_sname"]; ?></td>
-                                                        <td> <?php echo $t1["tb_student_degree"]; ?> </td>
-                                                        <td> <a href="del_student?tb_student_id=<?= $t1['tb_student_id']; ?>" class="btn btn-info"><i class="fa fa-trash-o"></i> Del</a>
+                                                        <td> <?php
+                                                                if( $t1["tb_student_degree"] == 1) {
+                                                                    echo "ม. 1/1"; 
+                                                                } else if( $t1["tb_student_degree"] == 2) { 
+                                                                    echo "ม. 1/2"; 
+                                                                }
+                                                                else if( $t1["tb_student_degree"] == 3) { 
+                                                                    echo "ม. 1/3"; 
+                                                                }
+                                                                else if( $t1["tb_student_degree"] == 4) { 
+                                                                    echo "ม. 2/1"; 
+                                                                }
+                                                                else if( $t1["tb_student_degree"] == 5) { 
+                                                                    echo "ม. 2/2"; 
+                                                                }
+                                                                else if( $t1["tb_student_degree"] == 6) { 
+                                                                    echo "ม. 2/3"; 
+                                                                }
+                                                                else if( $t1["tb_student_degree"] == 7) { 
+                                                                    echo "ม. 3/1"; 
+                                                                }
+                                                                else if( $t1["tb_student_degree"] == 8) { 
+                                                                    echo "ม. 3/2"; 
+                                                                }
+                                                                else if( $t1["tb_student_degree"] == 9) { 
+                                                                    echo "ม. 3/3"; 
+                                                                }
+                                                                else if( $t1["tb_student_degree"] == 10) { 
+                                                                    echo "ม. 4/1"; 
+                                                                }
+                                                                else if( $t1["tb_student_degree"] == 11) {
+                                                                    echo "ม. 4/2"; 
+                                                                 }
+                                                                else if( $t1["tb_student_degree"] == 12) { 
+                                                                    echo "ม. 4/3"; 
+                                                                }
+                                                                else if( $t1["tb_student_degree"] == 13) {
+                                                                    echo "ม. 5/1"; 
+                                                                 }
+                                                                else if( $t1["tb_student_degree"] == 14) {
+                                                                    echo "ม. 5/2"; 
+                                                                 }
+                                                                else if( $t1["tb_student_degree"] == 15) { 
+                                                                    echo "ม. 5/3"; 
+                                                                }
+                                                                else if( $t1["tb_student_degree"] == 16) { 
+                                                                    echo "ม. 6/1"; 
+                                                                }
+                                                                else if( $t1["tb_student_degree"] == 17) { 
+                                                                    echo "ม. 6/2"; 
+                                                                }
+                                                                else {
+                                                                    echo "ม. 6/3"; 
+                                                                }
+                                                        ?> </td>
+                                                        <td> <a href="del_student.php?tb_student_id=<?= $t1['tb_student_id']; ?>" class="btn btn-danger"><i class="fa fa-trash-o"></i> ลบ</a>
                                                         </td>
                                                     </tr>
                                                 <?php
@@ -230,7 +284,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                         //     echo '</pre>';
                                         // }
                                         ?>
-                                        <button type="submit" class="btn btn-info">Submit</button>
+                                        <button type="submit" class="btn btn-info">ยืนยัน</button>
                                     </div>
                                 </form>
                             </div>

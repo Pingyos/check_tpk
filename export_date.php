@@ -218,11 +218,12 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         </button>
                                                         &nbsp;
                                                         <button type="button" class="btn btn-secondary" onclick="clearForm()">
-                                                            <span>เคลียร์ข้อมูล</span>
+                                                        <i class="menu-icon fa fa-reset"></i><span>ล้างข้อมูล</span>
                                                         </button>
+                                                        &nbsp;
                                                         <!-- เพิ่มปุ่ม export -->
                                                         <button type="button" class="btn btn-primary" onclick="exportToCSV()">
-                                                            <span>Export CSV</span>
+                                                        <i class="menu-icon fa fa-print"> </i> <span>ส่งออก</span>
                                                         </button>
                                                     </div>
                                                     <script>

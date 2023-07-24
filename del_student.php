@@ -17,7 +17,7 @@ if (isset($_GET['tb_student_id'])) {
         echo '<script>
              setTimeout(function() {
               swal({
-                  title: "Del Data Success",
+                  title: "success",
                   type: "success"
               }, function() {
                   window.location = "import_student.php";
@@ -28,7 +28,7 @@ if (isset($_GET['tb_student_id'])) {
         echo '<script>
              setTimeout(function() {
               swal({
-                  title: "Del Data Error",
+                  title: "error",
                   type: "error"
               }, function() {
                   window.location = "import_student.php";

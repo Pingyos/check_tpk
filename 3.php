@@ -218,7 +218,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         </button>
                                                         &nbsp;
                                                         <button type="button" class="btn btn-secondary" onclick="clearForm()">
-                                                            <span>เคลียร์ข้อมูล</span>
+                                                            <span>ล้างข้อมูล</span>
                                                         </button>
                                                     </div>
                                                     <script>

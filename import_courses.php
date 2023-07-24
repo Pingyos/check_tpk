@@ -63,8 +63,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 </div>
                                             </div>
                                             <div class="form-group col-lg-6 col-md-3 col-12">
-                                                <button name="import" type="submit" class="btn btn-info">
-                                                    <span>อัพโหลด</span>
+                                                <button name="import" type="submit" class="btn btn-success">
+                                                    <i class="fa fa-upload"></i> <span>อัปโหลด</span>
                                                 </button>
                                             </div>
                                         </form>
@@ -135,14 +135,15 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 <tr>
                                                     <td>ลำดับ</td>
                                                     <td>รหัสวิชา-ชื่อวิชา</td>
-                                                    <td>รหัสผู้สอน</td>
-                                                    <td>รายละเอียด</td>
+                                                    <td>ครูผู้สอน</td>
+                                                    <td>กลุ่มสาระการเรียนรู้</td>
+                                                    <td></td>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <?php
                                                 require_once 'connect.php';
-                                                $stmt = $conn->prepare("SELECT * FROM ck_courses ORDER BY tb_course_id");
+                                                $stmt = $conn->prepare("SELECT * FROM ck_courses a LEFT JOIN ck_users b ON a.tb_teacher_id=b.id LEFT JOIN ck_departments c on c.tb_department_id=b.groups");
                                                 $stmt->execute();
                                                 $result = $stmt->fetchAll();
                                                 $countrow = 1;
@@ -151,8 +152,9 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     <tr>
                                                         <td><?= $countrow ?></td>
                                                         <td> <?php echo $t1["tb_course_code"]; ?> - <?php echo $t1["tb_course_name"]; ?> </td>
-                                                        <td> <?php echo $t1["tb_teacher_id"]; ?> </td>
-                                                        <td> <a href="del_course.php?tb_course_id=<?= $t1['tb_course_id']; ?>" class="btn btn-info"><i class="fa fa-trash-o"></i> Del</a>
+                                                        <td> <?php echo $t1["name_title"]; ?> <?php echo $t1["name"]; ?> <?php echo $t1["surname"]; ?> </td>
+                                                        <td> <?php echo $t1["tb_department_name"]; ?> </td>
+                                                        <td> <a href="del_course.php?tb_course_id=<?= $t1['tb_course_id']; ?>" class="btn btn-danger"><i class="fa fa-trash-o"></i> ลบ</a>
                                                         </td>
                                                     </tr>
                                                 <?php
@@ -198,7 +200,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                         //     echo '</pre>';
                                         // }
                                         ?>
-                                        <button type="submit" class="btn btn-info">Submit</button>
+                                        <button type="submit" class="btn btn-info">ยืนยัน</button>
                                     </div>
                                 </form>
                             </div>
