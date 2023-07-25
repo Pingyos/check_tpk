@@ -199,7 +199,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                     </div>
                                     <div>
                                         <?php
-                                        // require_once 'add_checking_db.php';
+                                        require_once 'add_checking_db.php';
                                         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             if (empty($_POST['absent'])) {
                                                 $_POST['absent'] = [0];
@@ -209,9 +209,9 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $_POST['cause'] = array_fill(0, $stmt2->rowCount(), "");
                                             }
 
-                                            echo '<pre>';
-                                            print_r($_POST);
-                                            echo '</pre>';
+                                            // echo '<pre>';
+                                            // print_r($_POST);
+                                            // echo '</pre>';
                                         }
                                         ?>
                                         <button type="submit" class="btn btn-info">

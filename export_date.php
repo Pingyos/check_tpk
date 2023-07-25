@@ -54,7 +54,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <h3 class="text-center">รายงานการขาดเรียน</h3>
                                         </div>
                                         <hr>
-                                        <form action="exportpdf.php" method="post" novalidate="novalidate">
+                                        <form action="#" method="post" novalidate="novalidate">
                                             <div class="row">
                                                 <?php
                                                 require_once 'connect.php';
@@ -207,27 +207,21 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 }
                                                 ?>
                                             </div>
-                                            <input type="hidden" name="course" value="<?php echo isset($_POST['course']) ? $_POST['course'] : ''; ?>">
-                                            <input type="hidden" name="startDate" value="<?php echo isset($_POST['startDate']) ? $_POST['startDate'] : ''; ?>">
-                                            <input type="hidden" name="endDate" value="<?php echo isset($_POST['endDate']) ? $_POST['endDate'] : ''; ?>">
-                                            <input type="hidden" name="studentCode" value="<?php echo isset($_POST['studentCode']) ? $_POST['studentCode'] : ''; ?>">
-
                                             <hr>
                                             <div class="col-lg-12">
                                                 <div class="row">
                                                     <div class="row" style="margin-left: 0px">
-                                                        <button type="submit" class="btn btn-info" name="showData">
+                                                        <button type="submit" class="btn btn-info">
                                                             <span><i class="menu-icon fa fa-search"></i> แสดงรายชื่อ</span>
                                                         </button>
                                                         &nbsp;
                                                         <button type="button" class="btn btn-secondary" onclick="clearForm()">
-                                                            <i class="menu-icon fa fa-reset"></i><span>ล้างข้อมูล</span>
+                                                            <span>เคลียร์ข้อมูล</span>
                                                         </button>
                                                         &nbsp;
-                                                        <button type="submit" class="btn btn-success" name="exportToPdf">
-                                                            <i class="menu-icon fa fa-file-pdf-o"></i><span>Export to PDF</span>
-                                                        </button>
-
+                                                        <a target="_blank" href="exportpdf.php?course=<?php echo isset($_POST['course']) ? $_POST['course'] : ''; ?>&startDate=<?php echo isset($_POST['startDate']) ? $_POST['startDate'] : ''; ?>&endDate=<?php echo isset($_POST['endDate']) ? $_POST['endDate'] : ''; ?>&studentCode=<?php echo isset($_POST['studentCode']) ? $_POST['studentCode'] : ''; ?>" class="btn btn-success" target="_blank" name="exportToPdf">
+                                                            <i class="menu-icon fa fa-file-pdf-o"></i><span> ส่งออก </span>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </div>
