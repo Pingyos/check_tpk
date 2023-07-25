@@ -219,6 +219,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <button type="button" class="btn btn-secondary" onclick="clearForm()">
                                                             <i class="menu-icon fa fa-reset"></i><span>ล้างข้อมูล</span>
                                                         </button>
+                                                        &nbsp;
+                                                        <a href="exportpdf.php" class="btn btn-secondary">
+                                                            <i class="menu-icon fa fa-reset"></i><span>Export to PDF</span>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </div>
