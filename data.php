@@ -137,13 +137,13 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                 <td>
                                                                     <select class="form-control" name="cause[]" disabled onchange="handleCauseSelect(this, <?= $index ?>)">
                                                                         <option value="">โปรดเลือก</option>
-                                                                        <option value="ลาป่วย" <?php if ($_POST['cause'][$index] === 'ลาป่วย') echo 'selected'; ?>>ลาป่วย</option>
-                                                                        <option value="ลากิจ" <?php if ($_POST['cause'][$index] === 'ลากิจ') echo 'selected'; ?>>ลากิจ</option>
-                                                                        <option value="หนีเรียน" <?php if ($_POST['cause'][$index] === 'หนีเรียน') echo 'selected'; ?>>หนีเรียน</option>
-                                                                        <option value="ขออนุญาตเวลาเรียน" <?php if ($_POST['cause'][$index] === 'ขออนุญาตเวลาเรียน') echo 'selected'; ?>>ขออนุญาตเวลาเรียน</option>
-                                                                        <option value="อื่นๆ" <?php if ($_POST['cause'][$index] === 'อื่นๆ') echo 'selected'; ?>>อื่นๆ</option>
+                                                                        <option value="ลาป่วย" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'ลาป่วย') echo 'selected'; ?>>ลาป่วย</option>
+                                                                        <option value="ลากิจ" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'ลากิจ') echo 'selected'; ?>>ลากิจ</option>
+                                                                        <option value="หนีเรียน" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'หนีเรียน') echo 'selected'; ?>>หนีเรียน</option>
+                                                                        <option value="ขออนุญาตเวลาเรียน" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'ขออนุญาตเวลาเรียน') echo 'selected'; ?>>ขออนุญาตเวลาเรียน</option>
+                                                                        <option value="อื่นๆ" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'อื่นๆ') echo 'selected'; ?>>อื่นๆ</option>
                                                                     </select>
-                                                                    <input type="text" class="form-control" name="custom_cause[]" disabled placeholder="โปรดระบุ" style="display: none;">
+                                                                    <input type="text" class="form-control" name="custom_cause[]" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'อื่นๆ') echo 'style="display: block;"'; ?> placeholder="โปรดระบุ" value="<?= isset($_POST['custom_cause'][$index]) ? $_POST['custom_cause'][$index] : ''; ?>" <?php if (!(isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'อื่นๆ')) echo 'style="display: none;"'; ?>>
                                                                 </td>
                                                             </tr>
 
@@ -167,11 +167,9 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                     if (selectCause.value === 'อื่นๆ') {
                                                                         inputText.style.display = 'block';
                                                                         inputText.disabled = false;
-                                                                        cause[index] = inputText.value; // เก็บค่า custom_cause ที่ผู้ใช้กรอกเข้ามาในตัวแปร cause ตามตำแหน่ง index
                                                                     } else {
                                                                         inputText.style.display = 'none';
                                                                         inputText.value = '';
-                                                                        cause[index] = selectCause.value; // เก็บค่าที่เลือกใน dropdown ในตัวแปร cause ตามตำแหน่ง index
                                                                     }
                                                                 }
                                                             </script>
@@ -201,7 +199,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                     </div>
                                     <div>
                                         <?php
-                                        require_once 'add_checking_db.php';
+                                        // require_once 'add_checking_db.php';
                                         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             if (empty($_POST['absent'])) {
                                                 $_POST['absent'] = [0];

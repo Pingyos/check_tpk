@@ -10,10 +10,8 @@ if (
     && isset($_POST['name'])
     && isset($_POST['surname'])
     && isset($_POST['absent'])
-    && isset($_POST['cause'])
-    && isset($_POST['custom_cause'])
 ) {
-    require_once 'connect.php'; // เชื่อมต่อฐานข้อมูล
+    require_once 'connect.php'; // Connect to the database
 
     $time = $_POST['time'];
     $period = $_POST['period'];
@@ -25,15 +23,15 @@ if (
     $name = $_POST['name'];
     $surname = $_POST['surname'];
     $absent = $_POST['absent'];
-    $cause = $_POST['cause'];
-    $custom_cause = $_POST['custom_cause'];
+    $cause = isset($_POST['cause']) ? $_POST['cause'] : array();
+    $custom_cause = isset($_POST['custom_cause']) ? $_POST['custom_cause'] : array();
 
     if (is_array($absent) && is_array($cause) && is_array($custom_cause)) {
         $numRows = count($absent);
 
         for ($i = 0; $i < $numRows; $i++) {
             $currentAbsent = $absent[$i];
-            $currentCause = $cause[$i];
+            $currentCause = isset($cause[$i]) ? $cause[$i] : '';
 
             // Use the ternary operator to handle empty custom_cause
             $currentCustomCause = !empty($custom_cause[$i]) ? $custom_cause[$i] : '';
@@ -56,7 +54,6 @@ if (
             $stmt->execute();
         }
     }
-
     if ($stmt->rowCount() > 0) {
         echo '<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>';
         echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>';

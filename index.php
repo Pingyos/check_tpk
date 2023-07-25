@@ -70,32 +70,34 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     </script>
                                                 </div>
 
-                                                <div class="form-group col-lg-6 col-md-3 col-12">
+                                                <div class="form-group col-lg-6 col-md-3 col-6">
                                                     <label for="cc-name" class="control-label mb-1">คาบเรียน</label>
                                                     <div class="form-group has-success">
+
+                                                        <label for="period1">คาบเรียนที่ 1 </label>
                                                         <input type="checkbox" class="checkbox" name="period[]" value="1" id="period1">
-                                                        <label for="period1">คาบเรียนที่ 1 |</label>
-
+                                                        |
+                                                        <label for="period2">คาบเรียนที่ 2 </label>
                                                         <input type="checkbox" class="checkbox" name="period[]" value="2" id="period2">
-                                                        <label for="period2">คาบเรียนที่ 2 |</label>
-
+                                                        |
+                                                        <label for="period3">คาบเรียนที่ 3 </label>
                                                         <input type="checkbox" class="checkbox" name="period[]" value="3" id="period3">
-                                                        <label for="period3">คาบเรียนที่ 3 |</label>
-
+                                                        |
+                                                        <label for="period4">คาบเรียนที่ 4 </label>
                                                         <input type="checkbox" class="checkbox" name="period[]" value="4" id="period4">
-                                                        <label for="period4">คาบเรียนที่ 4 |</label>
-
+                                                        |
+                                                        <label for="period5">คาบเรียนที่ 5 </label>
                                                         <input type="checkbox" class="checkbox" name="period[]" value="5" id="period5">
-                                                        <label for="period5">คาบเรียนที่ 5 |</label>
-
+                                                        |
+                                                        <label for="period6">คาบเรียนที่ 6 </label>
                                                         <input type="checkbox" class="checkbox" name="period[]" value="6" id="period6">
-                                                        <label for="period6">คาบเรียนที่ 6 |</label>
-
+                                                        |
+                                                        <label for="period7">คาบเรียนที่ 7 </label>
                                                         <input type="checkbox" class="checkbox" name="period[]" value="7" id="period7">
-                                                        <label for="period7">คาบเรียนที่ 7 |</label>
-
+                                                        |
+                                                        <label for="period8">คาบเรียนที่ 8 </label>
                                                         <input type="checkbox" class="checkbox" name="period[]" value="8" id="period8">
-                                                        <label for="period8">คาบเรียนที่ 8</label>
+                                                        |
                                                     </div>
                                                     <script>
                                                         const checkboxes = document.querySelectorAll('input[type="checkbox"][name="period[]"]');

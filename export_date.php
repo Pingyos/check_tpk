@@ -23,7 +23,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 }
 ?>
 
-
 <!doctype html>
 <html class="no-js" lang="">
 
@@ -125,68 +124,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 echo '<input type="text" name="studentCode" id="studentCode" class="form-control" value="' . $studentCode . '">';
                                                 echo '</div>';
 
-                                                require_once __DIR__ . '/vendor/autoload.php';
-
-                                                $defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
-                                                $fontDirs = $defaultConfig['fontDir'];
-
-                                                $defaultFontConfig = (new Mpdf\Config\FontVariables())->getDefaults();
-                                                $fontData = $defaultFontConfig['fontdata'];
-
-                                                $mpdf = new \Mpdf\Mpdf([
-                                                    'fontDir' => array_merge($fontDirs, [
-                                                        __DIR__ . '/tmp',
-                                                    ]),
-                                                    'fontdata' => $fontData + [ // lowercase letters only in font key
-                                                        'sarabun' => [
-                                                            'R' => 'THSarabunNew.ttf',
-                                                            'I' => 'THSarabunNew Italic.ttf',
-                                                            'B' => 'THSarabunNew BoldItalic.ttf'
-                                                        ]
-                                                    ],
-                                                    'default_font' => 'sarabun'
-                                                ]);
-                                                $style = "
-                                                <style>
-                                                    .center {
-                                                        text-align: center;
-                                                        margin: 0;
-                                                        padding: 0;
-                                                    }
-                                                </style>
-                                            ";
-
-                                                $mpdf->WriteHTML($style);
-                                                $mpdf->WriteHTML('<div class="center"><img src="../check_tpk/images/logo2.png" style="width: 100px; height: 100px;"></div>');
-                                                $mpdf->WriteHTML('<div class="center"><h2>รายงานการขาดเรียน</h2></div>');
-
-                                                $style = "
-                                                    <style>
-                                                        th:nth-child(1) { /* คอลัมน์ที่ 1 (รหัสนักเรียน) */
-                                                            width: 100px; /* เปลี่ยนค่าเป็นขนาดที่ต้องการในหน่วยที่คุณต้องการ */
-                                                        }
-                                                        th:nth-child(2) { /* คอลัมน์ที่ 2 (ชื่อ-สกุล) */
-                                                            width: 150px; /* เปลี่ยนค่าเป็นขนาดที่ต้องการในหน่วยที่คุณต้องการ */
-                                                        }
-                                                        th:nth-child(3) { /* คอลัมน์ที่ 3 (สาเหตุ) */
-                                                            width: 130px; /* เปลี่ยนค่าเป็นขนาดที่ต้องการในหน่วยที่คุณต้องการ */
-                                                        }
-                                                        th:nth-child(4) { /* คอลัมน์ที่ 4 (ระดับชั้น) */
-                                                            width: 80px; /* เปลี่ยนค่าเป็นขนาดที่ต้องการในหน่วยที่คุณต้องการ */
-                                                        }
-                                                        th:nth-child(5) { /* คอลัมน์ที่ 5 (วิชา) */
-                                                            width: 120px; /* เปลี่ยนค่าเป็นขนาดที่ต้องการในหน่วยที่คุณต้องการ */
-                                                        }
-                                                        th:nth-child(6) { /* คอลัมน์ที่ 6 (ตาบเรียน/วันที่) */
-                                                            width: 150px; /* เปลี่ยนค่าเป็นขนาดที่ต้องการในหน่วยที่คุณต้องการ */
-                                                        }
-                                                    </style>
-                                                ";
-
-                                                $mpdf->WriteHTML($style);
-
-                                                ob_start();
-
                                                 if (isset($_POST['course']) || isset($_POST['startDate']) || isset($_POST['endDate']) || isset($_POST['studentCode'])) {
                                                     $selectedCourse = $_POST['course'];
                                                     $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
@@ -270,12 +207,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 }
                                                 ?>
                                             </div>
-                                            <?php
-                                            $html = ob_get_contents();
-                                            $mpdf->WriteHTML($html);
-                                            $mpdf->Output("report.pdf");
-                                            ob_end_flush();
-                                            ?>
+
                                             <hr>
                                             <div class="col-lg-12">
                                                 <div class="row">
@@ -287,13 +219,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <button type="button" class="btn btn-secondary" onclick="clearForm()">
                                                             <i class="menu-icon fa fa-reset"></i><span>ล้างข้อมูล</span>
                                                         </button>
-                                                        &nbsp;
-                                                        <!-- เพิ่มปุ่ม export -->
-                                                        <a href="report.pdf" class="btn btn-primary" target="_blank"><i class="menu-icon fa fa-print"></i> ส่งออก PDF</a>
-
-                                                        <!-- <button href="report.pdf" type="button" class="btn btn-primary">
-                                                            <i class="menu-icon fa fa-print"></i><span>ส่งออกเป็น PDF</span>
-                                                        </button> -->
                                                     </div>
                                                 </div>
                                             </div>
@@ -302,10 +227,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                 </div>
 
                             </div>
-                        </div> <!-- .card -->
+                        </div>
                     </div>
                 </div>
-                <!-- /Widgets -->
+
             </div>
         </div>
         <!-- /.content -->
@@ -314,8 +239,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
         <?php require_once 'footer.php'; ?>
         <!-- /.site-footer -->
     </div>
-    <!-- /#right-panel -->
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.4/dist/umd/popper.min.js"></script>

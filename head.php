@@ -26,7 +26,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree&display=swap" rel="stylesheet">
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <style>
         #weatherWidget .currentDesc {
             color: #ffffff !important;
