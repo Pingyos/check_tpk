@@ -19,6 +19,7 @@
                     <li>
                         <a href="import_courses.php"><i class="menu-icon fa fa-upload"></i>เพิ่มวิชา</a>
                     </li>
+
                 <?php endif; ?>
                 <?php if ($_SESSION['status'] == 0) : ?>
                     <li class="active">
@@ -32,6 +33,9 @@
                     </li> -->
                     <li>
                         <a href="report.php"> <i class="menu-icon fa fa-paste (alias)"></i>รายงาน </a>
+                    </li>
+                    <li>
+                        <a href="radioreport.php"><i class="menu-icon fa fa-upload"></i>ทดสอบรายงาน</a>
                     </li>
                 <?php endif; ?>
             </ul>

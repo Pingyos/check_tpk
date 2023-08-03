@@ -58,9 +58,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <div class="row">
                                                 <?php
                                                 require_once 'connect.php';
-
-                                                // ใช้ PDO เพื่อดึงข้อมูลวิชาจากฐานข้อมูล
-                                                $sql = "SELECT DISTINCT courses, course_name FROM ck_checking";
+                                                $sql = "SELECT DISTINCT courses, course_name FROM ck_checking ";
                                                 $stmt = $conn->prepare($sql);
                                                 $stmt->execute();
                                                 $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -119,23 +117,46 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 echo '</div>';
 
                                                 // เพิ่ม input text สำหรับค้นหารหัสนักเรียน
-                                                echo '<div class="form-group col-12">';
+                                                echo '<div class="form-group col-6">';
                                                 echo '<label for="studentCode" class="control-label mb-1">รหัสนักเรียน</label>';
                                                 echo '<input type="text" name="studentCode" id="studentCode" class="form-control" value="' . $studentCode . '">';
                                                 echo '</div>';
 
-                                                if (isset($_POST['course']) || isset($_POST['startDate']) || isset($_POST['endDate']) || isset($_POST['studentCode'])) {
+                                                $sql = "SELECT DISTINCT cause FROM ck_checking ";
+                                                $stmt = $conn->prepare($sql);
+                                                $stmt->execute();
+                                                $causes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                                // ...
+
+                                                echo '<div class="form-group col-6">';
+                                                echo '<label for="cause" class="control-label mb-1">สาเหตุ</label>';
+                                                echo '<select name="cause" id="cause" class="form-control">';
+                                                echo '<option value="">เลือกสาเหตุ</option>'; // Add a default option
+
+                                                // Populate the dropdown options with distinct "cause" values
+                                                foreach ($causes as $cause) {
+                                                    $selected = (isset($_POST['cause']) && $_POST['cause'] === $cause['cause']) ? 'selected' : '';
+                                                    echo '<option value="' . $cause['cause'] . '" ' . $selected . '>' . $cause['cause'] . '</option>';
+                                                }
+
+                                                echo '</select>';
+                                                echo '</div>';
+
+                                                if (isset($_POST['course']) || isset($_POST['startDate']) || isset($_POST['endDate']) || isset($_POST['studentCode']) || isset($_POST['cause'])) {
                                                     $selectedCourse = $_POST['course'];
                                                     $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
                                                     $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
                                                     $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
+                                                    $cause = $_POST['cause'];
 
                                                     // เชื่อมต่อฐานข้อมูลอีกครั้ง
                                                     require_once 'connect.php';
 
                                                     $sql = "SELECT c.*, s.tb_student_tname, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
-                                                    JOIN ck_students s ON c.absent = s.tb_student_code
-                                                    WHERE 1=1";
+                                                            JOIN ck_students s ON c.absent = s.tb_student_code
+                                                            WHERE 1=1";
+
 
                                                     if ($selectedCourse) {
                                                         $sql .= " AND c.courses = :courseCode";
@@ -149,7 +170,13 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         $sql .= " AND c.absent = :studentCode";
                                                     }
 
+                                                    // Add the condition for the cause field
+                                                    if ($cause) {
+                                                        $sql .= " AND c.cause = :cause";
+                                                    }
+
                                                     $stmt = $conn->prepare($sql);
+
 
                                                     if ($selectedCourse) {
                                                         $stmt->bindParam(':courseCode', $selectedCourse);
@@ -164,6 +191,12 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         $stmt->bindParam(':studentCode', $studentCode);
                                                     }
 
+                                                    // Bind the parameter for the cause field
+                                                    if ($cause) {
+                                                        $stmt->bindParam(':cause', $cause);
+                                                    }
+
+                                                    // Execute the query
                                                     $stmt->execute();
                                                     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                     if (count($students) > 0) {
@@ -215,11 +248,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             <span><i class="menu-icon fa fa-search"></i> แสดงรายชื่อ</span>
                                                         </button>
                                                         &nbsp;
-                                                        <button type="button" class="btn btn-secondary" onclick="clearForm()">
-                                                            <span>เคลียร์ข้อมูล</span>
-                                                        </button>
-                                                        &nbsp;
-                                                        <a target="_blank" href="exportpdf.php?course=<?php echo isset($_POST['course']) ? $_POST['course'] : ''; ?>&startDate=<?php echo isset($_POST['startDate']) ? $_POST['startDate'] : ''; ?>&endDate=<?php echo isset($_POST['endDate']) ? $_POST['endDate'] : ''; ?>&studentCode=<?php echo isset($_POST['studentCode']) ? $_POST['studentCode'] : ''; ?>" class="btn btn-success" target="_blank" name="exportToPdf">
+                                                        <a target="_blank" href="exportpdf.php?teacherId=<?php echo $_SESSION['id']; ?>&course=<?php echo isset($_POST['course']) ? $_POST['course'] : ''; ?>&startDate=<?php echo isset($_POST['startDate']) ? $_POST['startDate'] : ''; ?>&endDate=<?php echo isset($_POST['endDate']) ? $_POST['endDate'] : ''; ?>&studentCode=<?php echo isset($_POST['studentCode']) ? $_POST['studentCode'] : ''; ?>&cause=<?php echo isset($_POST['cause']) ? $_POST['cause'] : ''; ?>" class="btn btn-success" target="_blank" name="exportToPdf">
                                                             <i class="menu-icon fa fa-file-pdf-o"></i><span> ส่งออก </span>
                                                         </a>
                                                     </div>
@@ -228,7 +257,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                         </form>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>

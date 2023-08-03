@@ -55,22 +55,24 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <h3 class="text-center">รายงานการขาดเรียน</h3>
                                         </div>
                                         <hr>
+                                        <!-- เพิ่มโค้ดในส่วนของหน้าเว็บหรืออินเตอร์เฟซที่ต้องการแสดง dropdown วิชา และ input วันที่ -->
                                         <form action="#" method="post" novalidate="novalidate">
                                             <div class="row">
                                                 <?php
                                                 require_once 'connect.php';
-
-                                                // ใช้ PDO เพื่อดึงข้อมูลวิชาจากฐานข้อมูล
-                                                $sql = "SELECT DISTINCT courses, course_name FROM ck_checking WHERE teacher_id = :id";
+                                                $teacherId = $_SESSION['id'];
+                                                $sql = "SELECT DISTINCT courses, course_name FROM ck_checking WHERE teacher_id = :teacherId";
                                                 $stmt = $conn->prepare($sql);
-                                                $stmt->bindParam(':id', $_SESSION['id']);
+                                                $stmt->bindParam(':teacherId', $teacherId); // Bind the parameter for teacher_id
                                                 $stmt->execute();
                                                 $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                                                // สร้าง dropdown สำหรับเลือกวิชา
+                                                // สร้าง dropdown
                                                 echo '<div class="form-group col-12">';
                                                 echo '<label for="course" class="control-label mb-1">วิชา</label>';
                                                 echo '<select name="course" id="course" class="form-control">';
+                                                echo '<option value="" selected>แสดงทั้งหมด</option>'; // เพิ่มตัวเลือก "แสดงทั้งหมด"
+
                                                 $selectedCourses = array(); // ตัวแปรเก็บรายการวิชาที่ถูกเลือกไว้แล้ว
 
                                                 foreach ($checkings as $checking) {
@@ -79,79 +81,155 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
                                                     // เพิ่มตัวเลือกเฉพาะเมื่อยังไม่มีรายการวิชานี้อยู่ในรายการที่ถูกเลือกไว้แล้ว
                                                     if (!in_array($courseCode, $selectedCourses)) {
-                                                        echo '<option value="' . $courseCode . '">' . $courseName . '</option>';
+                                                        $selected = ($courseCode == $_POST['course']) ? 'selected' : ''; // ตรวจสอบว่าตรงกับตัวเลือกก่อนหน้าหรือไม่
+                                                        echo '<option value="' . $courseCode . '" ' . $selected . '>' . $courseName . '</option>';
                                                         $selectedCourses[] = $courseCode; // เพิ่มรายการวิชาที่ถูกเลือกไว้ในรายการ
                                                     }
                                                 }
                                                 echo '</select>';
                                                 echo '</div>';
 
-                                                // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
-                                                $selectedDate = date('Y-m-d');
-                                                if (isset($_POST['date'])) {
-                                                    $selectedDate = $_POST['date'];
-                                                }
+                                                // เช็คว่ามีค่าวันที่เริ่มต้นที่ส่งมาหรือไม่ ถ้าไม่มีกำหนดให้เป็นวันที่ปัจจุบัน
+                                                $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
 
-                                                // เพิ่ม input date สำหรับเลือกวันที่
-                                                echo '<div class="form-group col-12">';
-                                                echo '<label for="date" class="control-label mb-1">วันที่</label>';
-                                                echo '<input type="date" name="date" id="date" class="form-control" value="' . $selectedDate . '">';
+                                                // เช็คว่ามีค่าวันที่สิ้นสุดที่ส่งมาหรือไม่ ถ้าไม่มีกำหนดให้เป็นวันที่ปัจจุบัน
+                                                $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
+
+                                                // แปลงวันที่เริ่มต้นและวันที่สิ้นสุดเป็นวัตถุ DateTime
+                                                $startDateObj = new DateTime($startDate);
+                                                $endDateObj = new DateTime($endDate);
+
+                                                // ลดวันที่เริ่มต้นลง 1 วัน
+                                                $startDateObj->modify('-1 day');
+
+                                                // แปลงกลับเป็นรูปแบบของวันที่
+                                                $startDate = $startDateObj->format('Y-m-d');
+
+                                                // เช็คว่ามีค่ารหัสนักเรียนที่ส่งมาหรือไม่
+                                                $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
+
+                                                // เพิ่ม input date สำหรับเลือกวันที่เริ่มต้น
+                                                echo '<div class="form-group col-6">';
+                                                echo '<label for="startDate" class="control-label mb-1">วันที่เริ่มต้น</label>';
+                                                echo '<input type="date" name="startDate" id="startDate" class="form-control" value="' . $startDate . '">';
                                                 echo '</div>';
 
-                                                // เมื่อกด submit
-                                                if (isset($_POST['course'])) {
+                                                // เพิ่ม input date สำหรับเลือกวันที่สิ้นสุด
+                                                echo '<div class="form-group col-6">';
+                                                echo '<label for="endDate" class="control-label mb-1">วันที่สิ้นสุด</label>';
+                                                echo '<input type="date" name="endDate" id="endDate" class="form-control" value="' . $endDate . '">';
+                                                echo '</div>';
+
+                                                // เพิ่ม input text สำหรับค้นหารหัสนักเรียน
+                                                echo '<div class="form-group col-6">';
+                                                echo '<label for="studentCode" class="control-label mb-1">รหัสนักเรียน</label>';
+                                                echo '<input type="text" name="studentCode" id="studentCode" class="form-control" value="' . $studentCode . '">';
+                                                echo '</div>';
+
+                                                $sql = "SELECT DISTINCT cause FROM ck_checking WHERE teacher_id = :teacherId";
+                                                $stmt = $conn->prepare($sql);
+                                                $stmt->bindParam(':teacherId', $teacherId); // Bind the parameter for teacher_id
+                                                $stmt->execute();
+                                                $causes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                                // ...
+
+                                                echo '<div class="form-group col-6">';
+                                                echo '<label for="cause" class="control-label mb-1">สาเหตุ</label>';
+                                                echo '<select name="cause" id="cause" class="form-control">';
+                                                echo '<option value="">เลือกสาเหตุ</option>'; // Add a default option
+
+                                                // Populate the dropdown options with distinct "cause" values
+                                                foreach ($causes as $cause) {
+                                                    $selected = (isset($_POST['cause']) && $_POST['cause'] === $cause['cause']) ? 'selected' : '';
+                                                    echo '<option value="' . $cause['cause'] . '" ' . $selected . '>' . $cause['cause'] . '</option>';
+                                                }
+
+                                                echo '</select>';
+                                                echo '</div>';
+
+                                                if (isset($_POST['course']) || isset($_POST['startDate']) || isset($_POST['endDate']) || isset($_POST['studentCode']) || isset($_POST['cause'])) {
                                                     $selectedCourse = $_POST['course'];
+                                                    $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
+                                                    $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
+                                                    $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
+                                                    $cause = $_POST['cause'];
 
                                                     // เชื่อมต่อฐานข้อมูลอีกครั้ง
                                                     require_once 'connect.php';
 
-                                                    // ดึงข้อมูลนักเรียนตามวิชาและวันที่ที่เลือก
-                                                    $sql = "SELECT c.*, s.tb_student_tname, s.tb_student_name, s.tb_student_sname, DATE(c.time) AS checking_date 
-                                                FROM ck_checking c 
-                                                JOIN ck_students s ON c.absent = s.tb_student_code
-                                                WHERE c.teacher_id = :teacherId AND c.courses = :courseCode";
+                                                    $teacherId = $_SESSION['id'];
 
-                                                    // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
-                                                    if (isset($_POST['date'])) {
-                                                        $selectedDate = $_POST['date'];
-                                                        $sql .= " AND DATE(c.time) = :selectedDate";
+                                                    $sql = "SELECT c.*, s.tb_student_tname, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
+                                                            JOIN ck_students s ON c.absent = s.tb_student_code
+                                                            WHERE 1=1";
+
+                                                    // Add the condition for the teacher_id
+                                                    if ($teacherId) {
+                                                        $sql .= " AND c.teacher_id = :teacherId";
+                                                    }
+
+                                                    if ($selectedCourse) {
+                                                        $sql .= " AND c.courses = :courseCode";
+                                                    }
+
+                                                    if ($startDate && $endDate) {
+                                                        $sql .= " AND DATE(c.time) BETWEEN :startDate AND :endDate";
+                                                    }
+
+                                                    if ($studentCode) {
+                                                        $sql .= " AND c.absent = :studentCode";
+                                                    }
+
+                                                    // Add the condition for the cause field
+                                                    if ($cause) {
+                                                        $sql .= " AND c.cause = :cause";
                                                     }
 
                                                     $stmt = $conn->prepare($sql);
-                                                    $stmt->bindParam(':teacherId', $_SESSION['id']);
-                                                    $stmt->bindParam(':courseCode', $selectedCourse);
 
-                                                    // ตรวจสอบว่ามีการส่งค่าวันที่ผ่านฟอร์มหรือไม่
-                                                    if (isset($_POST['date'])) {
-                                                        $stmt->bindParam(':selectedDate', $selectedDate);
+                                                    // Bind the parameter for teacher_id
+                                                    if ($teacherId) {
+                                                        $stmt->bindParam(':teacherId', $teacherId);
                                                     }
 
+                                                    if ($selectedCourse) {
+                                                        $stmt->bindParam(':courseCode', $selectedCourse);
+                                                    }
+
+                                                    if ($startDate && $endDate) {
+                                                        $stmt->bindParam(':startDate', $startDate);
+                                                        $stmt->bindParam(':endDate', $endDate);
+                                                    }
+
+                                                    if ($studentCode) {
+                                                        $stmt->bindParam(':studentCode', $studentCode);
+                                                    }
+
+                                                    // Bind the parameter for the cause field
+                                                    if ($cause) {
+                                                        $stmt->bindParam(':cause', $cause);
+                                                    }
+
+                                                    // Execute the query
                                                     $stmt->execute();
                                                     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
                                                     if (count($students) > 0) {
                                                         echo '<table id="bootstrap-data-table" class="table table-striped table-bordered">';
                                                         echo '<thead><tr>
-                                                                <th>รหัสนักเรียน</th>
-                                                                <th>ชื่อ-สกุล</th>
-                                                                <th>สาเหตุ</th>
-                                                                <th>ระดับชั้น</th>
-                                                                <th>วิชา</th>
-                                                                <th>คาบเรียน/วันที่</th>
-                                                            </tr></thead>';
+                                                            <th>รหัสนักเรียน</th>
+                                                            <th>ชื่อ-สกุล</th>
+                                                            <th>สาเหตุ</th>
+                                                            <th>ระดับชั้น</th>
+                                                            <th>วิชา</th>
+                                                            <th>ตาบเรียน/วันที่</th>
+                                                        </tr></thead>';
                                                         echo '<tbody>';
+
                                                         foreach ($students as $student) {
                                                             echo '<tr>';
                                                             echo '<td>' . $student['absent'] . '</td>';
-
-                                                            // ค้นหาข้อมูลนักเรียนจากรหัสนักเรียนในตาราง ck_students
-                                                            $stmt = $conn->prepare("SELECT tb_student_tname, tb_student_name, tb_student_sname FROM ck_students WHERE tb_student_code = :studentCode");
-                                                            $stmt->bindParam(':studentCode', $student['absent']);
-                                                            $stmt->execute();
-                                                            $studentInfo = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                                                            // แสดงชื่อและนามสกุลของนักเรียน
-                                                            echo '<td>' . $studentInfo['tb_student_tname'] . ' ' . $studentInfo['tb_student_name'] . ' ' . $studentInfo['tb_student_sname'] . '</td>';
+                                                            echo '<td>' . $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] . '</td>';
                                                             echo '<td>' . $student['cause'] . '  ' . ($student['custom_cause'] ? '* ' . $student['custom_cause'] : '') . '</td>';
                                                             echo '<td>';
 
@@ -161,15 +239,15 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             echo 'ม.' . $year . '/' . $class;
 
                                                             echo '</td>';
-
                                                             echo '<td>' . $student['courses'] . ' - ' . $student['course_name'] . '</td>';
-                                                            echo '<td>' . $student['period'] . ' / ' . $student['checking_date'] . '</td>';
+                                                            echo '<td>' . $student['period'] . ' / ' . $student['time'] . '</td>';
                                                             echo '</tr>';
                                                         }
+
                                                         echo '</tbody>';
                                                         echo '</table>';
                                                     } else {
-                                                        echo 'ไม่มีข้อมูลนักเรียนที่ขาดในวันที่ที่เลือก';
+                                                        echo 'ไม่มีข้อมูลนักเรียนที่ขาด.';
                                                     }
 
                                                     // ปิดการเชื่อมต่อฐานข้อมูล
@@ -177,21 +255,23 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 }
                                                 ?>
                                             </div>
-
                                             <hr>
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <div class="row" style="margin-left : 0px">
+                                            <div class="col-lg-12">
+                                                <div class="row">
+                                                    <div class="row" style="margin-left: 0px">
                                                         <button type="submit" class="btn btn-info">
                                                             <span><i class="menu-icon fa fa-search"></i> แสดงรายชื่อ</span>
                                                         </button>
+                                                        &nbsp;
+                                                        <a target="_blank" href="reportpdf.php?teacherId=<?php echo $_SESSION['id']; ?>&course=<?php echo isset($_POST['course']) ? $_POST['course'] : ''; ?>&startDate=<?php echo isset($_POST['startDate']) ? $_POST['startDate'] : ''; ?>&endDate=<?php echo isset($_POST['endDate']) ? $_POST['endDate'] : ''; ?>&studentCode=<?php echo isset($_POST['studentCode']) ? $_POST['studentCode'] : ''; ?>&cause=<?php echo isset($_POST['cause']) ? $_POST['cause'] : ''; ?>" class="btn btn-success" target="_blank" name="exportToPdf">
+                                                            <i class="menu-icon fa fa-file-pdf-o"></i><span> ส่งออก </span>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
-
                             </div>
                         </div> <!-- .card -->
                     </div>

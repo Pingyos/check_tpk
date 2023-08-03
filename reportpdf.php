@@ -6,6 +6,7 @@ $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : date('Y-m-d');
 $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : date('Y-m-d');
 $studentCode = isset($_GET['studentCode']) ? $_GET['studentCode'] : '';
 $cause = isset($_GET['cause']) ? $_GET['cause'] : '';
+$teacherId = isset($_GET['teacherId']) ? $_GET['teacherId'] : '';
 
 
 require_once 'connect.php';
@@ -13,6 +14,11 @@ require_once 'connect.php';
 $sql = "SELECT c.*, s.tb_student_tname, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
 JOIN ck_students s ON c.absent = s.tb_student_code
 WHERE 1=1";
+
+// เพิ่มเงื่อนไขใน SQL ให้กรองตาม teacher_id
+if ($teacherId) {
+    $sql .= " AND c.teacher_id = :teacherId";
+}
 
 if ($selectedCourse) {
     $sql .= " AND c.courses = :courseCode";
@@ -32,6 +38,11 @@ if ($cause) {
 
 // คริวรีข้อมูลด้วยคำสั่ง SQL
 $stmt = $conn->prepare($sql);
+
+// ตรวจสอบว่ามีค่า teacher_id ถูกส่งมาหรือไม่ ถ้ามีให้ bind parameter ให้กับตัวแปร $teacherId
+if ($teacherId) {
+    $stmt->bindParam(':teacherId', $teacherId);
+}
 
 if ($selectedCourse) {
     $stmt->bindParam(':courseCode', $selectedCourse);
@@ -89,11 +100,6 @@ if (count($students) > 0) {
             $pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ชื่อนักเรียน: ' . $studentName . ' ' . 'รหัสนักเรียน: ' . $studentCode), 0, 1, 'C');
         }
     }
-
-    if ($selectedCourse) {
-        $pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'รหัสวิชา: ' . $selectedCourse . ' '.'ชื่อวิชา: '), 0, 1, 'C');
-    }
-
     $pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ระหว่างวันที่: ' . $startDate . '  ถึงวันที่: ' . $endDate), 0, 1, 'C');
     $pdf->Cell(0, 10, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
 
