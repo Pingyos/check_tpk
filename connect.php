@@ -14,4 +14,3 @@ try {
 }
 //Set ว/ด/ป เวลา ให้เป็นของประเทศไทย
     date_default_timezone_set('Asia/Bangkok');
-?>

@@ -32,12 +32,9 @@ if (
         for ($i = 0; $i < $numRows; $i++) {
             $currentAbsent = $absent[$i];
             $currentCause = isset($cause[$i]) ? $cause[$i] : '';
-
-            // Use the ternary operator to handle empty custom_cause
             $currentCustomCause = !empty($custom_cause[$i]) ? $custom_cause[$i] : '';
-
             $stmt = $conn->prepare("INSERT INTO ck_checking (`time`, `period`, `courses`, `course_name`, `rooms`, `teacher_id`, `name_title`, `name`, `surname`, `absent`, `cause`, `custom_cause`)
-                                    VALUES (:time, :period, :courses, :course_name, :rooms, :teacher_id, :name_title, :name, :surname, :absent, :cause, :custom_cause)");
+            VALUES (:time, :period, :courses, :course_name, :rooms, :teacher_id, :name_title, :name, :surname, :absent, :cause, :custom_cause)");
             $stmt->bindParam(':time', $time, PDO::PARAM_STR);
             $stmt->bindParam(':period', $period, PDO::PARAM_STR);
             $stmt->bindParam(':courses', $courses, PDO::PARAM_STR);

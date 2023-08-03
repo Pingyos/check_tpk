@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=utf-8');
 if (isset($_GET['tb_student_id'])) {
     require_once 'connect.php';
     //ประกาศตัวแปรรับค่าจาก param method get

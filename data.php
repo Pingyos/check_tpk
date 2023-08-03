@@ -12,7 +12,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
     echo '<script>
                 setTimeout(function() {
                 swal({
-                title: "คุณไม่มีสิทธิ์ใช้งานหน้านี้",
+                title: "Please login again",
                 type: "error"
                 }, function() {
                 window.location = "login.php"; //หน้าที่ต้องการให้กระโดดไป
@@ -100,7 +100,20 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             $row = $stmt->fetch(PDO::FETCH_ASSOC);
                                             $rooms = $row['rooms'];
 
-                                            $stmt2 = $conn->prepare("SELECT * FROM ck_students WHERE tb_student_degree = :rooms");
+                                            // เรียกใช้งานตัวแปร $stmt2 ในการเรียกข้อมูลนักเรียนจากตาราง ck_students
+                                            $stmt2 = $conn->prepare("SELECT *
+                                                                    FROM ck_students
+                                                                    WHERE tb_student_degree = :rooms
+                                                                    ORDER BY 
+                                                                        CASE 
+                                                                            WHEN tb_student_degree <= 9 THEN 0
+                                                                            ELSE 1
+                                                                        END ASC,
+                                                                        CASE 
+                                                                            WHEN tb_student_degree <= 9 THEN tb_student_tname
+                                                                            ELSE tb_student_code
+                                                                        END ASC;
+                                                                    ");
                                             $stmt2->bindParam(':rooms', $rooms, PDO::PARAM_INT);
                                             $stmt2->execute();
 
@@ -119,7 +132,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <tr>
                                                             <th>ลำดับ</th>
                                                             <th>รหัสนักเรียน</th>
-                                                            <th>ชื่อ-สกุล</th>
+                                                            <th>รายชื่อ-นามสกุล</th>
                                                             <th>ขาดเรียน</th>
                                                             <th>สาเหตุ</th>
                                                         </tr>
@@ -128,7 +141,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <?php $index = 0; ?>
                                                         <?php while ($row2 = $stmt2->fetch(PDO::FETCH_ASSOC)) { ?>
                                                             <tr>
-                                                                <td><?= $countrow ?></td>
+                                                                <td><?= $index ?></td>
                                                                 <td><?= $row2['tb_student_code']; ?></td>
                                                                 <td><?= $row2['tb_student_tname']; ?> <?= $row2['tb_student_name']; ?> <?= $row2['tb_student_sname']; ?></td>
                                                                 <td>
@@ -137,13 +150,14 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                 <td>
                                                                     <select class="form-control" name="cause[]" disabled onchange="handleCauseSelect(this, <?= $index ?>)">
                                                                         <option value="">โปรดเลือก</option>
+                                                                        <option value="ขาดเรียน" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'ขาดเรียน') echo 'selected'; ?>>ขาดเรียน</option>
                                                                         <option value="ลาป่วย" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'ลาป่วย') echo 'selected'; ?>>ลาป่วย</option>
                                                                         <option value="ลากิจ" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'ลากิจ') echo 'selected'; ?>>ลากิจ</option>
                                                                         <option value="หนีเรียน" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'หนีเรียน') echo 'selected'; ?>>หนีเรียน</option>
                                                                         <option value="ขออนุญาตเวลาเรียน" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'ขออนุญาตเวลาเรียน') echo 'selected'; ?>>ขออนุญาตเวลาเรียน</option>
                                                                         <option value="อื่นๆ" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'อื่นๆ') echo 'selected'; ?>>อื่นๆ</option>
                                                                     </select>
-                                                                    <input type="text" class="form-control" name="custom_cause[]" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'อื่นๆ') echo 'style="display: block;"'; ?> placeholder="โปรดระบุ" value="<?= isset($_POST['custom_cause'][$index]) ? $_POST['custom_cause'][$index] : ''; ?>" <?php if (!(isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'อื่นๆ')) echo 'style="display: none;"'; ?>>
+                                                                    <input type="text" class="form-control" name="custom_cause[]" style="display: none;">
                                                                 </td>
                                                             </tr>
 
@@ -173,10 +187,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                     }
                                                                 }
                                                             </script>
-
                                                         <?php $index++;
                                                         } ?>
                                                     </tbody>
+
                                                 </table>
                                     <?php } else {
                                                 echo 'No student data found.';

@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=utf-8');
 session_start();
 echo '
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
@@ -11,7 +12,7 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
     echo '<script>
         setTimeout(function() {
             swal({
-                title: "คุณไม่มีสิทธิ์ใช้งานหน้านี้",
+                title: "Please login again",
                 type: "error"
             }, function() {
                 window.location = "login.php"; // หน้าที่ต้องการให้กระโดดไป

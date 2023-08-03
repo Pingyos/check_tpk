@@ -16,7 +16,7 @@
                     <form action="" method="post">
                         <div class="form-group">
                             <label>เข้าสู่ระบบ</label>
-                            <input type="text" name="email" class="form-control login" required minlength="3" placeholder="Enter E-mail...">
+                            <input type="text" name="email" class="form-control login" required minlength="3" placeholder="Username....">
                         </div>
                         <div class="form-group">
                             <input type="password" name="password" class="form-control login" required minlength="3" placeholder="Enter Password...">
@@ -110,7 +110,7 @@
                                 setTimeout(function() {
                                     swal({
                                         title: "เกิดข้อผิดพลาด",
-                                        text: "email หรือ Password ไม่ถูกต้อง ลองใหม่อีกครั้ง",
+                                        text: "Username หรือ Password ไม่ถูกต้อง ลองใหม่อีกครั้ง",
                                         type: "warning"
                                     }, function() {
                                         window.location = "login.php"; // หน้าที่ต้องการให้กระโดดไป
