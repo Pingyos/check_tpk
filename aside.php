@@ -8,7 +8,7 @@
                         <a href="mainadmin.php"><i class="menu-icon fa fa-user"></i>หน้าหลักแอดมิน</a>
                     </li>
                     <li>
-                        <a href="export_date.php"><i class="menu-icon fa fa-save (alias)"></i>พิมพ์รายงาน</a>
+                        <a href="export_date.php"><i class="menu-icon fa fa-save (alias)"></i>แสดงรายชื่อ</a>
                     </li>
                     <li>
                         <a href="import_users.php"><i class="menu-icon fa fa-upload"></i>เพิ่มครู</a>
@@ -19,7 +19,9 @@
                     <li>
                         <a href="import_courses.php"><i class="menu-icon fa fa-upload"></i>เพิ่มวิชา</a>
                     </li>
-
+                    <li>
+                        <a href="radioexport.php"><i class="menu-icon fa fa-upload"></i>พิมพ์รายงาน</a>
+                    </li>
                 <?php endif; ?>
                 <?php if ($_SESSION['status'] == 0) : ?>
                     <li class="active">
@@ -32,10 +34,10 @@
                         <a href="main.php"> <i class="menu-icon fa fa-pencil"></i>เช็คชื่อ </a>
                     </li> -->
                     <li>
-                        <a href="report.php"> <i class="menu-icon fa fa-paste (alias)"></i>รายงาน </a>
+                        <a href="report.php"> <i class="menu-icon fa fa-paste (alias)"></i>แสดงรายชื่อ </a>
                     </li>
                     <li>
-                        <a href="radioreport.php"><i class="menu-icon fa fa-upload"></i>ทดสอบรายงาน</a>
+                        <a href="radioreport.php"><i class="menu-icon fa fa-upload"></i>พิมพ์รายงาน</a>
                     </li>
                 <?php endif; ?>
             </ul>

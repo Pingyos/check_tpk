@@ -222,7 +222,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             <th>สาเหตุ</th>
                                                             <th>ระดับชั้น</th>
                                                             <th>วิชา</th>
-                                                            <th>ตาบเรียน/วันที่</th>
+                                                            <th>คาบเรียนที่/วันที่</th>
+                                                            <th>Action</th>
                                                         </tr></thead>';
                                                         echo '<tbody>';
 
@@ -241,6 +242,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             echo '</td>';
                                                             echo '<td>' . $student['courses'] . ' - ' . $student['course_name'] . '</td>';
                                                             echo '<td>' . $student['period'] . ' / ' . $student['time'] . '</td>';
+                                                            echo '<td><a href="edit_student.php?id=' . $student['id'] . '">แก้ไข</a></td>';
                                                             echo '</tr>';
                                                         }
 
@@ -262,10 +264,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <button type="submit" class="btn btn-info">
                                                             <span><i class="menu-icon fa fa-search"></i> แสดงรายชื่อ</span>
                                                         </button>
-                                                        &nbsp;
+                                                        <!-- &nbsp;
                                                         <a target="_blank" href="reportpdf.php?teacherId=<?php echo $_SESSION['id']; ?>&course=<?php echo isset($_POST['course']) ? $_POST['course'] : ''; ?>&startDate=<?php echo isset($_POST['startDate']) ? $_POST['startDate'] : ''; ?>&endDate=<?php echo isset($_POST['endDate']) ? $_POST['endDate'] : ''; ?>&studentCode=<?php echo isset($_POST['studentCode']) ? $_POST['studentCode'] : ''; ?>&cause=<?php echo isset($_POST['cause']) ? $_POST['cause'] : ''; ?>" class="btn btn-success" target="_blank" name="exportToPdf">
                                                             <i class="menu-icon fa fa-file-pdf-o"></i><span> ส่งออก </span>
-                                                        </a>
+                                                        </a> -->
                                                     </div>
                                                 </div>
                                             </div>
