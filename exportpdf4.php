@@ -168,7 +168,7 @@ $pdf->Cell(90, 7, iconv('utf-8', 'cp874', 'ลงชื่อ ..................
 $pdf->Cell(90, 7, iconv('utf-8', 'cp874', '( .................................................)'), 0, 1, 'C');
 
 
-$pdf->Cell(90, 7, iconv('utf-8', 'cp874', '( ครูที่ปรึกษา )'), 0, 1, 'C');
+$pdf->Cell(90, 7, iconv('utf-8', 'cp874', 'ครูที่ปรึกษา'), 0, 1, 'C');
 // Clear the output buffer
 ob_end_clean();
 $filename = "report_" . date('Y-m-d') . ".pdf";

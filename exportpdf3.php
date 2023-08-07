@@ -213,7 +213,7 @@ $courseData = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($courseData) {
     $name = $courseData['name'];
-    $pdf->Cell(65, 7, iconv('utf-8', 'cp874', '' . $name), 0, 0, 'C');
+    $pdf->Cell(65, 7, iconv('utf-8', 'cp874', '(' . $name . ')'), 0, 0, 'C');
 }
 $id = 2002;
 $sql = "SELECT * FROM ck_users WHERE id = :id";
@@ -224,7 +224,7 @@ $courseData = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($courseData) {
     $name = $courseData['name'];
-    $pdf->Cell(65, 7, iconv('utf-8', 'cp874', '' . $name), 0, 0, 'C');
+    $pdf->Cell(65, 7, iconv('utf-8', 'cp874', '(' . $name . ')'), 0, 0, 'C');
 }
 $id = 2003;
 $sql = "SELECT * FROM ck_users WHERE id = :id";
@@ -235,11 +235,11 @@ $courseData = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($courseData) {
     $name = $courseData['name'];
-    $pdf->Cell(65, 7, iconv('utf-8', 'cp874', '' . $name), 0, 1, 'C');
+    $pdf->Cell(65, 7, iconv('utf-8', 'cp874', '(' . $name . ')'), 0, 1, 'C');
 }
-$pdf->Cell(65, 7, iconv('utf-8', 'cp874', '( ผู้ช่วยรองผู้อำนวยการฝ่ายวิชาการ )'), 0, 0, 'C');
-$pdf->Cell(65, 7, iconv('utf-8', 'cp874', '( รองผู้อำนวยการโรงเรียนถ้ำปินวิทยาคม )'), 0, 0, 'C');
-$pdf->Cell(0, 7, iconv('utf-8', 'cp874', '( ผู้อำนวยการโรงเรียนถ้ำปินวิทยาคม )'), 0, 1, 'C');
+$pdf->Cell(65, 7, iconv('utf-8', 'cp874', 'ผู้ช่วยรองผู้อำนวยการฝ่ายวิชาการ'), 0, 0, 'C');
+$pdf->Cell(65, 7, iconv('utf-8', 'cp874', 'รองผู้อำนวยการโรงเรียนถ้ำปินวิทยาคม'), 0, 0, 'C');
+$pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'ผู้อำนวยการโรงเรียนถ้ำปินวิทยาคม'), 0, 1, 'C');
 ob_end_clean();
 $filename = "report_" . date('Y-m-d') . ".pdf";
 
