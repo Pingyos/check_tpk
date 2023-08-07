@@ -17,6 +17,9 @@
 	$('#bootstrap-data-table2').DataTable({
         lengthMenu: [[20, 40, 60, -1], [20, 40, 60, "All"]],
     });
+	$('#bootstrap-data-table-report').DataTable({
+        lengthMenu: [[10, 20, 30, -1], [10, 20, 30, "All"]],
+    });
 
     $('#bootstrap-data-tableteachers-export').DataTable({
         dom: 'lBfrtip',
