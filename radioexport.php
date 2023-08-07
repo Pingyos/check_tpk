@@ -63,11 +63,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <div class="radio-group col-lg-12 col-md-3 col-12">
                                                             <div class="row col-md-4">
                                                                 <input type="radio" id="export_1" value="export_1" name="Member" class="tap-input">
-                                                                <label for="export3"> พิมพ์รายงานการขาดเรียน</label>
+                                                                <label for="export1"> พิมพ์รายงานการขาดเรียน</label>
                                                             </div><br>
                                                             <div class="row col-md-4">
                                                                 <input type="radio" id="export_2" value="export_2" name="Member" class="tap-input">
-                                                                <label for="export3"> พิมพ์รายงานการขาดเรียนแบบ รายบุคคล</label>
+                                                                <label for="export2"> พิมพ์รายงานการขาดเรียนแบบ รายบุคคล</label>
                                                             </div><br>
                                                         </div>
                                                         <div class="radio-group col-lg-12 col-md-3 col-12">
@@ -104,7 +104,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         </div>
 
                                                         <div id="show-me" class="form-group col-lg-12 col-md-3 col-12">
-
                                                             <div class="row">
                                                                 <?php
                                                                 require_once 'connect.php';
@@ -118,9 +117,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                 echo '<label for="course" class="control-label mb-1">วิชา <span style="color:red;">*</span></label>';
                                                                 echo '<select name="course" id="course" class="form-control">';
                                                                 echo '<option value="" selected>แสดงทั้งหมด</option>';
-
                                                                 $selectedCourses = array();
-
                                                                 foreach ($checkings as $checking) {
                                                                     $courseCode = $checking['courses'];
                                                                     $courseName = $checking['course_name'];
@@ -153,7 +150,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                 echo '<label for="endDate" class="control-label mb-1">วันที่สิ้นสุด <span style="color:red;">*</span></label>';
                                                                 echo '<input type="date" name="endDate" id="endDate" class="form-control" value="' . $endDate . '">';
                                                                 echo '</div>';
-
                                                                 ?>
                                                             </div>
                                                             <hr>
@@ -168,21 +164,17 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             </div>
                                                             <script>
                                                                 document.getElementById('exportBtn1').addEventListener('click', function() {
-                                                                    var teacherId = <?php echo json_encode($_SESSION['id']); ?>;
                                                                     var course = document.querySelector('#show-me select[name="course"]').value;
                                                                     var startDate = document.querySelector('#show-me input[name="startDate"]').value;
                                                                     var endDate = document.querySelector('#show-me input[name="endDate"]').value;
-                                                                    var cause = "ขาดเรียน";
-                                                                    var url = `exportpdf1.php?teacherId=${teacherId}&course=${course}&startDate=${startDate}&endDate=${endDate}&cause=${cause}`;
+                                                                    var url = `exportpdf1.php?&course=${course}&startDate=${startDate}&endDate=${endDate}`;
                                                                     url += `&timestamp=${Date.now()}`;
                                                                     window.open(url, '_blank');
                                                                 });
                                                             </script>
-
                                                         </div>
 
                                                         <div id="show-me-2" class="form-group col-lg-12 col-md-3 col-12">
-
                                                             <div class="row">
                                                                 <?php
                                                                 require_once 'connect.php';
@@ -338,8 +330,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                     var course = document.querySelector('#show-me-3 select[name="course"]').value;
                                                                     var startDate = document.querySelector('#show-me-3 input[name="startDate"]').value;
                                                                     var endDate = document.querySelector('#show-me-3 input[name="endDate"]').value;
-                                                                    var cause = "หนีเรียน";
-                                                                    var url = `exportpdf3.php?course=${course}&startDate=${startDate}&endDate=${endDate}&cause=${cause}`;
+                                                                    var url = `exportpdf3.php?course=${course}&startDate=${startDate}&endDate=${endDate}`;
                                                                     url += `&timestamp=${Date.now()}`;
                                                                     window.open(url, '_blank');
                                                                 });

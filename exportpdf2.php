@@ -155,12 +155,12 @@ if (count($students) > 0) {
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
 
     $pdf->SetFont('THSarabunNewBold', '', 12);
-
+    $pdf->Cell(10, 10, iconv('utf-8', 'cp874', 'ลำดับ'), 1, 0, 'C');
     $pdf->Cell(20, 10, iconv('utf-8', 'cp874', 'วันที่'), 1, 0, 'C');
     $pdf->Cell(60, 10, iconv('utf-8', 'cp874', 'วิชา'), 1, 0, 'C');
     $pdf->Cell(50, 10, iconv('utf-8', 'cp874', 'ครูผู้สอน'), 1, 0, 'C');
-    $pdf->Cell(20, 10, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 0, 'C');
-    $pdf->Cell(40, 10, iconv('utf-8', 'cp874', 'สาเหตุ'), 1, 1, 'C');
+    $pdf->Cell(15, 10, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 0, 'C');
+    $pdf->Cell(35, 10, iconv('utf-8', 'cp874', 'สาเหตุ'), 1, 1, 'C');
     function compareStudents($a, $b)
     {
 
@@ -172,7 +172,9 @@ if (count($students) > 0) {
     }
     usort($students, 'compareStudents');
     $pdf->SetFont('THSarabunNew', '', 12);
+    $counter = 1;
     foreach ($students as $student) {
+        $pdf->Cell(10, 10, iconv('utf-8', 'cp874', $counter), 1, 0, 'C');
         $yearFormatted = date('Y', strtotime($student['time'])) + 543;
         $pdf->Cell(20, 10, iconv('utf-8', 'cp874', date('d/m/', strtotime($student['time'])) . $yearFormatted), 1, 0, 'L');
         $pdf->Cell(60, 10, iconv('utf-8', 'cp874', $student['courses'] . ' - ' . $student['course_name']), 1, 0, 'L');
@@ -180,16 +182,17 @@ if (count($students) > 0) {
         $periodNumbers = explode(',', $student['period']);
         $numberCount = count($periodNumbers);
         $totalNumberCount += $numberCount;
-        $pdf->Cell(20, 10, iconv('utf-8', 'cp874', $numberCount), 1, 0, 'C');
-        $pdf->Cell(40, 10, iconv('utf-8', 'cp874', $student['cause'] . '  ' . ($student['custom_cause'] ? '* ' . $student['custom_cause'] : '')), 1, 1, 'L');
+        $pdf->Cell(15, 10, iconv('utf-8', 'cp874', $numberCount), 1, 0, 'C');
+        $pdf->Cell(35, 10, iconv('utf-8', 'cp874', $student['cause'] . '  ' . ($student['custom_cause'] ? '* ' . $student['custom_cause'] : '')), 1, 1, 'L');
+        $counter++;
     }
 } else {
     $pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ไม่มีข้อมูลนักเรียนที่ขาด'), 0, 1, 'C');
 }
 $pdf->SetFont('THSarabunNewBold', '', 16);
-$pdf->Cell(130, 10, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
-$pdf->Cell(20, 10, iconv('utf-8', 'cp874', '' . ' ' . $totalNumberCount), 1, 0, 'C');
-$pdf->Cell(40, 10, iconv('utf-8', 'cp874', '' . ' '), 1, 0, 'R');
+$pdf->Cell(140, 10, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
+$pdf->Cell(15, 10, iconv('utf-8', 'cp874', '' . ' ' . $totalNumberCount), 1, 0, 'C');
+$pdf->Cell(35, 10, iconv('utf-8', 'cp874', '' . ' '), 1, 0, 'R');
 
 $pdf->SetFont('THSarabunNew', '', '14');
 $pdf->Cell(0, 30, iconv('utf-8', 'cp874', ''), 0, 1, 'C');

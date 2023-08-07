@@ -119,15 +119,18 @@ if (count($students) > 0) {
         $formattedDateThai = $dateTime->format('d') . ' ' . $thaiMonths[$dateTime->format('m') - 1] . ' ' . ($dateTime->format('Y') + 543);
         return $formattedDateThai;
     }
+
     $startDateFormattedThai = formatDateThai($startDate);
     $endDateFormattedThai = formatDateThai($endDate);
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'ระหว่างวันที่: ' . $startDateFormattedThai . '  ถึงวันที่: ' . $endDateFormattedThai), 0, 1, 'C');
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
-    $pdf->SetFont('THSarabunNewBold', '', 12);
 
+    $pdf->SetFont('THSarabunNewBold', '', 12);
+    $pdf->Cell(20, 10, iconv('utf-8', 'cp874', 'ลำดับ'), 1, 0, 'C');
     $pdf->Cell(30, 10, iconv('utf-8', 'cp874', 'รหัสนักเรียน'), 1, 0, 'C');
     $pdf->Cell(80, 10, iconv('utf-8', 'cp874', 'ชื่อ-สกุล'), 1, 0, 'C');
     $pdf->Cell(20, 10, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 1, 'C');
+
     $pdf->SetFont('THSarabunNew', '', 12);
     function compareStudents($a, $b)
     {
@@ -139,7 +142,9 @@ if (count($students) > 0) {
         return $a['rooms'] - $b['rooms'];
     }
     usort($students, 'compareStudents');
+    $counter = 1;
     foreach ($students as $student) {
+        $pdf->Cell(20, 10, iconv('utf-8', 'cp874', $counter), 1, 0, 'C');
         $roomNumber = is_numeric($student['rooms']) ? $student['rooms'] : 0;
         $pdf->Cell(30, 10, iconv('utf-8', 'cp874', $student['absent']), 1, 0, 'C');
         $pdf->Cell(80, 10, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
@@ -147,17 +152,18 @@ if (count($students) > 0) {
         $numberCount = count($periodNumbers);
         $totalNumberCount += $numberCount;
         $pdf->Cell(20, 10, iconv('utf-8', 'cp874', $numberCount), 1, 1, 'C');
+        $counter++;
     }
 } else {
     $pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ไม่มีข้อมูลนักเรียนที่ขาด'), 0, 1, 'C');
 }
 $pdf->SetFont('THSarabunNewBold', '', 16);
-$pdf->Cell(110, 10, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
+$pdf->Cell(130, 10, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
 $pdf->Cell(20, 10, iconv('utf-8', 'cp874', '' . ' ' . $totalNumberCount), 1, 0, 'C');
 
 $pdf->SetFont('THSarabunNew', '', '14');
 $pdf->Cell(0, 10, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
-$pdf->Cell(90, 30, iconv('utf-8', 'cp874', 'ลงชื่อรับทราบข้อมูล'), 0, 1, 'C');    
+$pdf->Cell(90, 30, iconv('utf-8', 'cp874', 'ลงชื่อรับทราบข้อมูล'), 0, 1, 'C');
 $pdf->Cell(90, 7, iconv('utf-8', 'cp874', 'ลงชื่อ .................................................'), 0, 1, 'C');
 $pdf->Cell(90, 7, iconv('utf-8', 'cp874', '( .................................................)'), 0, 1, 'C');
 

@@ -5,8 +5,7 @@ $selectedCourse = isset($_GET['course']) ? $_GET['course'] : '';
 $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : date('Y-m-d');
 $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : date('Y-m-d');
 $studentCode = isset($_GET['studentCode']) ? $_GET['studentCode'] : '';
-$cause = isset($_GET['cause']) ? $_GET['cause'] : '';
-
+$cause = isset($_GET['cause']) ? $_GET['cause'] : 'ขาดเรียน';
 
 require_once 'connect.php';
 
@@ -108,10 +107,12 @@ if (count($students) > 0) {
     }
     $startDateFormattedThai = formatDateThai($startDate);
     $endDateFormattedThai = formatDateThai($endDate);
+
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'ระหว่างวันที่: ' . $startDateFormattedThai . '  ถึงวันที่: ' . $endDateFormattedThai), 0, 1, 'C');
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
 
     $pdf->SetFont('THSarabunNewBold', '', 12);
+    $pdf->Cell(20, 10, iconv('utf-8', 'cp874', 'ลำดับ'), 1, 0, 'C');
     $pdf->Cell(30, 10, iconv('utf-8', 'cp874', 'รหัสนักเรียน'), 1, 0, 'C');
     $pdf->Cell(80, 10, iconv('utf-8', 'cp874', 'ชื่อ-สกุล'), 1, 0, 'C');
     $pdf->Cell(25, 10, iconv('utf-8', 'cp874', 'ระดับชั้น'), 1, 0, 'C');
@@ -127,7 +128,7 @@ if (count($students) > 0) {
         return $a['rooms'] - $b['rooms'];
     }
     usort($students, 'compareStudents');
-
+    $counter = 1;
     foreach ($students as $student) {
         $roomNumber = is_numeric($student['rooms']) ? $student['rooms'] : 0;
 
@@ -191,6 +192,7 @@ if (count($students) > 0) {
                 break;
         }
         $pdf->SetFont('THSarabunNew', '', 12);
+        $pdf->Cell(20, 10, iconv('utf-8', 'cp874', $counter), 1, 0, 'C');
         $pdf->Cell(30, 10, iconv('utf-8', 'cp874', $student['absent']), 1, 0, 'C');
         $pdf->Cell(80, 10, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
         $pdf->Cell(25, 10, iconv('utf-8', 'cp874', $roomDisplay), 1, 0, 'C');
@@ -198,6 +200,7 @@ if (count($students) > 0) {
         $numberCount = count($periodNumbers);
         $totalNumberCount += $numberCount;
         $pdf->Cell(30, 10, iconv('utf-8', 'cp874', $numberCount), 1, 1, 'C');
+        $counter++;
     }
 } else {
     $pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ไม่มีข้อมูลนักเรียนที่ขาด'), 0, 1, 'C');

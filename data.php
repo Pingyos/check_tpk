@@ -138,7 +138,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <?php $index = 0; ?>
+                                                        <?php $index = 1; ?>
                                                         <?php while ($row2 = $stmt2->fetch(PDO::FETCH_ASSOC)) { ?>
                                                             <tr>
                                                                 <td><?= $index ?></td>
@@ -148,7 +148,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                     <input type="checkbox" class="form-control" name="absent[]" value="<?= $row2['tb_student_code']; ?>" onchange="handleCheckbox(this)">
                                                                 </td>
                                                                 <td>
-                                                                    <select class="form-control" name="cause[]" disabled onchange="handleCauseSelect(this, <?= $index ?>)">
+                                                                    <select required class="form-control" name="cause[]" disabled onchange="handleCauseSelect(this, <?= $index ?>)">
                                                                         <option value="">โปรดเลือก</option>
                                                                         <option value="ขาดเรียน" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'ขาดเรียน') echo 'selected'; ?>>ขาดเรียน</option>
                                                                         <option value="ลาป่วย" <?php if (isset($_POST['cause'][$index]) && $_POST['cause'][$index] === 'ลาป่วย') echo 'selected'; ?>>ลาป่วย</option>
@@ -160,7 +160,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                     <input type="text" class="form-control" name="custom_cause[]" style="display: none;">
                                                                 </td>
                                                             </tr>
-
                                                             <script>
                                                                 function handleCheckbox(checkbox) {
                                                                     var selectCause = checkbox.parentNode.nextElementSibling.querySelector('select[name="cause[]"]');
@@ -175,7 +174,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                         inputText.value = '';
                                                                     }
                                                                 }
-
                                                                 function handleCauseSelect(selectCause, index) {
                                                                     var inputText = selectCause.nextElementSibling;
                                                                     if (selectCause.value === 'อื่นๆ') {
