@@ -30,7 +30,6 @@ if ($cause) {
     $sql .= " AND c.cause = :cause";
 }
 
-// คริวรีข้อมูลด้วยคำสั่ง SQL
 $stmt = $conn->prepare($sql);
 
 if ($selectedCourse) {
@@ -54,56 +53,56 @@ $stmt->execute();
 $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-
-
-
-// สร้าง PDF
-$pdf = new FPDF('L', 'mm', 'A4');
+$pdf = new FPDF('P', 'mm', 'A4');
 $pdf->AddPage();
 $pdf->AddFont('THSarabunNew', '', 'THSarabunNew.php');
 $pdf->AddFont('THSarabunNewBold', '', 'THSarabunNewBold.php');
 $pdf->SetFont('THSarabunNew', '', '12');
-
-// Start output buffering to prevent any output before PDF generation
 ob_start();
 
-// สร้างตารางข้อมูลจาก $students
 if (count($students) > 0) {
     $pdf->SetFont('THSarabunNewBold', '', '18');
-    $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'รายงานการขาดเรียน'), 0, 1, 'C');
+    $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'รายงานการ' . ' ' . $cause), 0, 1, 'C');
     $pdf->SetFont('THSarabunNewBold', '', '16');
     require_once 'connect.php';
     if (isset($_GET['studentCode'])) {
-        // รับค่า studentCode ที่ส่งมา
         $studentCode = $_GET['studentCode'];
 
-        // เตรียมคำสั่ง SQL เพื่อค้นหาชื่อนักเรียนจากตาราง ck_students
         $sqlStudent = "SELECT tb_student_tname, tb_student_name, tb_student_sname FROM ck_students WHERE tb_student_code = :studentCode";
         $stmtStudent = $conn->prepare($sqlStudent);
         $stmtStudent->bindParam(':studentCode', $studentCode);
         $stmtStudent->execute();
         $studentData = $stmtStudent->fetch(PDO::FETCH_ASSOC);
-
-        // ถ้าค้นพบข้อมูลนักเรียนที่มี tb_student_code ตรงกับ studentCode ที่ส่งมาก็จะแสดงชื่อนักเรียนนั้นใน PDF
         if ($studentData) {
             $studentName = $studentData['tb_student_tname'] . ' ' . $studentData['tb_student_name'] . ' ' . $studentData['tb_student_sname'];
             $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'ชื่อนักเรียน: ' . $studentName . ' ' . 'รหัสนักเรียน: ' . $studentCode), 0, 1, 'C');
         }
     }
-
-    $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'ระหว่างวันที่: ' . $startDate . '  ถึงวันที่: ' . $endDate), 0, 1, 'C');
+    function formatDateThai($date)
+    {
+        $dateTime = new DateTime($date);
+        $thaiMonths = array(
+            'มกราคม', 'กุมภาพันธ์', 'มีนาคม',
+            'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+            'กรกฎาคม', 'สิงหาคม', 'กันยายน',
+            'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+        );
+        $formattedDateThai = $dateTime->format('d') . ' ' . $thaiMonths[$dateTime->format('m') - 1] . ' ' . ($dateTime->format('Y') + 543);
+        return $formattedDateThai;
+    }
+    $startDateFormattedThai = formatDateThai($startDate);
+    $endDateFormattedThai = formatDateThai($endDate);
+    $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'ระหว่างวันที่: ' . $startDateFormattedThai . '  ถึงวันที่: ' . $endDateFormattedThai), 0, 1, 'C');
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
 
-    // กำหนดขนาดฟอนต์ของตารางเป็น 12
-    $pdf->SetFont('THSarabunNew', '', 12);
+    $pdf->SetFont('THSarabunNewBold', '', 12);
 
-    // กำหนดความกว้างของคอลัมน์ในตาราง
     $pdf->Cell(20, 10, iconv('utf-8', 'cp874', 'วันที่'), 1, 0, 'C');
-    $pdf->Cell(60, 10, iconv('utf-8', 'cp874', 'ชื่อ-สกุล'), 1, 0, 'C');
+    $pdf->Cell(50, 10, iconv('utf-8', 'cp874', 'ชื่อ-สกุล'), 1, 0, 'C');
     $pdf->Cell(15, 10, iconv('utf-8', 'cp874', 'ระดับชั้น'), 1, 0, 'C');
     $pdf->Cell(60, 10, iconv('utf-8', 'cp874', 'วิชา'), 1, 0, 'C');
-    $pdf->Cell(90, 10, iconv('utf-8', 'cp874', 'สาเหตุ'), 1, 0, 'C');
-    $pdf->Cell(30, 10, iconv('utf-8', 'cp874', 'คาบเรียนที่'), 1, 1, 'C');
+    $pdf->Cell(30, 10, iconv('utf-8', 'cp874', 'ครูผู้สอน'), 1, 0, 'C');
+    $pdf->Cell(15, 10, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 1, 'C');
 
     function compareStudents($a, $b)
     {
@@ -117,8 +116,7 @@ if (count($students) > 0) {
     usort($students, 'compareStudents');
     foreach ($students as $student) {
         $roomNumber = is_numeric($student['rooms']) ? $student['rooms'] : 0;
-
-        // แทนค่าตามเงื่อนไข
+        $pdf->SetFont('THSarabunNew', '', 12);
         switch ($roomNumber) {
             case 1:
                 $roomDisplay = 'ม.1/1';
@@ -178,31 +176,67 @@ if (count($students) > 0) {
                 $roomDisplay = 'ไม่ทราบ';
                 break;
         }
-
-        $pdf->Cell(20, 10, iconv('utf-8', 'cp874', $student['time']), 1, 0, 'L');
-        $pdf->Cell(60, 10, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
-        $pdf->Cell(15, 10, iconv('utf-8', 'cp874', $roomDisplay), 1, 0, 'L');
+        $yearFormatted = date('Y', strtotime($student['time'])) + 543;
+        $pdf->Cell(20, 10, iconv('utf-8', 'cp874', date('d/m/', strtotime($student['time'])) . $yearFormatted), 1, 0, 'L');
+        $pdf->Cell(50, 10, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
+        $pdf->Cell(15, 10, iconv('utf-8', 'cp874', $roomDisplay), 1, 0, 'C');
         $pdf->Cell(60, 10, iconv('utf-8', 'cp874', $student['courses'] . ' - ' . $student['course_name']), 1, 0, 'L');
-        $pdf->Cell(90, 10, iconv('utf-8', 'cp874', $student['cause'] . '  ' . ($student['custom_cause'] ? '* ' . $student['custom_cause'] : '')), 1, 0, 'L');
-        $pdf->Cell(30, 10, iconv('utf-8', 'cp874', $student['period']), 1, 1, 'L');
+        $pdf->Cell(30, 10, iconv('utf-8', 'cp874', $student['name_title'] . ' ' . $student['name'] . ' ' . $student['surname']), 1, 0, 'L');
+        $periodNumbers = explode(',', $student['period']);
+        $numberCount = count($periodNumbers);
+        $totalNumberCount += $numberCount;
+        $pdf->Cell(15, 10, iconv('utf-8', 'cp874', $numberCount), 1, 1, 'C');
     }
 } else {
     $pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ไม่มีข้อมูลนักเรียนที่ขาด'), 0, 1, 'C');
 }
+$pdf->SetFont('THSarabunNewBold', '', 16);
+$pdf->Cell(175, 10, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
+$pdf->Cell(15, 10, iconv('utf-8', 'cp874', '' . ' ' . $totalNumberCount), 1, 0, 'C');
+
 $pdf->SetFont('THSarabunNew', '', '14');
-$pdf->Cell(0, 20, iconv('utf-8', 'cp874', ''), 0, 1, 'L');
+$pdf->Cell(0, 30, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
+$pdf->Cell(65, 7, iconv('utf-8', 'cp874', 'ลงชื่อ .................................................'), 0, 0, 'C');
+$pdf->Cell(65, 7, iconv('utf-8', 'cp874', 'ลงชื่อ .................................................'), 0, 0, 'C');
+$pdf->Cell(65, 7, iconv('utf-8', 'cp874', 'ลงชื่อ .................................................'), 0, 1, 'C');
 
-$pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ลงชื่อ .......................'), 0, 1, 'C');
-$pdf->Cell(0, 10, iconv('utf-8', 'cp874', '( ผู้ช่วยรองผู้อำนวยการฝ่ายวิชาการยรองฝ่ายวิชาการ )'), 0, 1, 'C');
+require_once 'connect.php';
+$id = 2001;
+$sql = "SELECT * FROM ck_users WHERE id = :id";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt->execute();
+$courseData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$pdf->Cell(0, 10, iconv('utf-8', 'cp874', ''), 0, 1, 'L');
-$pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ลงชื่อ .......................'), 0, 1, 'C');
-$pdf->Cell(0, 10, iconv('utf-8', 'cp874', '( รองผู้อำนวยการโรงเรียนถ้ำปินวิทยาคม )'), 0, 1, 'C');
+if ($courseData) {
+    $name = $courseData['name'];
+    $pdf->Cell(65, 7, iconv('utf-8', 'cp874', '' . $name), 0, 0, 'C');
+}
+$id = 2002;
+$sql = "SELECT * FROM ck_users WHERE id = :id";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt->execute();
+$courseData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$pdf->Cell(0, 10, iconv('utf-8', 'cp874', ''), 0, 1, 'L');
-$pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ลงชื่อ .......................'), 0, 1, 'C');
-$pdf->Cell(0, 10, iconv('utf-8', 'cp874', '( ผู้อำนวยการโรงเรียนถ้ำปินวิทยาคม )'), 0, 1, 'C');
-// Clear the output buffer
+if ($courseData) {
+    $name = $courseData['name'];
+    $pdf->Cell(65, 7, iconv('utf-8', 'cp874', '' . $name), 0, 0, 'C');
+}
+$id = 2003;
+$sql = "SELECT * FROM ck_users WHERE id = :id";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt->execute();
+$courseData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($courseData) {
+    $name = $courseData['name'];
+    $pdf->Cell(65, 7, iconv('utf-8', 'cp874', '' . $name), 0, 1, 'C');
+}
+$pdf->Cell(65, 7, iconv('utf-8', 'cp874', '( ผู้ช่วยรองผู้อำนวยการฝ่ายวิชาการ )'), 0, 0, 'C');
+$pdf->Cell(65, 7, iconv('utf-8', 'cp874', '( รองผู้อำนวยการโรงเรียนถ้ำปินวิทยาคม )'), 0, 0, 'C');
+$pdf->Cell(0, 7, iconv('utf-8', 'cp874', '( ผู้อำนวยการโรงเรียนถ้ำปินวิทยาคม )'), 0, 1, 'C');
 ob_end_clean();
 $filename = "report_" . date('Y-m-d') . ".pdf";
 

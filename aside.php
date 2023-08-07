@@ -11,6 +11,9 @@
                         <a href="export_date.php"><i class="menu-icon fa fa-save (alias)"></i>แสดงรายชื่อ</a>
                     </li>
                     <li>
+                        <a href="radioexport.php"><i class="menu-icon fa fa-share"></i>พิมพ์รายงาน</a>
+                    </li>
+                    <li>
                         <a href="import_users.php"><i class="menu-icon fa fa-upload"></i>เพิ่มครู</a>
                     </li>
                     <li>
@@ -18,9 +21,6 @@
                     </li>
                     <li>
                         <a href="import_courses.php"><i class="menu-icon fa fa-upload"></i>เพิ่มวิชา</a>
-                    </li>
-                    <li>
-                        <a href="radioexport.php"><i class="menu-icon fa fa-upload"></i>พิมพ์รายงาน</a>
                     </li>
                 <?php endif; ?>
                 <?php if ($_SESSION['status'] == 0) : ?>
@@ -37,7 +37,7 @@
                         <a href="report.php"> <i class="menu-icon fa fa-paste (alias)"></i>แสดงรายชื่อ </a>
                     </li>
                     <li>
-                        <a href="radioreport.php"><i class="menu-icon fa fa-upload"></i>พิมพ์รายงาน</a>
+                        <a href="radioreport.php"><i class="menu-icon fa fa-share"></i>พิมพ์รายงาน</a>
                     </li>
                 <?php endif; ?>
             </ul>

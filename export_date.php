@@ -54,7 +54,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <h3 class="text-center">รายงานการขาดเรียน</h3>
                                         </div>
                                         <hr>
-                                        <form action="#" method="post" novalidate="novalidate">
+                                        <form method="post" novalidate="novalidate">
                                             <div class="row">
                                                 <?php
                                                 require_once 'connect.php';
@@ -63,60 +63,57 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $stmt->execute();
                                                 $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                                                // สร้าง dropdown
+
                                                 echo '<div class="form-group col-12">';
                                                 echo '<label for="course" class="control-label mb-1">วิชา</label>';
                                                 echo '<select name="course" id="course" class="form-control">';
-                                                echo '<option value="" selected>แสดงทั้งหมด</option>'; // เพิ่มตัวเลือก "แสดงทั้งหมด"
+                                                echo '<option value="" selected>แสดงทั้งหมด</option>';
 
-                                                $selectedCourses = array(); // ตัวแปรเก็บรายการวิชาที่ถูกเลือกไว้แล้ว
+                                                $selectedCourses = array();
 
                                                 foreach ($checkings as $checking) {
                                                     $courseCode = $checking['courses'];
                                                     $courseName = $checking['course_name'];
 
-                                                    // เพิ่มตัวเลือกเฉพาะเมื่อยังไม่มีรายการวิชานี้อยู่ในรายการที่ถูกเลือกไว้แล้ว
+
                                                     if (!in_array($courseCode, $selectedCourses)) {
-                                                        $selected = ($courseCode == $_POST['course']) ? 'selected' : ''; // ตรวจสอบว่าตรงกับตัวเลือกก่อนหน้าหรือไม่
+                                                        $selected = ($courseCode == $_POST['course']) ? 'selected' : '';
                                                         echo '<option value="' . $courseCode . '" ' . $selected . '>' . $courseName . '</option>';
-                                                        $selectedCourses[] = $courseCode; // เพิ่มรายการวิชาที่ถูกเลือกไว้ในรายการ
+                                                        $selectedCourses[] = $courseCode;
                                                     }
                                                 }
                                                 echo '</select>';
                                                 echo '</div>';
 
-                                                // เช็คว่ามีค่าวันที่เริ่มต้นที่ส่งมาหรือไม่ ถ้าไม่มีกำหนดให้เป็นวันที่ปัจจุบัน
+
                                                 $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
 
-                                                // เช็คว่ามีค่าวันที่สิ้นสุดที่ส่งมาหรือไม่ ถ้าไม่มีกำหนดให้เป็นวันที่ปัจจุบัน
                                                 $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
 
-                                                // แปลงวันที่เริ่มต้นและวันที่สิ้นสุดเป็นวัตถุ DateTime
+
                                                 $startDateObj = new DateTime($startDate);
                                                 $endDateObj = new DateTime($endDate);
 
-                                                // ลดวันที่เริ่มต้นลง 1 วัน
+
                                                 $startDateObj->modify('-1 day');
 
-                                                // แปลงกลับเป็นรูปแบบของวันที่
                                                 $startDate = $startDateObj->format('Y-m-d');
 
-                                                // เช็คว่ามีค่ารหัสนักเรียนที่ส่งมาหรือไม่
+
                                                 $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
 
-                                                // เพิ่ม input date สำหรับเลือกวันที่เริ่มต้น
                                                 echo '<div class="form-group col-6">';
                                                 echo '<label for="startDate" class="control-label mb-1">วันที่เริ่มต้น</label>';
                                                 echo '<input type="date" name="startDate" id="startDate" class="form-control" value="' . $startDate . '">';
                                                 echo '</div>';
 
-                                                // เพิ่ม input date สำหรับเลือกวันที่สิ้นสุด
+
                                                 echo '<div class="form-group col-6">';
                                                 echo '<label for="endDate" class="control-label mb-1">วันที่สิ้นสุด</label>';
                                                 echo '<input type="date" name="endDate" id="endDate" class="form-control" value="' . $endDate . '">';
                                                 echo '</div>';
 
-                                                // เพิ่ม input text สำหรับค้นหารหัสนักเรียน
+
                                                 echo '<div class="form-group col-6">';
                                                 echo '<label for="studentCode" class="control-label mb-1">รหัสนักเรียน</label>';
                                                 echo '<input type="text" name="studentCode" id="studentCode" class="form-control" value="' . $studentCode . '">';
@@ -127,14 +124,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $stmt->execute();
                                                 $causes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                                                // ...
 
                                                 echo '<div class="form-group col-6">';
                                                 echo '<label for="cause" class="control-label mb-1">สาเหตุ</label>';
                                                 echo '<select name="cause" id="cause" class="form-control">';
-                                                echo '<option value="">เลือกสาเหตุ</option>'; // Add a default option
-
-                                                // Populate the dropdown options with distinct "cause" values
+                                                echo '<option value="">เลือกสาเหตุ</option>';
                                                 foreach ($causes as $cause) {
                                                     $selected = (isset($_POST['cause']) && $_POST['cause'] === $cause['cause']) ? 'selected' : '';
                                                     echo '<option value="' . $cause['cause'] . '" ' . $selected . '>' . $cause['cause'] . '</option>';
@@ -150,7 +144,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
                                                     $cause = $_POST['cause'];
 
-                                                    // เชื่อมต่อฐานข้อมูลอีกครั้ง
+
                                                     require_once 'connect.php';
 
                                                     $sql = "SELECT c.*, s.tb_student_tname, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
@@ -208,6 +202,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             <th>ระดับชั้น</th>
                                                             <th>วิชา</th>
                                                             <th>คาบเรียนที่/วันที่</th>
+                                                            <th>รายละเอียด</th>
                                                         </tr></thead>';
                                                         echo '<tbody>';
 
@@ -226,6 +221,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             echo '</td>';
                                                             echo '<td>' . $student['courses'] . ' - ' . $student['course_name'] . '</td>';
                                                             echo '<td>' . $student['period'] . ' / ' . $student['time'] . '</td>';
+                                                            echo '<td><a class="btn btn-warning" href="edit_student.php?id=' . $student['id'] . '"><i class="menu-icon fa fa-edit"></i>แก้ไข</a>
+                                                                      <a class="btn btn-danger" href="del_student_report.php?id=' . $student['id'] . '"><i class="menu-icon fa fa-edit"></i>ยกเลิกการขาด</a>
+                                                            
+                                                            </td>';
                                                             echo '</tr>';
                                                         }
 

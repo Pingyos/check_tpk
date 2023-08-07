@@ -1,4 +1,5 @@
 <?php
+
 require('fpdf186/fpdf.php');
 
 $selectedCourse = isset($_GET['course']) ? $_GET['course'] : '';
@@ -14,8 +15,6 @@ require_once 'connect.php';
 $sql = "SELECT c.*, s.tb_student_tname, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
 JOIN ck_students s ON c.absent = s.tb_student_code
 WHERE 1=1";
-
-// เพิ่มเงื่อนไขใน SQL ให้กรองตาม teacher_id
 if ($teacherId) {
     $sql .= " AND c.teacher_id = :teacherId";
 }
@@ -35,11 +34,8 @@ if ($studentCode) {
 if ($cause) {
     $sql .= " AND c.cause = :cause";
 }
-
-// คริวรีข้อมูลด้วยคำสั่ง SQL
 $stmt = $conn->prepare($sql);
 
-// ตรวจสอบว่ามีค่า teacher_id ถูกส่งมาหรือไม่ ถ้ามีให้ bind parameter ให้กับตัวแปร $teacherId
 if ($teacherId) {
     $stmt->bindParam(':teacherId', $teacherId);
 }
@@ -60,15 +56,15 @@ if ($studentCode) {
 if ($cause) {
     $stmt->bindParam(':cause', $cause);
 }
-
+ob_start();
 $stmt->execute();
 $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$pdf = new FPDF('L', 'mm', 'A4');
+$pdf = new FPDF('P', 'mm', 'A4');
 $pdf->AddPage();
 $pdf->AddFont('THSarabunNew', '', 'THSarabunNew.php');
 $pdf->AddFont('THSarabunNewBold', '', 'THSarabunNewBold.php');
 $pdf->SetFont('THSarabunNew', '', '12');
-ob_start();
+
 
 if (count($students) > 0) {
     $pdf->SetFont('THSarabunNewBold', '', '18');
@@ -83,7 +79,6 @@ if (count($students) > 0) {
         $stmtCourse->bindParam(':selectedCourse', $selectedCourse);
         $stmtCourse->execute();
         $courseData = $stmtCourse->fetch(PDO::FETCH_ASSOC);
-
         if ($courseData) {
             $tb_course_name = $courseData['tb_course_name'];
             $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'รายวิชา: ' . $tb_course_name), 0, 1, 'C');
@@ -92,7 +87,7 @@ if (count($students) > 0) {
         if (isset($_GET['teacherId'])) {
             $teacherId = $_GET['teacherId'];
 
-            // ค้นหาชื่อผู้สอนจากตาราง ck_users
+
             $sqlTeacher = "SELECT name_title, name, surname FROM ck_users WHERE id = :teacherId";
             $stmtTeacher = $conn->prepare($sqlTeacher);
             $stmtTeacher->bindParam(':teacherId', $teacherId);
@@ -107,20 +102,29 @@ if (count($students) > 0) {
             }
         }
     }
-
-    $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'ระหว่างวันที่: ' . $startDate . '  ถึงวันที่: ' . $endDate), 0, 1, 'C');
+    function formatDateThai($date)
+    {
+        $dateTime = new DateTime($date);
+        $thaiMonths = array(
+            'มกราคม', 'กุมภาพันธ์', 'มีนาคม',
+            'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+            'กรกฎาคม', 'สิงหาคม', 'กันยายน',
+            'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+        );
+        $formattedDateThai = $dateTime->format('d') . ' ' . $thaiMonths[$dateTime->format('m') - 1] . ' ' . ($dateTime->format('Y') + 543);
+        return $formattedDateThai;
+    }
+    $startDateFormattedThai = formatDateThai($startDate);
+    $endDateFormattedThai = formatDateThai($endDate);
+    $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'ระหว่างวันที่: ' . $startDateFormattedThai . '  ถึงวันที่: ' . $endDateFormattedThai), 0, 1, 'C');
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
-
-    // กำหนดขนาดฟอนต์ของตารางเป็น 12
-    $pdf->SetFont('THSarabunNew', '', 12);
-
-    // กำหนดความกว้างของคอลัมน์ในตาราง
+    $pdf->SetFont('THSarabunNewBold', '', 12);
     $pdf->Cell(20, 10, iconv('utf-8', 'cp874', 'วันที่'), 1, 0, 'C');
-    $pdf->Cell(60, 10, iconv('utf-8', 'cp874', 'ชื่อ-สกุล'), 1, 0, 'C');
+    $pdf->Cell(65, 10, iconv('utf-8', 'cp874', 'ชื่อ-สกุล'), 1, 0, 'C');
     $pdf->Cell(15, 10, iconv('utf-8', 'cp874', 'ระดับชั้น'), 1, 0, 'C');
-    $pdf->Cell(60, 10, iconv('utf-8', 'cp874', 'วิชา'), 1, 0, 'C');
-    $pdf->Cell(20, 10, iconv('utf-8', 'cp874', 'คาบเรียน'), 1, 0, 'C');
-    $pdf->Cell(100, 10, iconv('utf-8', 'cp874', 'สาเหตุ'), 1, 1, 'C');
+    $pdf->Cell(60, 10, iconv('utf-8', 'cp874', 'สาเหตุ'), 1, 0, 'C');
+    $pdf->Cell(20, 10, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 1, 'C');
+
     function compareStudents($a, $b)
     {
 
@@ -131,11 +135,9 @@ if (count($students) > 0) {
         return $a['rooms'] - $b['rooms'];
     }
     usort($students, 'compareStudents');
-
+    $pdf->SetFont('THSarabunNew', '', 12);
     foreach ($students as $student) {
         $roomNumber = is_numeric($student['rooms']) ? $student['rooms'] : 0;
-
-        // แทนค่าตามเงื่อนไข
         switch ($roomNumber) {
             case 1:
                 $roomDisplay = 'ม.1/1';
@@ -196,24 +198,31 @@ if (count($students) > 0) {
                 break;
         }
 
-        $pdf->Cell(20, 10, iconv('utf-8', 'cp874', $student['time']), 1, 0, 'L');
-        $pdf->Cell(60, 10, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
-        $pdf->Cell(15, 10, iconv('utf-8', 'cp874', $roomDisplay), 1, 0, 'L');
-        $pdf->Cell(60, 10, iconv('utf-8', 'cp874', $student['courses'] . ' - ' . $student['course_name']), 1, 0, 'L');
-        $pdf->Cell(20, 10, iconv('utf-8', 'cp874', $student['period']), 1, 0, 'L');
-        $pdf->Cell(100, 10, iconv('utf-8', 'cp874', $student['cause'] . '  ' . ($student['custom_cause'] ? '* ' . $student['custom_cause'] : '')), 1, 1, 'L');
+        $yearFormatted = date('Y', strtotime($student['time'])) + 543;
+        $pdf->Cell(20, 10, iconv('utf-8', 'cp874', date('d/m/', strtotime($student['time'])) . $yearFormatted), 1, 0, 'L');
+        $pdf->Cell(65, 10, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
+        $pdf->Cell(15, 10, iconv('utf-8', 'cp874', $roomDisplay), 1, 0, 'C');
+        $pdf->Cell(60, 10, iconv('utf-8', 'cp874', $student['cause'] . '  ' . ($student['custom_cause'] ? '* ' . $student['custom_cause'] : '')), 1, 0, 'L');
+        $periodNumbers = explode(',', $student['period']);
+        $numberCount = count($periodNumbers);
+        $totalNumberCount += $numberCount;
+        $pdf->Cell(20, 10, iconv('utf-8', 'cp874', $numberCount), 1, 1, 'C');
     }
 } else {
     $pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ไม่มีข้อมูลนักเรียนที่ขาด'), 0, 1, 'C');
 }
+$pdf->SetFont('THSarabunNewBold', '', 16);
+$pdf->Cell(160, 10, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
+$pdf->Cell(20, 10, iconv('utf-8', 'cp874', '' . ' ' . $totalNumberCount), 1, 0, 'C');
 
 $pdf->SetFont('THSarabunNew', '', '16');
-$pdf->Cell(0, 40, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
-$pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ลงชื่อ .......................'), 0, 1, 'C');
-$pdf->Cell(0, 10, iconv('utf-8', 'cp874', '( ครูผู้สอน )'), 0, 1, 'C');
-ob_end_clean();
-$filename = "report_" . date('Y-m-d') . ".pdf";
+$pdf->Cell(0, 30, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
+$pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'ลงชื่อ .................................................'), 0, 1, 'C');
+$pdf->Cell(0, 7, iconv('utf-8', 'cp874', '' . $name_title . ' ' . $name . ' ' . $surname), 0, 1, 'C');
 
+$filename = "report_" . date('Y-m-d') . ".pdf";
+ob_end_clean();
 header("Content-Type: application/pdf");
 header("Content-Disposition: attachment; filename=\"$filename\"");
 $pdf->Output();
+

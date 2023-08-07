@@ -112,14 +112,35 @@ if (empty($_SESSION['id']) || empty($_SESSION['name']) || empty($_SESSION['surna
                                         <div class="text-left dib">
                                             <div class="stat-heading">จำนวนวิชา</div>
                                             <div class="stat-text"><span class="count"><?php echo $result['courses']; ?></span> วิชา </div>
-                                            <a href="#" data-toggle="modal" data-target="#exampleModal_totaC" class="small-box-footer">
-                                                More <i class="fa fa-arrow-circle-right"></i>
-                                            </a>
+                                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
+                    require_once 'connect.php';
+                    $stmt = $conn->prepare("SELECT COUNT(*) AS studentscheck FROM ck_checking");
+                    $stmt->execute();
+                    $result = $stmt->fetch();
+                    ?>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="stat-widget-five">
+                                    <div class="stat-icon dib flat-color-1">
+                                        <i class="pe-7s-users"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="text-left dib">
+                                            <div class="stat-heading">จำนวนนักเรียนที่ ขาดเรียน ฯลฯ</div>
+                                            <div class="stat-text"><span class="count"><?php echo $result['studentscheck']; ?></span> คน </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
                 <div class="modal fade" id="studentsModal" tabindex="-1" role="dialog" aria-labelledby="studentsModalLabel" aria-hidden="true">

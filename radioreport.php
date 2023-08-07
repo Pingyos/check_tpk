@@ -56,20 +56,20 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                         </div>
                                         <hr>
                                         <!-- เพิ่มโค้ดในส่วนของหน้าเว็บหรืออินเตอร์เฟซที่ต้องการแสดง dropdown วิชา และ input วันที่ -->
-                                        <form action="#" method="post" novalidate="novalidate">
+                                        <form method="post" novalidate="novalidate">
                                             <div class="row">
                                                 <div class="form-group col-lg-12 col-md-3 col-12">
                                                     <fieldset class="form-row" id="Member">
-
                                                         <div class="radio-group col-lg-12 col-md-3 col-12">
-                                                            <input type="radio" id="watch-me" value="yes" name="Member" class="tap-input">
-                                                            <label for="watch-me">พิมพ์รายงานการขาดเรียนรายวิชา</label>
-                                                            &nbsp;
-                                                            <input type="radio" id="watch-me-maybe" value="maybe" name="Member" class="tap-input">
-                                                            <label for="MemberMaybe">พิมพ์รายงานการขาดเรียนรายบุคคล</label>
+                                                            <div class="row col-md-4">
+                                                                <input type="radio" id="watch-me" value="yes" name="Member" class="tap-input">
+                                                                <label for="watch-me">พิมพ์รายงานการขาดเรียนรายวิชา</label>
+                                                            </div>
+                                                            <div class="row col-md-8">
+                                                                <input type="radio" id="watch-me-maybe" value="maybe" name="Member" class="tap-input">
+                                                                <label for="watch-me-maybe">พิมพ์รายงานการขาดเรียนรายบุคคล</label>
+                                                            </div>
                                                         </div>
-
-
                                                         <style>
                                                             .radio-group {
                                                                 display: flex;
@@ -77,7 +77,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             }
 
                                                             .radio-group input[type="radio"] {
-                                                                margin-right: 20px;
+                                                                margin-right: 15px;
+                                                                margin-top: -7px;
                                                             }
 
                                                             #MemberNo {
@@ -90,70 +91,65 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
 
                                                         <div id="show-me" class="form-group col-lg-12 col-md-3 col-12">
-                                                            <form action="#" method="post" novalidate="novalidate">
-                                                                <div class="row">
-                                                                    <?php
-                                                                    require_once 'connect.php';
-                                                                    $teacherId = $_SESSION['id'];
-                                                                    $sql = "SELECT DISTINCT courses, course_name FROM ck_checking WHERE teacher_id = :teacherId";
-                                                                    $stmt = $conn->prepare($sql);
-                                                                    $stmt->bindParam(':teacherId', $teacherId);
-                                                                    $stmt->execute();
-                                                                    $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                                            <div class="row">
+                                                                <?php
+                                                                require_once 'connect.php';
+                                                                $teacherId = $_SESSION['id'];
+                                                                $sql = "SELECT DISTINCT courses, course_name FROM ck_checking WHERE teacher_id = :teacherId";
+                                                                $stmt = $conn->prepare($sql);
+                                                                $stmt->bindParam(':teacherId', $teacherId);
+                                                                $stmt->execute();
+                                                                $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                                                                    echo '<div class="form-group col-12">';
-                                                                    echo '<label for="course" class="control-label mb-1">วิชา <span style="color:red;">*</span></label>';
-                                                                    echo '<select name="course" id="course" class="form-control">';
-                                                                    echo '<option value="" selected>แสดงทั้งหมด</option>';
+                                                                echo '<div class="form-group col-12">';
+                                                                echo '<label for="course" class="control-label mb-1">วิชา <span style="color:red;">*</span></label>';
+                                                                echo '<select name="course" id="course" class="form-control">';
+                                                                $selectedCourses = array();
 
-                                                                    $selectedCourses = array();
-
-                                                                    foreach ($checkings as $checking) {
-                                                                        $courseCode = $checking['courses'];
-                                                                        $courseName = $checking['course_name'];
-                                                                        if (!in_array($courseCode, $selectedCourses)) {
-                                                                            $selected = ($courseCode == $_POST['course']) ? 'selected' : '';
-                                                                            echo '<option value="' . $courseCode . '" ' . $selected . '>' . $courseName . '</option>';
-                                                                            $selectedCourses[] = $courseCode;
-                                                                        }
+                                                                foreach ($checkings as $checking) {
+                                                                    $courseCode = $checking['courses'];
+                                                                    $courseName = $checking['course_name'];
+                                                                    if (!in_array($courseCode, $selectedCourses)) {
+                                                                        $selected = ($courseCode == $_POST['course']) ? 'selected' : '';
+                                                                        echo '<option value="' . $courseCode . '" ' . $selected . '>' . $courseCode . ' ' . $courseName . '</option>';
+                                                                        $selectedCourses[] = $courseCode;
                                                                     }
-                                                                    echo '</select>';
-                                                                    echo '</div>';
+                                                                }
+                                                                echo '</select>';
+                                                                echo '</div>';
 
-                                                                    $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
+                                                                $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
 
-                                                                    $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
+                                                                $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
 
-                                                                    $startDateObj = new DateTime($startDate);
-                                                                    $endDateObj = new DateTime($endDate);
+                                                                $startDateObj = new DateTime($startDate);
+                                                                $endDateObj = new DateTime($endDate);
 
-                                                                    $startDateObj->modify('-1 day');
+                                                                $startDateObj->modify('-1 day');
 
-                                                                    $startDate = $startDateObj->format('Y-m-d');
-                                                                    $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
+                                                                $startDate = $startDateObj->format('Y-m-d');
+                                                                $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
 
-                                                                    echo '<div class="form-group col-lg-6 col-md-3 col-12">';
-                                                                    echo '<label for="startDate" class="control-label mb-1">วันที่เริ่มต้น <span style="color:red;">*</span></label>';
-                                                                    echo '<input type="date" name="startDate" id="startDate" class="form-control" value="' . $startDate . '">';
-                                                                    echo '</div>';
-                                                                    echo '<div class="form-group col-lg-6 col-md-3 col-12">';
-                                                                    echo '<label for="endDate" class="control-label mb-1">วันที่สิ้นสุด <span style="color:red;">*</span></label>';
-                                                                    echo '<input type="date" name="endDate" id="endDate" class="form-control" value="' . $endDate . '">';
-                                                                    echo '</div>';
-                                                                    ?>
-                                                                </div>
-                                                                <hr>
-                                                                <div class="col-lg-12">
-                                                                    <div class="row">
-                                                                        <div class="row" style="margin-left: 0px">
-                                                                            <button class="btn btn-success" id="exportBtn1">
-                                                                                <i class="menu-icon fa fa-file-pdf-o"></i><span> ส่งออก </span>
-                                                                            </button>
-                                                                        </div>
+                                                                echo '<div class="form-group col-lg-6 col-md-3 col-12">';
+                                                                echo '<label for="startDate" class="control-label mb-1">วันที่เริ่มต้น <span style="color:red;">*</span></label>';
+                                                                echo '<input type="date" name="startDate" id="startDate" class="form-control" value="' . $startDate . '">';
+                                                                echo '</div>';
+                                                                echo '<div class="form-group col-lg-6 col-md-3 col-12">';
+                                                                echo '<label for="endDate" class="control-label mb-1">วันที่สิ้นสุด <span style="color:red;">*</span></label>';
+                                                                echo '<input type="date" name="endDate" id="endDate" class="form-control" value="' . $endDate . '">';
+                                                                echo '</div>';
+                                                                ?>
+                                                            </div>
+                                                            <hr>
+                                                            <div class="col-lg-12">
+                                                                <div class="row">
+                                                                    <div class="row" style="margin-left: 0px">
+                                                                        <button class="btn btn-success" id="exportBtn1">
+                                                                            <i class="menu-icon fa fa-file-pdf-o"></i><span> ส่งออก </span>
+                                                                        </button>
                                                                     </div>
                                                                 </div>
-                                                            </form>
-
+                                                            </div>
                                                             <script>
                                                                 document.getElementById('exportBtn1').addEventListener('click', function() {
                                                                     var teacherId = <?php echo json_encode($_SESSION['id']); ?>;
@@ -168,83 +164,81 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         </div>
 
                                                         <div id="show-me-2" class="form-group col-lg-12 col-md-3 col-12">
-                                                            <form action="#" method="post" novalidate="novalidate">
+                                                            <div class="row">
+                                                                <?php
+                                                                require_once 'connect.php';
+                                                                $teacherId = $_SESSION['id'];
+                                                                $sql = "SELECT DISTINCT courses, course_name FROM ck_checking WHERE teacher_id = :teacherId";
+                                                                $stmt = $conn->prepare($sql);
+                                                                $stmt->bindParam(':teacherId', $teacherId);
+                                                                $stmt->execute();
+                                                                $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                                                echo '<div class="form-group col-12">';
+                                                                echo '<label for="course" class="control-label mb-1">วิชา <span style="color:red;">*</span></label>';
+                                                                echo '<select name="course" id="course" class="form-control">';
+                                                                $selectedCourses = array();
+                                                                $latestCourse = '';
+
+                                                                if (isset($_POST['course'])) {
+                                                                    $selectedCourse = $_POST['course'];
+                                                                }
+
+                                                                foreach ($checkings as $checking) {
+                                                                    $courseCode = $checking['courses'];
+                                                                    $courseName = $checking['course_name'];
+                                                                    if ($checking['teacher_id'] == $desiredTeacherId) {
+                                                                        $latestCourse = $courseCode;
+                                                                    }
+                                                                    $selected = ($courseCode == $selectedCourse) ? 'selected' : '';
+                                                                    if (!in_array($courseCode, $selectedCourses)) {
+                                                                        echo '<option value="' . $courseCode . '" ' . $selected . '>' . $courseCode . ' ' . $courseName . '</option>';
+                                                                        $selectedCourses[] = $courseCode;
+                                                                    }
+                                                                }
+
+                                                                echo '</select>';
+                                                                echo '</div>';
+
+                                                                $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
+
+                                                                $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
+
+                                                                $startDateObj = new DateTime($startDate);
+                                                                $endDateObj = new DateTime($endDate);
+
+                                                                $startDateObj->modify('-1 day');
+
+                                                                $startDate = $startDateObj->format('Y-m-d');
+
+                                                                $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
+
+                                                                echo '<div class="form-group col-lg-6 col-md-3 col-12">';
+                                                                echo '<label for="startDate" class="control-label mb-1">วันที่เริ่มต้น <span style="color:red;">*</span></label>';
+                                                                echo '<input type="date" name="startDate" id="startDate" class="form-control" value="' . $startDate . '">';
+                                                                echo '</div>';
+
+                                                                echo '<div class="form-group col-lg-6 col-md-3 col-12">';
+                                                                echo '<label for="endDate" class="control-label mb-1">วันที่สิ้นสุด <span style="color:red;">*</span></label>';
+                                                                echo '<input type="date" name="endDate" id="endDate" class="form-control" value="' . $endDate . '">';
+                                                                echo '</div>';
+
+                                                                echo '<div class="form-group col-lg-12 col-md-3 col-12">';
+                                                                echo '<label for="studentCode" class="control-label mb-1">รหัสนักเรียน <span style="color:red;">*</span></label>';
+                                                                echo '<input type="text" required name="studentCode" id="studentCode" class="form-control" value="' . $studentCode . '">';
+                                                                echo '</div>';
+                                                                ?>
+                                                            </div>
+                                                            <hr>
+                                                            <div class="col-lg-12">
                                                                 <div class="row">
-                                                                    <?php
-                                                                    require_once 'connect.php';
-                                                                    $teacherId = $_SESSION['id'];
-                                                                    $sql = "SELECT DISTINCT courses, course_name FROM ck_checking WHERE teacher_id = :teacherId";
-                                                                    $stmt = $conn->prepare($sql);
-                                                                    $stmt->bindParam(':teacherId', $teacherId);
-                                                                    $stmt->execute();
-                                                                    $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                                                                    echo '<div class="form-group col-12">';
-                                                                    echo '<label for="course" class="control-label mb-1">วิชา <span style="color:red;">*</span></label>';
-                                                                    echo '<select name="course" id="course" class="form-control">';
-                                                                    $selectedCourses = array();
-                                                                    $latestCourse = '';
-
-                                                                    if (isset($_POST['course'])) {
-                                                                        $selectedCourse = $_POST['course'];
-                                                                    }
-
-                                                                    foreach ($checkings as $checking) {
-                                                                        $courseCode = $checking['courses'];
-                                                                        $courseName = $checking['course_name'];
-                                                                        if ($checking['teacher_id'] == $desiredTeacherId) {
-                                                                            $latestCourse = $courseCode;
-                                                                        }
-                                                                        $selected = ($courseCode == $selectedCourse) ? 'selected' : '';
-                                                                        if (!in_array($courseCode, $selectedCourses)) {
-                                                                            echo '<option value="' . $courseCode . '" ' . $selected . '>' . $courseName . '</option>';
-                                                                            $selectedCourses[] = $courseCode;
-                                                                        }
-                                                                    }
-
-                                                                    echo '</select>';
-                                                                    echo '</div>';
-
-                                                                    $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
-
-                                                                    $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
-
-                                                                    $startDateObj = new DateTime($startDate);
-                                                                    $endDateObj = new DateTime($endDate);
-
-                                                                    $startDateObj->modify('-1 day');
-
-                                                                    $startDate = $startDateObj->format('Y-m-d');
-
-                                                                    $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
-
-                                                                    echo '<div class="form-group col-lg-6 col-md-3 col-12">';
-                                                                    echo '<label for="startDate" class="control-label mb-1">วันที่เริ่มต้น <span style="color:red;">*</span></label>';
-                                                                    echo '<input type="date" name="startDate" id="startDate" class="form-control" value="' . $startDate . '">';
-                                                                    echo '</div>';
-
-                                                                    echo '<div class="form-group col-lg-6 col-md-3 col-12">';
-                                                                    echo '<label for="endDate" class="control-label mb-1">วันที่สิ้นสุด <span style="color:red;">*</span></label>';
-                                                                    echo '<input type="date" name="endDate" id="endDate" class="form-control" value="' . $endDate . '">';
-                                                                    echo '</div>';
-
-                                                                    echo '<div class="form-group col-lg-12 col-md-3 col-12">';
-                                                                    echo '<label for="studentCode" class="control-label mb-1">รหัสนักเรียน <span style="color:red;">*</span></label>';
-                                                                    echo '<input type="text" required name="studentCode" id="studentCode" class="form-control" value="' . $studentCode . '">';
-                                                                    echo '</div>';
-                                                                    ?>
-                                                                </div>
-                                                                <hr>
-                                                                <div class="col-lg-12">
-                                                                    <div class="row">
-                                                                        <div class="row" style="margin-left: 0px">
-                                                                            <button class="btn btn-success" id="exportBtn2">
-                                                                                <i class="menu-icon fa fa-file-pdf-o"></i><span> ส่งออก </span>
-                                                                            </button>
-                                                                        </div>
+                                                                    <div class="row" style="margin-left: 0px">
+                                                                        <button class="btn btn-success" id="exportBtn2">
+                                                                            <i class="menu-icon fa fa-file-pdf-o"></i><span> ส่งออก </span>
+                                                                        </button>
                                                                     </div>
                                                                 </div>
-                                                            </form>
+                                                            </div>
                                                             <script>
                                                                 document.getElementById('exportBtn2').addEventListener('click', function() {
                                                                     var teacherId = <?php echo $_SESSION['id']; ?>;
@@ -254,7 +248,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                     var studentCode = document.querySelector('#show-me-2 input[name="studentCode"]').value;
                                                                     if (studentCode.trim() === '') {
                                                                         alert('กรุณาระบุรหัสประจำตัวนักเรียน');
-                                                                        window.location.reload(); // รีโหลดหน้าเว็บใหม่
+                                                                        window.location.reload();
                                                                     }
                                                                     var url = `reportpdf2.php?teacherId=${teacherId}&course=${course}&startDate=${startDate}&endDate=${endDate}&studentCode=${studentCode}`;
                                                                     url += `&timestamp=${Date.now()}`;
