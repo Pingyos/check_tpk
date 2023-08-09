@@ -5,7 +5,7 @@ $selectedCourse = isset($_GET['course']) ? $_GET['course'] : '';
 $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : date('Y-m-d');
 $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : date('Y-m-d');
 $studentCode = isset($_GET['studentCode']) ? $_GET['studentCode'] : '';
-$cause = isset($_GET['cause']) ? $_GET['cause'] : '';
+$cause = isset($_GET['cause']) ? $_GET['cause'] : 'ขาดเรียน';
 
 require_once 'connect.php';
 

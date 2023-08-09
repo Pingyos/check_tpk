@@ -150,103 +150,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                 echo '<label for="endDate" class="control-label mb-1">วันที่สิ้นสุด <span style="color:red;">*</span></label>';
                                                                 echo '<input type="date" name="endDate" id="endDate" class="form-control" value="' . $endDate . '">';
                                                                 echo '</div>';
-
-                                                                if (isset($_POST['course']) || isset($_POST['startDate']) || isset($_POST['endDate']) || isset($_POST['studentCode'])) {
-                                                                    $selectedCourse = $_POST['course'];
-                                                                    $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
-                                                                    $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
-                                                                    $cause = 'ขาดเรียน';
-
-                                                                    require_once 'connect.php';
-
-                                                                    $sql = "SELECT c.*, s.tb_student_tname, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
-                                                                            JOIN ck_students s ON c.absent = s.tb_student_code
-                                                                            WHERE 1=1";
-
-
-                                                                    if ($selectedCourse) {
-                                                                        $sql .= " AND c.courses = :courseCode";
-                                                                    }
-
-                                                                    if ($startDate && $endDate) {
-                                                                        $sql .= " AND DATE(c.time) BETWEEN :startDate AND :endDate";
-                                                                    }
-
-                                                                    if ($cause) {
-                                                                        $sql .= " AND c.cause = :cause";
-                                                                    }
-
-                                                                    $stmt = $conn->prepare($sql);
-
-
-                                                                    if ($selectedCourse) {
-                                                                        $stmt->bindParam(':courseCode', $selectedCourse);
-                                                                    }
-
-                                                                    if ($startDate && $endDate) {
-                                                                        $stmt->bindParam(':startDate', $startDate);
-                                                                        $stmt->bindParam(':endDate', $endDate);
-                                                                    }
-                                                                    if ($cause) {
-                                                                        $stmt->bindParam(':cause', $cause);
-                                                                    }
-
-                                                                    $stmt->execute();
-                                                                    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                                                    if (count($students) > 0) {
-                                                                        echo '<table id="bootstrap-data-table-report" class="table table-striped table-bordered">';
-                                                                        echo '<thead><tr>
-                                                                            <th>รหัสนักเรียน</th>
-                                                                            <th>ชื่อ-สกุล</th>
-                                                                            <th>สาเหตุ</th>
-                                                                            <th>ระดับชั้น</th>
-                                                                            <th>วิชา</th>
-                                                                            <th>คาบเรียนที่/วันที่</th>
-                                                                            </tr></thead>';
-                                                                        echo '<tbody>';
-
-                                                                        foreach ($students as $student) {
-                                                                            echo '<tr>';
-                                                                            echo '<td>' . $student['absent'] . '</td>';
-                                                                            echo '<td>' . $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] . '</td>';
-                                                                            echo '<td>' . $student['cause'] . '  ' . ($student['custom_cause'] ? '* ' . $student['custom_cause'] : '') . '</td>';
-                                                                            echo '<td>';
-
-                                                                            $level = $student['rooms'];
-                                                                            $class = ($level - 1) % 3 + 1;
-                                                                            $year = floor(($level - 1) / 3) + 1;
-                                                                            echo 'ม.' . $year . '/' . $class;
-
-                                                                            echo '</td>';
-                                                                            echo '<td>' . $student['courses'] . ' - ' . $student['course_name'] . '</td>';
-                                                                            echo '<td>' . $student['period'] . ' / ' . $student['time'] . '</td>';
-                                                                            echo '</tr>';
-                                                                        }
-
-                                                                        echo '</tbody>';
-                                                                        echo '</table>';
-                                                                    } else {
-                                                                        echo 'ไม่มีข้อมูลนักเรียนที่ขาด.';
-                                                                    }
-                                                                }
                                                                 ?>
                                                             </div>
                                                             <hr>
                                                             <div class="col-lg-12">
-                                                                <div class="row">
-                                                                    <div class="row" style="margin-left: 0px">
-                                                                        <button type="submit" class="btn btn-info">
-                                                                            <span><i class="menu-icon fa fa-search"></i> แสดงรายชื่อ</span>
-                                                                        </button>
-                                                                        &nbsp;
-                                                                        <a target="_blank" href="exportpdf1.php?course=<?php echo isset($selectedCourse) ? $selectedCourse : ''; ?>&startDate=<?php echo isset($startDate) ? $startDate : ''; ?>&endDate=<?php echo isset($endDate) ? $endDate : ''; ?>&cause=<?php echo isset($cause) ? $cause : ''; ?>" class="btn btn-success" target="_blank" name="exportToPdf">
-                                                                            <i class="menu-icon fa fa-file-pdf-o"></i><span> ส่งออก </span>
-                                                                        </a>
-
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- <div class="col-lg-12">
                                                                 <div class="row">
                                                                     <div class="row" style="margin-left: 0px">
                                                                         <button class="btn btn-success" id="exportBtn1">
@@ -264,7 +171,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                     url += `&timestamp=${Date.now()}`;
                                                                     window.open(url, '_blank');
                                                                 });
-                                                            </script> -->
+                                                            </script>
                                                         </div>
 
                                                         <div id="show-me-2" class="form-group col-lg-12 col-md-3 col-12">
