@@ -99,21 +99,15 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                         if ($stmt->rowCount() > 0) {
                                             $row = $stmt->fetch(PDO::FETCH_ASSOC);
                                             $rooms = $row['rooms'];
-
-                                            // เรียกใช้งานตัวแปร $stmt2 ในการเรียกข้อมูลนักเรียนจากตาราง ck_students
                                             $stmt2 = $conn->prepare("SELECT *
-                                                                    FROM ck_students
-                                                                    WHERE tb_student_degree = :rooms
-                                                                    ORDER BY 
-                                                                        CASE 
-                                                                            WHEN tb_student_degree <= 9 THEN 0
-                                                                            ELSE 1
-                                                                        END ASC,
-                                                                        CASE 
-                                                                            WHEN tb_student_degree <= 9 THEN tb_student_tname
-                                                                            ELSE tb_student_code
-                                                                        END ASC;
-                                                                    ");
+                                            FROM ck_students
+                                            WHERE tb_student_degree = :rooms
+                                            ORDER BY 
+                                                CASE 
+                                                    WHEN tb_student_sex = 1 THEN 0
+                                                    WHEN tb_student_sex = 2 THEN 1
+                                                    ELSE 2
+                                                END ASC;");
                                             $stmt2->bindParam(':rooms', $rooms, PDO::PARAM_INT);
                                             $stmt2->execute();
 
@@ -174,6 +168,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                         inputText.value = '';
                                                                     }
                                                                 }
+
                                                                 function handleCauseSelect(selectCause, index) {
                                                                     var inputText = selectCause.nextElementSibling;
                                                                     if (selectCause.value === 'อื่นๆ') {
