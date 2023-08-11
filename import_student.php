@@ -64,7 +64,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             </div>
                                             <div class="form-group col-lg-6 col-md-3 col-12">
                                                 <button name="import" type="submit" class="btn btn-success">
-                                                <i class="fa fa-upload"></i> <span>อัปโหลด</span>
+                                                    <i class="fa fa-upload"></i> <span>อัปโหลด</span>
                                                 </button>
                                             </div>
                                         </form>
@@ -90,10 +90,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $tb_student_id = $row[0];
                                                 $tb_student_code = $row[1];
                                                 $tb_student_tname = $row[2];
-                                                $tb_student_name = $row[3];
-                                                $tb_student_sname = $row[4];
-                                                $tb_student_degree = $row[5];
-                                                mysqli_query($conn, "INSERT INTO ck_students VALUES('$tb_student_id','$tb_student_code', '$tb_student_tname','$tb_student_name', '$tb_student_sname', '$tb_student_degree')");
+                                                $tb_student_sex = $row[3];
+                                                $tb_student_name = $row[4];
+                                                $tb_student_sname = $row[5];
+                                                $tb_student_degree = $row[6];
+                                                mysqli_query($conn, "INSERT INTO ck_students VALUES('$tb_student_id','$tb_student_code', '$tb_student_tname', '$tb_student_sex','$tb_student_name', '$tb_student_sname', '$tb_student_degree')");
                                             }
                                             echo '<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>';
                                             echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>';
@@ -156,60 +157,44 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <td> <?php echo $t1["tb_student_code"]; ?> </td>
                                                         <td> <?php echo $t1["tb_student_tname"]; ?> <?php echo $t1["tb_student_name"]; ?> <?php echo $t1["tb_student_sname"]; ?></td>
                                                         <td> <?php
-                                                                if( $t1["tb_student_degree"] == 1) {
-                                                                    echo "ม. 1/1"; 
-                                                                } else if( $t1["tb_student_degree"] == 2) { 
-                                                                    echo "ม. 1/2"; 
+                                                                if ($t1["tb_student_degree"] == 1) {
+                                                                    echo "ม. 1/1";
+                                                                } else if ($t1["tb_student_degree"] == 2) {
+                                                                    echo "ม. 1/2";
+                                                                } else if ($t1["tb_student_degree"] == 3) {
+                                                                    echo "ม. 1/3";
+                                                                } else if ($t1["tb_student_degree"] == 4) {
+                                                                    echo "ม. 2/1";
+                                                                } else if ($t1["tb_student_degree"] == 5) {
+                                                                    echo "ม. 2/2";
+                                                                } else if ($t1["tb_student_degree"] == 6) {
+                                                                    echo "ม. 2/3";
+                                                                } else if ($t1["tb_student_degree"] == 7) {
+                                                                    echo "ม. 3/1";
+                                                                } else if ($t1["tb_student_degree"] == 8) {
+                                                                    echo "ม. 3/2";
+                                                                } else if ($t1["tb_student_degree"] == 9) {
+                                                                    echo "ม. 3/3";
+                                                                } else if ($t1["tb_student_degree"] == 10) {
+                                                                    echo "ม. 4/1";
+                                                                } else if ($t1["tb_student_degree"] == 11) {
+                                                                    echo "ม. 4/2";
+                                                                } else if ($t1["tb_student_degree"] == 12) {
+                                                                    echo "ม. 4/3";
+                                                                } else if ($t1["tb_student_degree"] == 13) {
+                                                                    echo "ม. 5/1";
+                                                                } else if ($t1["tb_student_degree"] == 14) {
+                                                                    echo "ม. 5/2";
+                                                                } else if ($t1["tb_student_degree"] == 15) {
+                                                                    echo "ม. 5/3";
+                                                                } else if ($t1["tb_student_degree"] == 16) {
+                                                                    echo "ม. 6/1";
+                                                                } else if ($t1["tb_student_degree"] == 17) {
+                                                                    echo "ม. 6/2";
+                                                                } else {
+                                                                    echo "ม. 6/3";
                                                                 }
-                                                                else if( $t1["tb_student_degree"] == 3) { 
-                                                                    echo "ม. 1/3"; 
-                                                                }
-                                                                else if( $t1["tb_student_degree"] == 4) { 
-                                                                    echo "ม. 2/1"; 
-                                                                }
-                                                                else if( $t1["tb_student_degree"] == 5) { 
-                                                                    echo "ม. 2/2"; 
-                                                                }
-                                                                else if( $t1["tb_student_degree"] == 6) { 
-                                                                    echo "ม. 2/3"; 
-                                                                }
-                                                                else if( $t1["tb_student_degree"] == 7) { 
-                                                                    echo "ม. 3/1"; 
-                                                                }
-                                                                else if( $t1["tb_student_degree"] == 8) { 
-                                                                    echo "ม. 3/2"; 
-                                                                }
-                                                                else if( $t1["tb_student_degree"] == 9) { 
-                                                                    echo "ม. 3/3"; 
-                                                                }
-                                                                else if( $t1["tb_student_degree"] == 10) { 
-                                                                    echo "ม. 4/1"; 
-                                                                }
-                                                                else if( $t1["tb_student_degree"] == 11) {
-                                                                    echo "ม. 4/2"; 
-                                                                 }
-                                                                else if( $t1["tb_student_degree"] == 12) { 
-                                                                    echo "ม. 4/3"; 
-                                                                }
-                                                                else if( $t1["tb_student_degree"] == 13) {
-                                                                    echo "ม. 5/1"; 
-                                                                 }
-                                                                else if( $t1["tb_student_degree"] == 14) {
-                                                                    echo "ม. 5/2"; 
-                                                                 }
-                                                                else if( $t1["tb_student_degree"] == 15) { 
-                                                                    echo "ม. 5/3"; 
-                                                                }
-                                                                else if( $t1["tb_student_degree"] == 16) { 
-                                                                    echo "ม. 6/1"; 
-                                                                }
-                                                                else if( $t1["tb_student_degree"] == 17) { 
-                                                                    echo "ม. 6/2"; 
-                                                                }
-                                                                else {
-                                                                    echo "ม. 6/3"; 
-                                                                }
-                                                        ?> </td>
+                                                                ?> </td>
                                                         <td> <a href="del_student.php?tb_student_id=<?= $t1['tb_student_id']; ?>" class="btn btn-danger"><i class="fa fa-trash-o"></i> ลบ</a>
                                                         </td>
                                                     </tr>
@@ -249,6 +234,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                         <div class="form-group col-lg-6 col-md-3 col-12">
                                             <label for="tb_student_sname" class="control-label mb-1">สกุล</label>
                                             <input type="text" name="tb_student_sname" id="tb_student_sname" class="form-control" required>
+                                        </div>
+                                        <div class="form-group col-lg-6 col-md-3 col-12">
+                                            <label for="tb_student_sex" class="control-label mb-1">เพศ</label>
+                                            <input type="text" name="tb_student_sex" id="tb_student_sex" class="form-control" required>
                                         </div>
                                         <div class="form-group col-lg-12 col-md-3 col-12">
                                             <label for="tb_student_degree" class="control-label mb-1">ระดับชั้น</label>
