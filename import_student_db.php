@@ -17,7 +17,7 @@ if (
     $tb_student_degree = $_POST['tb_student_degree'];
 
     $stmt = $conn->prepare("INSERT INTO ck_students (`tb_student_code`, `tb_student_tname`, `tb_student_sex`, `tb_student_name`, `tb_student_sname`,`tb_student_degree`)
-                            VALUES (:tb_student_code, :tb_student_name, :tb_student_tname, :tb_student_sname, :tb_student_degree)");
+                            VALUES (:tb_student_code, :tb_student_name, :tb_student_tname, :tb_student_sex, :tb_student_sname, :tb_student_degree)");
     $stmt->bindParam(':tb_student_code', $tb_student_code, PDO::PARAM_STR);
     $stmt->bindParam(':tb_student_name', $tb_student_name, PDO::PARAM_STR);
     $stmt->bindParam(':tb_student_tname', $tb_student_tname, PDO::PARAM_STR);

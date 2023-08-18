@@ -235,11 +235,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             <label for="tb_student_sname" class="control-label mb-1">สกุล</label>
                                             <input type="text" name="tb_student_sname" id="tb_student_sname" class="form-control" required>
                                         </div>
+
                                         <div class="form-group col-lg-6 col-md-3 col-12">
-                                            <label for="tb_student_sex" class="control-label mb-1">เพศ</label>
-                                            <input type="text" name="tb_student_sex" id="tb_student_sex" class="form-control" required>
-                                        </div>
-                                        <div class="form-group col-lg-12 col-md-3 col-12">
                                             <label for="tb_student_degree" class="control-label mb-1">ระดับชั้น</label>
                                             <select name="tb_student_degree" id="tb_student_degree" class="form-control" required>
                                                 <option value="0">กรุณาเลือกระดับชั้น</option>
@@ -261,6 +258,15 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 <option value="16">ม.6/1</option>
                                                 <option value="17">ม.6/2</option>
                                                 <option value="18">ม.6/3</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group col-lg-6 col-md-3 col-12">
+                                            <label for="tb_student_sex" class="control-label mb-1">เพศ</label>
+                                            <select name="tb_student_sex" id="tb_student_sex" class="form-control" required>
+                                                <option value="0">กรุณาระบุเพศ</option>
+                                                <option value="1">ชาย</option>
+                                                <option value="2">หญิง</option>
                                             </select>
                                         </div>
                                     </div>
