@@ -10,8 +10,14 @@
                     <li>
                         <a href="export_date.php"><i class="menu-icon fa fa-save (alias)"></i>แสดงรายชื่อ</a>
                     </li>
-                    <li>
-                        <a href="radioexport.php"><i class="menu-icon fa fa-share"></i>พิมพ์รายงาน</a>
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-bar-chart"></i>พิมพ์รายงาน</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="menu-icon fa fa-line-chart"></i> <a href="new_report1.php"> รายงานการขาดเรียน</a></li>
+                            <li><i class="menu-icon fa fa-area-chart"></i> <a href="charts-flot.html"> รายงานการหนีเรียน</a></li>
+                            <li><i class="menu-icon fa fa-pie-chart"></i> <a href="charts-peity.html"> การขาดเรียนแบบ รายบุคคล</a></li>
+                            <li><i class="menu-icon fa fa-pie-chart"></i> <a href="charts-peity.html"> การขาดเรียน สำหรับครูประจำชั้น</a></li>
+                        </ul>
                     </li>
                     <li>
                         <a href="import_users.php"><i class="menu-icon fa fa-upload"></i>เพิ่มครู</a>

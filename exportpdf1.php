@@ -1,57 +1,25 @@
 <?php
 require('fpdf186/fpdf.php');
+require_once 'connect.php'; // Connect to the database only once
 
-$selectedCourse = isset($_GET['course']) ? $_GET['course'] : '';
 $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : date('Y-m-d');
 $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : date('Y-m-d');
-$studentCode = isset($_GET['studentCode']) ? $_GET['studentCode'] : '';
-$cause = isset($_GET['cause']) ? $_GET['cause'] : 'ขาดเรียน';
 
-require_once 'connect.php';
-
-$sql = "SELECT c.*, s.tb_student_tname, s.tb_student_name, s.tb_student_sname FROM ck_checking c 
-JOIN ck_students s ON c.absent = s.tb_student_code
-WHERE 1=1";
-
-if ($selectedCourse) {
-    $sql .= " AND c.courses = :courseCode";
-}
+$sql = "SELECT COUNT(id),absent FROM `ck_checking` GROUP BY absent ORDER BY absent ASC";
 
 if ($startDate && $endDate) {
     $sql .= " AND DATE(c.time) BETWEEN :startDate AND :endDate";
 }
 
-if ($studentCode) {
-    $sql .= " AND c.absent = :studentCode";
-}
-
-if ($cause) {
-    $sql .= " AND c.cause = :cause";
-}
-
-// คริวรีข้อมูลด้วยคำสั่ง SQL
 $stmt = $conn->prepare($sql);
 
-if ($selectedCourse) {
-    $stmt->bindParam(':courseCode', $selectedCourse);
-}
 
 if ($startDate && $endDate) {
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
 }
-
-if ($studentCode) {
-    $stmt->bindParam(':studentCode', $studentCode);
-}
-
-if ($cause) {
-    $stmt->bindParam(':cause', $cause);
-}
-
 $stmt->execute();
 $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 
 ob_start();
 // สร้าง PDF
@@ -131,6 +99,7 @@ if (count($students) > 0) {
     $counter = 1;
     foreach ($students as $student) {
         $roomNumber = is_numeric($student['rooms']) ? $student['rooms'] : 0;
+        $studentCode = $student['absent'];
 
         switch ($roomNumber) {
             case 1:
@@ -196,9 +165,6 @@ if (count($students) > 0) {
         $pdf->Cell(30, 10, iconv('utf-8', 'cp874', $student['absent']), 1, 0, 'C');
         $pdf->Cell(80, 10, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
         $pdf->Cell(25, 10, iconv('utf-8', 'cp874', $roomDisplay), 1, 0, 'C');
-        $periodNumbers = explode(',', $student['period']);
-        $numberCount = count($periodNumbers);
-        $totalNumberCount += $numberCount;
         $pdf->Cell(30, 10, iconv('utf-8', 'cp874', $numberCount), 1, 1, 'C');
         $counter++;
     }
