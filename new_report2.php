@@ -51,7 +51,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                 <div id="pay-invoice">
                                     <div class="card-body">
                                         <div class="card-title">
-                                            <h3 class="text-center">รายงานการขาดเรียน</h3>
+                                            <h3 class="text-center">รายงานการหนีเรียน</h3>
                                         </div>
                                         <hr>
                                         <form method="post" novalidate="novalidate">
@@ -64,7 +64,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
                                                 $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
-                                                $cause = isset($_POST['cause']) ? $_POST['cause'] : 'ขาดเรียน';
+                                                $cause = isset($_POST['cause']) ? $_POST['cause'] : 'หนีเรียน';
                                                 $startDateObj = new DateTime($startDate);
                                                 $endDateObj = new DateTime($endDate);
                                                 $startDate = $startDateObj->format('Y-m-d');
@@ -92,7 +92,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                 alert('Please select both start and end dates.');
                                                                 return;
                                                             }
-                                                            var url = `exportpdf1.php?startDate=${startDate}&endDate=${endDate}`;
+                                                            var url = `exportpdf2.php?startDate=${startDate}&endDate=${endDate}`;
                                                             url += `&timestamp=${Date.now()}`;
                                                             window.open(url, '_blank');
                                                         });
