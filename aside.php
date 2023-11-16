@@ -7,16 +7,16 @@
                     <li>
                         <a href="mainadmin.php"><i class="menu-icon fa fa-user"></i>หน้าหลักแอดมิน</a>
                     </li>
-                    <li>
+                    <!-- <li>
                         <a href="export_date.php"><i class="menu-icon fa fa-save (alias)"></i>แสดงรายชื่อ</a>
-                    </li>
+                    </li> -->
                     <li class="menu-item-has-children dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-bar-chart"></i>พิมพ์รายงาน</a>
                         <ul class="sub-menu children dropdown-menu">
-                            <li><i class="menu-icon fa fa-line-chart"></i> <a href="new_report1.php"> รายงานการขาดเรียน</a></li>
-                            <li><i class="menu-icon fa fa-area-chart"></i> <a href="new_report2.php"> รายงานการหนีเรียน</a></li>
-                            <li><i class="menu-icon fa fa-pie-chart"></i>  <a href="new_report3.php"> การขาดเรียนแบบ รายบุคคล</a></li>
-                            <li><i class="menu-icon fa fa-pie-chart"></i> <a href="charts-peity.html"> การขาดเรียน สำหรับครูประจำชั้น</a></li>
+                            <li> <a href="new_report1.php"> รายงานการขาดเรียน</a></li>
+                            <li> <a href="new_report2.php"> รายงานการหนีเรียน</a></li>
+                            <li> <a href="new_report3.php"> รายงานแบบรายบุคคล</a></li>
+                            <li> <a href="new_report4.php"> รายงานสำหรับครูประจำชั้น</a></li>
                         </ul>
                     </li>
                     <li>
@@ -33,12 +33,13 @@
                     <li class="active">
                         <a href="index.php"><i class="menu-icon fa fa-pencil"></i>เช็คชื่อ </a>
                     </li>
-                    <!-- <li>
-                        <a href="add_student.php"> <i class="menu-icon fa fa-cloud-download"></i>ลงทะเบียนวิชา </a>
-                    </li> -->
-                    <!-- <li>
-                        <a href="main.php"> <i class="menu-icon fa fa-pencil"></i>เช็คชื่อ </a>
-                    </li> -->
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-bar-chart"></i>พิมพ์รายงาน</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li> <a href="teacher_report_1.php"> พิมพ์รายงานการขาดเรียนรายวิชา</a></li>
+                            <li> <a href="teacher_report_2.php"> พิมพ์รายงานการขาดเรียนรายบุคคล</a></li>
+                        </ul>
+                    </li>
                     <li>
                         <a href="report.php"> <i class="menu-icon fa fa-paste (alias)"></i>แสดงรายชื่อ </a>
                     </li>

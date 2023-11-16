@@ -4,18 +4,13 @@ require('fpdf186/fpdf.php');
 $selectedCourse = isset($_GET['course']) ? $_GET['course'] : '';
 $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : date('Y-m-d');
 $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : date('Y-m-d');
-$studentCode = isset($_GET['studentCode']) ? $_GET['studentCode'] : '';
 $cause = isset($_GET['cause']) ? $_GET['cause'] : 'ขาดเรียน';
 
 require_once 'connect.php';
-
-$sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname, s.tb_student_sex, s.tb_student_degree, c.absent, COUNT(c.absent) as count 
+$sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname,s.tb_student_sex,s.tb_student_degree, c.absent, COUNT(c.absent) as count 
 FROM ck_checking c
 JOIN ck_students s ON c.absent = s.tb_student_code
-WHERE c.cause = 'ขาดเรียน'
-GROUP BY c.absent
-ORDER BY s.tb_student_degree ASC, s.tb_student_sex ASC;
- ";
+WHERE 1=1 ";
 
 if ($selectedCourse) {
     $sql .= " AND c.courses = :courseCode";
@@ -25,15 +20,14 @@ if ($startDate && $endDate) {
     $sql .= " AND DATE(c.time) BETWEEN :startDate AND :endDate";
 }
 
-if ($studentCode) {
-    $sql .= " AND c.absent = :studentCode";
-}
-
 if ($cause) {
     $sql .= " AND c.cause = :cause";
 }
 
-$sql .= " GROUP BY c.absent ORDER BY s.tb_student_degree ASC, s.tb_student_sex ASC";
+$sql .= " GROUP BY c.absent ORDER BY 
+          s.tb_student_degree ASC, 
+          s.tb_student_sex ASC, 
+          c.absent ASC";
 
 $stmt = $conn->prepare($sql);
 
@@ -44,10 +38,6 @@ if ($selectedCourse) {
 if ($startDate && $endDate) {
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
-}
-
-if ($studentCode) {
-    $stmt->bindParam(':studentCode', $studentCode);
 }
 
 if ($cause) {
@@ -93,13 +83,12 @@ if (count($students) > 0) {
         $sqlStudent = "SELECT tb_student_tname, tb_student_name, tb_student_sname, tb_student_degree 
                        FROM ck_students 
                        WHERE tb_student_code = :studentCode
-                       ORDER BY tb_student_sex ASC";  // เพิ่ม ORDER BY ที่นี่
+                       ORDER BY tb_student_sex ASC";
         $stmtStudent = $conn->prepare($sqlStudent);
         $stmtStudent->bindParam(':studentCode', $studentCode);
         $stmtStudent->execute();
         $studentData = $stmtStudent->fetch(PDO::FETCH_ASSOC);
     }
-
     function formatDateThai($date)
     {
         $dateTime = new DateTime($date);
@@ -118,30 +107,80 @@ if (count($students) > 0) {
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
 
     $pdf->SetFont('THSarabunBoldPSK', '', 16);
-    $pdf->Cell(15, 10, iconv('utf-8', 'cp874', 'ลำดับ'), 1, 0, 'C');
+    $pdf->Cell(10, 10, iconv('utf-8', 'cp874', 'ลำดับ'), 1, 0, 'C');
     $pdf->Cell(30, 10, iconv('utf-8', 'cp874', 'รหัสนักเรียน'), 1, 0, 'C');
     $pdf->Cell(100, 10, iconv('utf-8', 'cp874', 'ชื่อ-นามสกุล'), 1, 0, 'C');
     $pdf->Cell(25, 10, iconv('utf-8', 'cp874', 'ระดับชั้น'), 1, 0, 'C');
-    $pdf->Cell(20, 10, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 1, 'C');
+    $pdf->Cell(25, 10, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 1, 'C');
 
     $pdf->SetFont('THSarabunPSK', '', 16);
     $counter = 1;
-    $totalNumberCount = 0; // Initialize totalNumberCount
-    $processedStudents = array(); // Track processed students
+    $processedStudents = array();
+    $totalCount = 0;
+
+
     foreach ($students as $student) {
         if (!in_array($student['absent'], $processedStudents)) {
-            $processedStudents[] = $student['absent']; // Mark student as processed
-            $pdf->Cell(15, 10, iconv('utf-8', 'cp874', $counter), 1, 0, 'C');
+            $processedStudents[] = $student['absent'];
+            $pdf->Cell(10, 10, iconv('utf-8', 'cp874', $counter), 1, 0, 'C');
             $pdf->Cell(30, 10, iconv('utf-8', 'cp874', $student['absent']), 1, 0, 'C');
             $pdf->Cell(100, 10, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
             $pdf->Cell(25, 10, iconv('utf-8', 'cp874', $roomMapping[$student['tb_student_degree']]), 1, 0, 'C');
-            $pdf->Cell(20, 10, $student['count'], 1, 1, 'C');
+            $pdf->Cell(25, 10, $student['count'], 1, 1, 'C');
+            $totalCount += $student['count'];
+
             $counter++;
         }
     }
 } else {
     $pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ไม่มีข้อมูลนักเรียนที่ขาด'), 0, 1, 'C');
 }
+
+$pdf->Cell(165, 10, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
+$pdf->Cell(25, 10, iconv('utf-8', 'cp874', '' . ' ' . $totalCount), 1, 0, 'C');
+$pdf->Cell(0, 30, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
+
+$pdf->Cell(65, 7, iconv('utf-8', 'cp874', 'ลงชื่อ .................................................'), 0, 0, 'C');
+$pdf->Cell(65, 7, iconv('utf-8', 'cp874', 'ลงชื่อ .................................................'), 0, 0, 'C');
+$pdf->Cell(65, 7, iconv('utf-8', 'cp874', 'ลงชื่อ .................................................'), 0, 1, 'C');
+
+$id = 2001;
+$sql = "SELECT * FROM ck_users WHERE id = :id";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt->execute();
+$courseData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($courseData) {
+    $name = $courseData['name'];
+    $pdf->Cell(65, 7, iconv('utf-8', 'cp874', '(' . $name . ')'), 0, 0, 'C');
+}
+$id = 2002;
+$sql = "SELECT * FROM ck_users WHERE id = :id";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt->execute();
+$courseData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($courseData) {
+    $name = $courseData['name'];
+    $pdf->Cell(65, 7, iconv('utf-8', 'cp874', '(' . $name . ')'), 0, 0, 'C');
+}
+$id = 2003;
+$sql = "SELECT * FROM ck_users WHERE id = :id";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt->execute();
+$courseData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($courseData) {
+    $name = $courseData['name'];
+    $pdf->Cell(65, 7, iconv('utf-8', 'cp874', '(' . $name . ')'), 0, 1, 'C');
+}
+
+$pdf->Cell(65, 7, iconv('utf-8', 'cp874', 'ผู้ช่วยรองผู้อำนวยการฝ่ายวิชาการ'), 0, 0, 'C');
+$pdf->Cell(65, 7, iconv('utf-8', 'cp874', 'รองผู้อำนวยการโรงเรียนถ้ำปินวิทยาคม'), 0, 0, 'C');
+$pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'ผู้อำนวยการโรงเรียนถ้ำปินวิทยาคม'), 0, 1, 'C');
 ob_end_clean();
 $filename = "report_" . date('Y-m-d') . ".pdf";
 

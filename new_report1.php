@@ -88,20 +88,25 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         document.getElementById('export_data').addEventListener('click', function() {
                                                             var startDate = document.querySelector('#startDate').value;
                                                             var endDate = document.querySelector('#endDate').value;
+                                                            var cause = 'ขาดเรียน';
+
                                                             if (!startDate || !endDate) {
                                                                 alert('Please select both start and end dates.');
                                                                 return;
                                                             }
-                                                            var url = `exportpdf1.php?startDate=${startDate}&endDate=${endDate}`;
+
+                                                            var url = `exportpdf1.php?startDate=${startDate}&endDate=${endDate}&cause=${encodeURIComponent(cause)}`;
                                                             url += `&timestamp=${Date.now()}`;
                                                             window.open(url, '_blank');
                                                         });
                                                     </script>
+
                                                 </div>
                                                 <?php
                                                 if (isset($_POST['startDate']) || isset($_POST['endDate'])) {
                                                     $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
                                                     $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
+                                                    $cause = isset($_POST['cause']) ? $_POST['cause'] : 'ขาดเรียน';
                                                     require_once 'connect.php';
                                                     $sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname,s.tb_student_sex,s.tb_student_degree, c.absent, COUNT(c.absent) as count 
                                                     FROM ck_checking c
@@ -114,7 +119,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 
                                                     $sql .= " AND c.cause = :cause";  // Add this line to filter by cause
 
-                                                    $sql .= " GROUP BY c.absent ORDER BY s.tb_student_degree ASC, s.tb_student_sex ASC";
+                                                    $sql .= " GROUP BY c.absent ORDER BY 
+                                                    s.tb_student_degree ASC, 
+                                                    s.tb_student_sex ASC, 
+                                                    c.absent ASC";
+
 
                                                     $stmt = $conn->prepare($sql);
 

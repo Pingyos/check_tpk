@@ -51,7 +51,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                 <div id="pay-invoice">
                                     <div class="card-body">
                                         <div class="card-title">
-                                            <h3 class="text-center">รายงานการหนีเรียน</h3>
+                                            <h3 class="text-center">รายงานแบบ รายบุคคล</h3>
                                         </div>
                                         <hr>
                                         <form method="post" novalidate="novalidate">
@@ -64,22 +64,53 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
                                                 $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
-                                                $cause = isset($_POST['cause']) ? $_POST['cause'] : 'หนีเรียน';
+                                                $rooms = isset($_POST['rooms']) ? $_POST['rooms'] : ''; // แก้ตรงนี้
                                                 $startDateObj = new DateTime($startDate);
                                                 $endDateObj = new DateTime($endDate);
                                                 $startDate = $startDateObj->format('Y-m-d');
-                                                $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
                                                 ?>
                                                 <div class="form-group col-6">
                                                     <label for="startDate" class="control-label mb-1">วันที่เริ่มต้น</label>
                                                     <input type="date" name="startDate" id="startDate" class="form-control" value="<?= $startDate ?>">
                                                 </div>
-
                                                 <div class="form-group col-6">
                                                     <label for="endDate" class="control-label mb-1">วันที่สิ้นสุด</label>
                                                     <input type="date" name="endDate" id="endDate" class="form-control" value="<?= $endDate ?>">
                                                 </div>
-                                                <div class="form-group col-6">
+                                                <div class="form-group col-12">
+                                                    <label for="rooms" class="control-label mb-1">ระดับชั้น</label>
+                                                    <select name="rooms" id="rooms" class="form-control">
+                                                        <?php
+                                                        $roomMapping = [
+                                                            1 => 'ม.1/1',
+                                                            2 => 'ม.1/2',
+                                                            3 => 'ม.1/3',
+                                                            4 => 'ม.2/1',
+                                                            5 => 'ม.2/2',
+                                                            6 => 'ม.2/3',
+                                                            7 => 'ม.3/1',
+                                                            8 => 'ม.3/2',
+                                                            9 => 'ม.3/3',
+                                                            10 => 'ม.4/1',
+                                                            11 => 'ม.4/2',
+                                                            12 => 'ม.4/3',
+                                                            13 => 'ม.5/1',
+                                                            14 => 'ม.5/2',
+                                                            15 => 'ม.5/3',
+                                                            16 => 'ม.6/1',
+                                                            17 => 'ม.6/2',
+                                                            18 => 'ม.6/3',
+                                                        ];
+
+                                                        foreach ($roomMapping as $roomKey => $roomValue) {
+                                                            $selected = ($roomKey == $rooms) ? 'selected' : '';
+                                                            echo "<option value=\"$roomKey\" $selected>$roomValue</option>";
+                                                        }
+                                                        ?>
+                                                    </select>
+
+                                                </div>
+                                                <div class="form-group col-12">
                                                     <button type="submit" class="btn btn-info">
                                                         <span><i class="menu-icon fa fa-search"></i> แสดงรายชื่อ</span>
                                                     </button>
@@ -88,14 +119,18 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         document.getElementById('export_data').addEventListener('click', function() {
                                                             var startDate = document.querySelector('#startDate').value;
                                                             var endDate = document.querySelector('#endDate').value;
-                                                            var cause = 'หนีเรียน';
+                                                            var rooms = document.querySelector('#rooms').value.trim();
 
                                                             if (!startDate || !endDate) {
-                                                                alert('Please select both start and end dates.');
+                                                                alert('Please fill in both start and end dates.');
                                                                 return;
                                                             }
+                                                            var url = `exportpdf4.php?startDate=${startDate}&endDate=${endDate}`;
 
-                                                            var url = `exportpdf2.php?startDate=${startDate}&endDate=${endDate}&cause=${encodeURIComponent(cause)}`;
+                                                            if (rooms) {
+                                                                url += `&rooms=${encodeURIComponent(rooms)}`;
+                                                            }
+
                                                             url += `&timestamp=${Date.now()}`;
                                                             window.open(url, '_blank');
                                                         });
@@ -105,9 +140,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 if (isset($_POST['startDate']) || isset($_POST['endDate'])) {
                                                     $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
                                                     $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
-                                                    $cause = isset($_POST['cause']) ? $_POST['cause'] : 'หนีเรียน';
-                                                    require_once 'connect.php';
-                                                    $sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname,s.tb_student_sex,s.tb_student_degree, c.courses, c.course_name, c.absent, COUNT(c.absent) as count 
+                                                    $cause = isset($_POST['cause']) ? $_POST['cause'] : '';
+                                                    $absent = isset($_POST['absent']) ? $_POST['absent'] : '';
+
+                                                    $sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname, s.tb_student_sex, s.tb_student_degree, c.absent, c.courses,c.course_name, c.cause, COUNT(c.absent) as count 
                                                     FROM ck_checking c
                                                     JOIN ck_students s ON c.absent = s.tb_student_code
                                                     WHERE 1=1 ";
@@ -115,13 +151,14 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     if ($startDate && $endDate) {
                                                         $sql .= " AND DATE(c.time) BETWEEN :startDate AND :endDate";
                                                     }
-
-                                                    $sql .= " AND c.cause = :cause";  // Add this line to filter by cause
-
-                                                    $sql .= " GROUP BY c.absent ORDER BY 
+                                                    if (!empty($rooms)) {
+                                                        $sql .= " AND c.rooms = :rooms";
+                                                    }
+                                                    $sql .= " GROUP BY c.absent, c.courses, c.cause ORDER BY 
                                                     s.tb_student_degree ASC, 
                                                     s.tb_student_sex ASC, 
                                                     c.absent ASC";
+
                                                     $stmt = $conn->prepare($sql);
 
                                                     if ($startDate && $endDate) {
@@ -129,7 +166,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         $stmt->bindParam(':endDate', $endDate);
                                                     }
 
-                                                    $stmt->bindParam(':cause', $cause);  // Add this line to bind the cause parameter
+                                                    // Bind the cause parameter only if it's not empty
+                                                    if (!empty($rooms)) {
+                                                        $stmt->bindParam(':rooms', $rooms);
+                                                    }
+                                                    // Bind the absent parameter only if it's not empty
 
                                                     $stmt->execute();
                                                     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -154,7 +195,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         18 => 'ม.6/3',
                                                     ];
                                                 ?>
-
                                                     <table id="bootstrap-data-table" class="table table-striped table-bordered">
                                                         <thead>
                                                             <tr>
@@ -163,7 +203,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                 <th>ชื่อ-นามสกุล</th>
                                                                 <th>วิชา</th>
                                                                 <th>ระดับชั้น</th>
-                                                                <th>จำนวน</th>
+                                                                <th>จำนวนคาบ</th>
+                                                                <th>สาเหตุ</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -175,11 +216,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                     <td><?= $counter ?></td>
                                                                     <td><?= $student['absent'] ?></td>
                                                                     <td><?= $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] ?></td>
+                                                                    <td><?= $student['courses'] . ' - ' . $student['course_name'] ?></td>
                                                                     <td><?= $roomMapping[$student['tb_student_degree']] ?></td>
-                                                                    <td><?= $student['courses'] ?> - <?= $student['course_name'] ?></td>
                                                                     <td><?= $student['count'] ?></td>
+                                                                    <td><?= $student['cause'] ?></td>
                                                                 </tr>
-
                                                             <?php
                                                                 $counter++;
                                                             }
@@ -193,11 +234,9 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     $conn = null;
                                                 }
                                                 ?>
-
                                             </div>
                                             <hr>
                                         </form>
-
                                     </div>
                                 </div>
                             </div>

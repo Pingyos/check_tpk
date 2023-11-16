@@ -4,18 +4,14 @@ require('fpdf186/fpdf.php');
 $selectedCourse = isset($_GET['course']) ? $_GET['course'] : '';
 $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : date('Y-m-d');
 $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : date('Y-m-d');
-$studentCode = isset($_GET['studentCode']) ? $_GET['studentCode'] : '';
 $cause = isset($_GET['cause']) ? $_GET['cause'] : 'หนีเรียน';
 
 require_once 'connect.php';
 
-$sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname, s.tb_student_sex, s.tb_student_degree, c.absent, COUNT(c.absent) as count 
+$sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname,s.tb_student_sex,s.tb_student_degree, c.courses, c.course_name, c.absent, COUNT(c.absent) as count 
 FROM ck_checking c
 JOIN ck_students s ON c.absent = s.tb_student_code
-WHERE c.cause = 'หนีเรียน'
-GROUP BY c.absent
-ORDER BY s.tb_student_degree ASC, s.tb_student_sex ASC;
- ";
+WHERE 1=1 ";
 
 if ($selectedCourse) {
     $sql .= " AND c.courses = :courseCode";
@@ -25,15 +21,15 @@ if ($startDate && $endDate) {
     $sql .= " AND DATE(c.time) BETWEEN :startDate AND :endDate";
 }
 
-if ($studentCode) {
-    $sql .= " AND c.absent = :studentCode";
-}
 
 if ($cause) {
     $sql .= " AND c.cause = :cause";
 }
 
-$sql .= " GROUP BY c.absent ORDER BY s.tb_student_degree ASC, s.tb_student_sex ASC";
+$sql .= " GROUP BY c.absent ORDER BY 
+s.tb_student_degree ASC, 
+s.tb_student_sex ASC, 
+c.absent ASC";
 
 $stmt = $conn->prepare($sql);
 
@@ -46,9 +42,6 @@ if ($startDate && $endDate) {
     $stmt->bindParam(':endDate', $endDate);
 }
 
-if ($studentCode) {
-    $stmt->bindParam(':studentCode', $studentCode);
-}
 
 if ($cause) {
     $stmt->bindParam(':cause', $cause);
@@ -118,30 +111,33 @@ if (count($students) > 0) {
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
 
     $pdf->SetFont('THSarabunBoldPSK', '', 16);
-    $pdf->Cell(15, 10, iconv('utf-8', 'cp874', 'ลำดับ'), 1, 0, 'C');
-    $pdf->Cell(30, 10, iconv('utf-8', 'cp874', 'รหัสนักเรียน'), 1, 0, 'C');
-    $pdf->Cell(100, 10, iconv('utf-8', 'cp874', 'ชื่อ-นามสกุล'), 1, 0, 'C');
+    $pdf->Cell(10, 10, iconv('utf-8', 'cp874', 'ลำดับ'), 1, 0, 'C');
+    $pdf->Cell(60, 10, iconv('utf-8', 'cp874', 'ชื่อ-นามสกุล'), 1, 0, 'C');
     $pdf->Cell(25, 10, iconv('utf-8', 'cp874', 'ระดับชั้น'), 1, 0, 'C');
-    $pdf->Cell(20, 10, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 1, 'C');
+    $pdf->Cell(70, 10, iconv('utf-8', 'cp874', 'วิชา'), 1, 0, 'C');
+    $pdf->Cell(25, 10, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 1, 'C');
 
     $pdf->SetFont('THSarabunPSK', '', 16);
     $counter = 1;
-    $totalNumberCount = 0; // Initialize totalNumberCount
-    $processedStudents = array(); // Track processed students
+    $processedStudents = array();
+    $totalCount = 0;
     foreach ($students as $student) {
         if (!in_array($student['absent'], $processedStudents)) {
             $processedStudents[] = $student['absent']; // Mark student as processed
-            $pdf->Cell(15, 10, iconv('utf-8', 'cp874', $counter), 1, 0, 'C');
-            $pdf->Cell(30, 10, iconv('utf-8', 'cp874', $student['absent']), 1, 0, 'C');
-            $pdf->Cell(100, 10, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
+            $pdf->Cell(10, 10, iconv('utf-8', 'cp874', $counter), 1, 0, 'C');
+            $pdf->Cell(60, 10, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
             $pdf->Cell(25, 10, iconv('utf-8', 'cp874', $roomMapping[$student['tb_student_degree']]), 1, 0, 'C');
-            $pdf->Cell(20, 10, $student['count'], 1, 1, 'C');
+            $pdf->Cell(70, 10, iconv('utf-8', 'cp874', $student['course_name']), 1, 0, 'L');
+            $pdf->Cell(25, 10, $student['count'], 1, 1, 'C');
+            $totalCount += $student['count'];
             $counter++;
         }
     }
 } else {
     $pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ไม่มีข้อมูลนักเรียนที่ขาด'), 0, 1, 'C');
 }
+$pdf->Cell(170, 10, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
+$pdf->Cell(20, 10, iconv('utf-8', 'cp874', '' . ' ' . $totalCount), 1, 0, 'C');
 ob_end_clean();
 $filename = "report_" . date('Y-m-d') . ".pdf";
 

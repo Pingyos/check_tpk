@@ -51,7 +51,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                 <div id="pay-invoice">
                                     <div class="card-body">
                                         <div class="card-title">
-                                            <h3 class="text-center">รายงานการหนีเรียน</h3>
+                                            <h3 class="text-center">รายงานการขาดเรียน</h3>
                                         </div>
                                         <hr>
                                         <form method="post" novalidate="novalidate">
@@ -64,11 +64,12 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
                                                 $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
-                                                $cause = isset($_POST['cause']) ? $_POST['cause'] : 'หนีเรียน';
                                                 $startDateObj = new DateTime($startDate);
                                                 $endDateObj = new DateTime($endDate);
                                                 $startDate = $startDateObj->format('Y-m-d');
                                                 $studentCode = isset($_POST['studentCode']) ? $_POST['studentCode'] : '';
+                                                $absent = isset($_POST['absent']) ? $_POST['absent'] : '';
+
                                                 ?>
                                                 <div class="form-group col-6">
                                                     <label for="startDate" class="control-label mb-1">วันที่เริ่มต้น</label>
@@ -80,6 +81,34 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     <input type="date" name="endDate" id="endDate" class="form-control" value="<?= $endDate ?>">
                                                 </div>
                                                 <div class="form-group col-6">
+                                                    <label for="course" class="control-label mb-1">วิชา</label>
+                                                    <select name="course" id="course" class="form-control">
+                                                        <!-- <option value="">ทั้งหมด</option> -->
+                                                        <?php
+                                                        require_once 'connect.php';
+                                                        $teacherId = $_SESSION['id'];
+                                                        $sql = "SELECT DISTINCT courses, course_name FROM ck_checking WHERE teacher_id = :teacherId";
+                                                        $stmt = $conn->prepare($sql);
+                                                        $stmt->bindParam(':teacherId', $teacherId);
+                                                        $stmt->execute();
+                                                        $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                                        foreach ($checkings as $checking) {
+                                                            $courseCode = $checking['courses'];
+                                                            $courseName = $checking['course_name'];
+                                                            if (!in_array($courseCode, $selectedCourses)) {
+                                                                $selected = ($courseCode == $_POST['course']) ? 'selected' : '';
+                                                                echo '<option value="' . $courseCode . '" ' . $selected . '>' . $courseCode . ' ' . $courseName . '</option>';
+                                                                $selectedCourses[] = $courseCode;
+                                                            }
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-6">
+                                                    <label for="absent" class="control-label mb-1">รหัสนักเรียน</label>
+                                                    <input type="text" name="absent" id="absent" class="form-control" value="<?= $absent ?>">
+                                                </div>
+                                                <div class="form-group col-6">
                                                     <button type="submit" class="btn btn-info">
                                                         <span><i class="menu-icon fa fa-search"></i> แสดงรายชื่อ</span>
                                                     </button>
@@ -88,26 +117,38 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         document.getElementById('export_data').addEventListener('click', function() {
                                                             var startDate = document.querySelector('#startDate').value;
                                                             var endDate = document.querySelector('#endDate').value;
-                                                            var cause = 'หนีเรียน';
+                                                            var selectedCourse = document.querySelector('#course').value;
+                                                            var teacherId = <?php echo json_encode($_SESSION['id']); ?>;
+                                                            var absent = document.querySelector('#absent').value.trim();
+
+                                                            if (!absent || absent.length === 0) {
+                                                                alert('กรุณาระบุ รหัสนักเรียนเพื่อออกรายงาน');
+                                                                return;
+                                                            }
 
                                                             if (!startDate || !endDate) {
                                                                 alert('Please select both start and end dates.');
                                                                 return;
                                                             }
 
-                                                            var url = `exportpdf2.php?startDate=${startDate}&endDate=${endDate}&cause=${encodeURIComponent(cause)}`;
+                                                            var url = `teacher_report_2_pdf.php?teacherId=${teacherId}&startDate=${startDate}&endDate=${endDate}&course=${selectedCourse}&absent=${absent}`;
                                                             url += `&timestamp=${Date.now()}`;
                                                             window.open(url, '_blank');
                                                         });
                                                     </script>
+
                                                 </div>
                                                 <?php
                                                 if (isset($_POST['startDate']) || isset($_POST['endDate'])) {
                                                     $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
                                                     $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
-                                                    $cause = isset($_POST['cause']) ? $_POST['cause'] : 'หนีเรียน';
+                                                    $course = isset($_POST['course']) ? $_POST['course'] : '';
+                                                    $absent = isset($_POST['absent']) ? $_POST['absent'] : '';
+                                                    $teacherId = isset($_POST['teacherId']) ? $_POST['teacherId'] : '';
                                                     require_once 'connect.php';
-                                                    $sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname,s.tb_student_sex,s.tb_student_degree, c.courses, c.course_name, c.absent, COUNT(c.absent) as count 
+
+                                                    $teacherId = $_SESSION['id'];
+                                                    $sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname, s.tb_student_sex, s.tb_student_degree, c.absent, c.courses, c.course_name, c.cause, COUNT(c.absent) as count 
                                                     FROM ck_checking c
                                                     JOIN ck_students s ON c.absent = s.tb_student_code
                                                     WHERE 1=1 ";
@@ -116,12 +157,19 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         $sql .= " AND DATE(c.time) BETWEEN :startDate AND :endDate";
                                                     }
 
-                                                    $sql .= " AND c.cause = :cause";  // Add this line to filter by cause
+                                                    if ($course) {
+                                                        $sql .= " AND c.courses = :courseCode";
+                                                    }
+                                                    if (!empty($absent)) {
+                                                        $sql .= " AND c.absent = :absent";
+                                                    }
+                                                    $sql .= " AND c.teacher_id = :teacherId";
 
-                                                    $sql .= " GROUP BY c.absent ORDER BY 
+                                                    $sql .= " GROUP BY c.absent, c.courses, c.cause ORDER BY 
                                                     s.tb_student_degree ASC, 
                                                     s.tb_student_sex ASC, 
                                                     c.absent ASC";
+
                                                     $stmt = $conn->prepare($sql);
 
                                                     if ($startDate && $endDate) {
@@ -129,7 +177,13 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         $stmt->bindParam(':endDate', $endDate);
                                                     }
 
-                                                    $stmt->bindParam(':cause', $cause);  // Add this line to bind the cause parameter
+                                                    if ($course) {
+                                                        $stmt->bindParam(':courseCode', $course);
+                                                    }
+                                                    if (!empty($absent)) {
+                                                        $stmt->bindParam(':absent', $absent);
+                                                    }
+                                                    $stmt->bindParam(':teacherId', $teacherId);  // ใช้ $_SESSION['id'] แทนที่ $_POST['teacherId']
 
                                                     $stmt->execute();
                                                     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -154,7 +208,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         18 => 'ม.6/3',
                                                     ];
                                                 ?>
-
                                                     <table id="bootstrap-data-table" class="table table-striped table-bordered">
                                                         <thead>
                                                             <tr>
@@ -163,7 +216,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                 <th>ชื่อ-นามสกุล</th>
                                                                 <th>วิชา</th>
                                                                 <th>ระดับชั้น</th>
-                                                                <th>จำนวน</th>
+                                                                <th>จำนวนคาบ</th>
+                                                                <th>สาเหตุ</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -175,11 +229,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                                     <td><?= $counter ?></td>
                                                                     <td><?= $student['absent'] ?></td>
                                                                     <td><?= $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] ?></td>
+                                                                    <td><?= $student['courses'] . ' - ' . $student['course_name'] ?></td>
                                                                     <td><?= $roomMapping[$student['tb_student_degree']] ?></td>
-                                                                    <td><?= $student['courses'] ?> - <?= $student['course_name'] ?></td>
                                                                     <td><?= $student['count'] ?></td>
+                                                                    <td><?= $student['cause'] ?></td>
                                                                 </tr>
-
                                                             <?php
                                                                 $counter++;
                                                             }
@@ -197,7 +251,6 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                             </div>
                                             <hr>
                                         </form>
-
                                     </div>
                                 </div>
                             </div>

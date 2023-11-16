@@ -162,8 +162,10 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         $sql .= " AND c.absent = :absent";
                                                     }
 
-                                                    $sql .= " GROUP BY c.absent, c.courses, c.cause ORDER BY s.tb_student_degree ASC, s.tb_student_sex ASC, c.courses ASC, c.cause ASC";
-
+                                                    $sql .= " GROUP BY c.absent, c.courses, c.cause ORDER BY 
+                                                    s.tb_student_degree ASC, 
+                                                    s.tb_student_sex ASC, 
+                                                    c.absent ASC";
                                                     $stmt = $conn->prepare($sql);
 
                                                     if ($startDate && $endDate) {
@@ -208,9 +210,9 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <thead>
                                                             <tr>
                                                                 <th>ลำดับ</th>
-                                                                <th>วิชา</th>
                                                                 <th>รหัสนักเรียน</th>
                                                                 <th>ชื่อ-นามสกุล</th>
+                                                                <th>วิชา</th>
                                                                 <th>ระดับชั้น</th>
                                                                 <th>จำนวนคาบ</th>
                                                                 <th>สาเหตุ</th>
@@ -223,9 +225,9 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             ?>
                                                                 <tr>
                                                                     <td><?= $counter ?></td>
-                                                                    <td><?= $student['courses'] . ' - ' . $student['course_name'] ?></td>
                                                                     <td><?= $student['absent'] ?></td>
                                                                     <td><?= $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] ?></td>
+                                                                    <td><?= $student['courses'] . ' - ' . $student['course_name'] ?></td>
                                                                     <td><?= $roomMapping[$student['tb_student_degree']] ?></td>
                                                                     <td><?= $student['count'] ?></td>
                                                                     <td><?= $student['cause'] ?></td>
