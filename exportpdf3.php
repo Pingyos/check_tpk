@@ -8,8 +8,7 @@ $absent = isset($_GET['absent']) ? $_GET['absent'] : '';
 $cause = isset($_GET['cause']) ? $_GET['cause'] : '';
 
 require_once 'connect.php';
-
-$sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname, s.tb_student_sex, s.tb_student_degree, c.absent, c.courses,c.course_name, c.cause, COUNT(c.absent) as count 
+$sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname, s.tb_student_sex, s.tb_student_degree, c.absent, c.time, c.courses, c.course_name, c.cause
 FROM ck_checking c
 JOIN ck_students s ON c.absent = s.tb_student_code
 WHERE 1=1 ";
@@ -30,10 +29,19 @@ if ($absent) {
     $sql .= " AND c.absent = :absent";
 }
 
-$sql .= " GROUP BY c.absent, c.courses, c.cause ORDER BY 
-s.tb_student_degree ASC, 
-s.tb_student_sex ASC, 
-c.absent ASC";
+$sql .= " ORDER BY
+            s.tb_student_degree ASC,
+            s.tb_student_sex ASC,
+            CASE c.cause
+                WHEN 'หนีเรียน' THEN 1
+                WHEN 'ขาดเรียน' THEN 2
+                WHEN 'ลาป่วย' THEN 3
+                WHEN 'ลากิจ' THEN 4
+                WHEN 'อื่นๆ' THEN 5
+                WHEN 'ขออนุญาตเวลาเรียน' THEN 6
+            END";
+
+
 $stmt = $conn->prepare($sql);
 
 if ($cause) {
@@ -121,34 +129,41 @@ if (count($students) > 0) {
 
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
 
-    $pdf->SetFont('THSarabunBoldPSK', '', 14);
-    $pdf->Cell(10, 10, iconv('utf-8', 'cp874', 'ลำดับ'), 1, 0, 'C');
-    $pdf->Cell(53, 10, iconv('utf-8', 'cp874', 'ชื่อ-นามสกุล'), 1, 0, 'C');
-    $pdf->Cell(70, 10, iconv('utf-8', 'cp874', 'วิชา'), 1, 0, 'C');
-    $pdf->Cell(15, 10, iconv('utf-8', 'cp874', 'ระดับชั้น'), 1, 0, 'C');
-    $pdf->Cell(17, 10, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 0, 'C');
-    $pdf->Cell(25, 10, iconv('utf-8', 'cp874', 'สาเหตุ'), 1, 1, 'C');
+    $pdf->SetFont('THSarabunBoldPSK', '', 16);
+    $pdf->Cell(10, 8, iconv('utf-8', 'cp874', 'ลำดับ'), 1, 0, 'C');
+    $pdf->Cell(25, 8, iconv('utf-8', 'cp874', 'วันที่'), 1, 0, 'C');
+    $pdf->Cell(50, 8, iconv('utf-8', 'cp874', 'ชื่อ-นามสกุล'), 1, 0, 'C');
+    $pdf->Cell(55, 8, iconv('utf-8', 'cp874', 'วิชา'), 1, 0, 'C');
+    $pdf->Cell(15, 8, iconv('utf-8', 'cp874', 'ระดับชั้น'), 1, 0, 'C');
+    $pdf->Cell(20, 8, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 0, 'C');
+    $pdf->Cell(20, 8, iconv('utf-8', 'cp874', 'สาเหตุ'), 1, 1, 'C');
 
-    $pdf->SetFont('THSarabunPSK', '', 14);
+    $pdf->SetFont('THSarabunPSK', '', 16);
     $counter = 1;
     $processedStudents = array();
     $totalCount = 0;
+
     foreach ($students as $student) {
-        $pdf->Cell(10, 10, iconv('utf-8', 'cp874', $counter), 1, 0, 'C');
-        $pdf->Cell(53, 10, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
-        $pdf->Cell(70, 10, iconv('utf-8', 'cp874', $student['course_name']), 1, 0, 'L');
-        $pdf->Cell(15, 10, iconv('utf-8', 'cp874', $roomMapping[$student['tb_student_degree']]), 1, 0, 'C');
-        $pdf->Cell(17, 10, $student['count'], 1, 0, 'C');
-        $totalCount += $student['count'];
-        $pdf->Cell(25, 10, iconv('utf-8', 'cp874', $student['cause']), 1, 1, 'L');
+        $pdf->Cell(10, 8, iconv('utf-8', 'cp874', $counter), 1, 0, 'C');
+        $yearFormatted = date('Y', strtotime($student['time'])) + 543;
+        $pdf->Cell(25, 8, iconv('utf-8', 'cp874', date('d/m/', strtotime($student['time'])) . $yearFormatted), 1, 0, 'L');
+        $pdf->Cell(50, 8, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
+        $pdf->Cell(55, 8, iconv('utf-8', 'cp874', $student['course_name']), 1, 0, 'L');
+        $pdf->Cell(15, 8, iconv('utf-8', 'cp874', $roomMapping[$student['tb_student_degree']]), 1, 0, 'C');
+        $periodNumbers = explode(',', $student['period']);
+        $numberCount = count($periodNumbers);
+        $totalNumberCount += $numberCount;
+        $pdf->Cell(20, 8, iconv('utf-8', 'cp874', $numberCount), 1, 0, 'C');
+        $pdf->multiCell(20, 8, iconv('utf-8', 'cp874', $student['cause']), 1, 'L');
+
         $counter++;
     }
 } else {
     $pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ไม่มีข้อมูลนักเรียนที่ขาด'), 0, 1, 'C');
 }
-$pdf->Cell(148, 10, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
-$pdf->Cell(17, 10, iconv('utf-8', 'cp874', '' . ' ' . $totalCount), 1, 0, 'C');
-$pdf->Cell(25, 10, iconv('utf-8', 'cp874', '' . ' '), 1, 0, 'C');
+$pdf->Cell(155, 8, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
+$pdf->Cell(20, 8, iconv('utf-8', 'cp874', '' . ' ' . $totalNumberCount), 1, 0, 'C');
+$pdf->Cell(20, 8, iconv('utf-8', 'cp874', '' . ' '), 1, 0, 'C');
 $pdf->Cell(0, 30, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
 
 

@@ -51,7 +51,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                 <div id="pay-invoice">
                                     <div class="card-body">
                                         <div class="card-title">
-                                            <h3 class="text-center">รายงานแบบ รายบุคคล</h3>
+                                            <h3 class="text-center">รายงานสำหรับครูประจำชั้น</h3>
                                         </div>
                                         <hr>
                                         <form method="post" novalidate="novalidate">

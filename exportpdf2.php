@@ -8,7 +8,7 @@ $cause = isset($_GET['cause']) ? $_GET['cause'] : 'หนีเรียน';
 
 require_once 'connect.php';
 
-$sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname,s.tb_student_sex,s.tb_student_degree, c.courses, c.course_name, c.absent, COUNT(c.absent) as count 
+$sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname,s.tb_student_sex,s.tb_student_degree, c.courses,c.name_title,c.name,c.surname, c.course_name, c.absent, COUNT(c.absent) as count 
 FROM ck_checking c
 JOIN ck_students s ON c.absent = s.tb_student_code
 WHERE 1=1 ";
@@ -88,7 +88,7 @@ if (count($students) > 0) {
         $sqlStudent = "SELECT tb_student_tname, tb_student_name, tb_student_sname, tb_student_degree 
                        FROM ck_students 
                        WHERE tb_student_code = :studentCode
-                       ORDER BY tb_student_sex ASC";  // เพิ่ม ORDER BY ที่นี่
+                       ORDER BY tb_student_sex ASC";
         $stmtStudent = $conn->prepare($sqlStudent);
         $stmtStudent->bindParam(':studentCode', $studentCode);
         $stmtStudent->execute();
@@ -113,11 +113,12 @@ if (count($students) > 0) {
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
 
     $pdf->SetFont('THSarabunBoldPSK', '', 16);
-    $pdf->Cell(10, 10, iconv('utf-8', 'cp874', 'ลำดับ'), 1, 0, 'C');
-    $pdf->Cell(60, 10, iconv('utf-8', 'cp874', 'ชื่อ-นามสกุล'), 1, 0, 'C');
-    $pdf->Cell(25, 10, iconv('utf-8', 'cp874', 'ระดับชั้น'), 1, 0, 'C');
-    $pdf->Cell(70, 10, iconv('utf-8', 'cp874', 'วิชา'), 1, 0, 'C');
-    $pdf->Cell(25, 10, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 1, 'C');
+    $pdf->Cell(10, 8, iconv('utf-8', 'cp874', 'ลำดับ'), 1, 0, 'C');
+    $pdf->Cell(50, 8, iconv('utf-8', 'cp874', 'ชื่อ-นามสกุล'), 1, 0, 'C');
+    $pdf->Cell(15, 8, iconv('utf-8', 'cp874', 'ระดับชั้น'), 1, 0, 'C');
+    $pdf->Cell(55, 8, iconv('utf-8', 'cp874', 'วิชา'), 1, 0, 'C');
+    $pdf->Cell(45, 8, iconv('utf-8', 'cp874', 'ครูผู้สอน'), 1, 0, 'C');
+    $pdf->Cell(20, 8, iconv('utf-8', 'cp874', 'จำนวนคาบ'), 1, 1, 'C');
 
     $pdf->SetFont('THSarabunPSK', '', 16);
     $counter = 1;
@@ -125,12 +126,13 @@ if (count($students) > 0) {
     $totalCount = 0;
     foreach ($students as $student) {
         if (!in_array($student['absent'], $processedStudents)) {
-            $processedStudents[] = $student['absent']; // Mark student as processed
-            $pdf->Cell(10, 10, iconv('utf-8', 'cp874', $counter), 1, 0, 'C');
-            $pdf->Cell(60, 10, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
-            $pdf->Cell(25, 10, iconv('utf-8', 'cp874', $roomMapping[$student['tb_student_degree']]), 1, 0, 'C');
-            $pdf->Cell(70, 10, iconv('utf-8', 'cp874', $student['course_name']), 1, 0, 'L');
-            $pdf->Cell(25, 10, $student['count'], 1, 1, 'C');
+            $processedStudents[] = $student['absent'];
+            $pdf->Cell(10, 8, iconv('utf-8', 'cp874', $counter), 1, 0, 'C');
+            $pdf->Cell(50, 8, iconv('utf-8', 'cp874', $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname']), 1, 0, 'L');
+            $pdf->Cell(15, 8, iconv('utf-8', 'cp874', $roomMapping[$student['tb_student_degree']]), 1, 0, 'C');
+            $pdf->Cell(55, 8, iconv('utf-8', 'cp874', $student['course_name']), 1, 0, 'L');
+            $pdf->Cell(45, 8, iconv('utf-8', 'cp874', $student['name_title'] . ' ' . $student['name'] . ' ' . $student['surname']), 1, 0, 'L');
+            $pdf->Cell(20, 8, $student['count'], 1, 1, 'C');
             $totalCount += $student['count'];
             $counter++;
         }
@@ -138,8 +140,8 @@ if (count($students) > 0) {
 } else {
     $pdf->Cell(0, 10, iconv('utf-8', 'cp874', 'ไม่มีข้อมูลนักเรียนที่ขาด'), 0, 1, 'C');
 }
-$pdf->Cell(165, 10, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
-$pdf->Cell(25, 10, iconv('utf-8', 'cp874', '' . ' ' . $totalCount), 1, 0, 'C');
+$pdf->Cell(175, 8, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
+$pdf->Cell(20, 8, iconv('utf-8', 'cp874', '' . ' ' . $totalCount), 1, 0, 'C');
 $pdf->Cell(0, 30, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
 
 
