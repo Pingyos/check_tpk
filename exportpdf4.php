@@ -92,6 +92,8 @@ $pdf->AddFont('THSarabunPSK', '', 'THSarabunPSK.php');
 $pdf->AddFont('THSarabunBoldPSK', '', 'THSarabunBoldPSK.php');
 ob_start();
 if (count($students) > 0) {
+    $pdf->SetFont('THSarabunPSK', '', '16');
+    $pdf->Cell(0, 1, iconv('utf-8', 'cp874', 'SAC - 4'), 0, 1, 'R');
     $pdf->SetFont('THSarabunBoldPSK', '', '18');
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'รายงานสำหรับครูประจำชั้น'), 0, 1, 'C');
     function formatDateThai($date)
@@ -142,6 +144,14 @@ if (count($students) > 0) {
 $pdf->Cell(145, 10, iconv('utf-8', 'cp874', 'รวม' . ' '), 1, 0, 'R');
 $pdf->Cell(17, 10, iconv('utf-8', 'cp874', '' . ' ' . $totalCount), 1, 0, 'C');
 $pdf->Cell(28, 10, iconv('utf-8', 'cp874', '' . ' '), 1, 0, 'C');
+$pdf->Cell(0, 30, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
+
+$pdf->Cell(90, 30, iconv('utf-8', 'cp874', 'ลงชื่อรับทราบข้อมูล'), 0, 1, 'C');
+$pdf->Cell(90, 7, iconv('utf-8', 'cp874', 'ลงชื่อ .................................................'), 0, 1, 'C');
+$pdf->Cell(90, 7, iconv('utf-8', 'cp874', '( .................................................)'), 0, 1, 'C');
+
+
+$pdf->Cell(90, 7, iconv('utf-8', 'cp874', 'ครูที่ปรึกษา'), 0, 1, 'C');
 ob_end_clean();
 $filename = "report_" . date('Y-m-d') . ".pdf";
 

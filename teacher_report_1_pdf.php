@@ -64,6 +64,7 @@ $roomMapping = [
     18 => 'ม.6/3',
 ];
 
+
 $pdf = new FPDF('P', 'mm', 'A4');
 $pdf->AddPage();
 $pdf->AddFont('THSarabunPSK', '', 'THSarabunPSK.php');
@@ -71,11 +72,12 @@ $pdf->AddFont('THSarabunBoldPSK', '', 'THSarabunBoldPSK.php');
 
 ob_start();
 if (count($students) > 0) {
+    $pdf->SetFont('THSarabunPSK', '', '16');
+    $pdf->Cell(0, 1, iconv('utf-8', 'cp874', 'SAC - 5'), 0, 1, 'R');
     $pdf->SetFont('THSarabunBoldPSK', '', '18');
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'รายงานการขาดเรียนรายวิชา'), 0, 1, 'C');
     if (isset($_GET['course'])) {
         $selectedCourse = $_GET['course'];
-        // ค้นหารายวิชาจากตาราง ck_courses
         $sqlCourse = "SELECT tb_course_name FROM ck_courses WHERE tb_course_code = :selectedCourse";
         $stmtCourse = $conn->prepare($sqlCourse);
         $stmtCourse->bindParam(':selectedCourse', $selectedCourse);
@@ -135,7 +137,6 @@ if (count($students) > 0) {
         $pdf->Cell(20, 10, iconv('utf-8', 'cp874', $roomMapping[$student['tb_student_degree']]), 1, 0, 'C');
         $pdf->Cell(25, 10, $student['count'], 1, 0, 'C');
         $totalCount += $student['count'];
-        // $pdf->Cell(30, 10, iconv('utf-8', 'cp874', $student['cause'] . '  ' . $student['custom_cause']), 1, 1, 'L');
         $pdf->Cell(30, 10, iconv('utf-8', 'cp874', $student['cause']), 1, 1, 'L');
 
         $counter++;

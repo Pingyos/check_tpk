@@ -79,6 +79,8 @@ $pdf->AddFont('THSarabunBoldPSK', '', 'THSarabunBoldPSK.php');
 
 ob_start();
 if (count($students) > 0) {
+    $pdf->SetFont('THSarabunPSK', '', '16');
+    $pdf->Cell(0, 1, iconv('utf-8', 'cp874', 'SAC - 6'), 0, 1, 'R');
     $pdf->SetFont('THSarabunBoldPSK', '', '18');
     $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'รายงานการขาดเรียน'), 0, 1, 'C');
     if (isset($_GET['course'])) {
