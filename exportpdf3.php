@@ -1,6 +1,54 @@
 <?php
 require('fpdf186/fpdf.php');
+class PDF extends FPDF
+{
+    // Page header
+    function Header()
+    {
+        $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : '...';
+        $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : '...';
+        $startDateFormattedThai = $this->formatDateThai($startDate);
+        $endDateFormattedThai = $this->formatDateThai($endDate);
+        $this->AddFont('THSarabunBoldPSK', '', 'THSarabunBoldPSK.php');
+        $this->SetFont('THSarabunBoldPSK', '', 14);
+        $this->Cell(80);
+        $this->Cell(0, 1, iconv('UTF-8', 'TIS-620', 'SAC - 2'), 0, 1, 'R');
+        $this->Cell(80);
+        $this->SetFont('THSarabunBoldPSK', '', 18);
+        $this->Cell(30, 7, iconv('UTF-8', 'TIS-620', 'รายงานรายบุคคล'), 0, 1, 'C');
+        $this->Cell(80);
+        $this->Cell(30, 7, iconv('UTF-8', 'TIS-620', 'ระหว่างวันที่: ' . $startDateFormattedThai . '  ถึงวันที่: ' . $endDateFormattedThai), 0, 0, 'C');
+        $this->Ln(10);
+    }
 
+    function formatDateThai($date)
+    {
+        $dateTime = new DateTime($date);
+        $thaiMonths = array(
+            'มกราคม', 'กุมภาพันธ์', 'มีนาคม',
+            'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+            'กรกฎาคม', 'สิงหาคม', 'กันยายน',
+            'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+        );
+        $formattedDateThai = $dateTime->format('d') . ' ' . $thaiMonths[$dateTime->format('m') - 1] . ' ' . ($dateTime->format('Y') + 543);
+        return $formattedDateThai;
+    }
+    // Page footer
+    function Footer()
+    {
+        $this->SetY(-15);
+        $this->AddFont('THSarabunPSK', '', 'THSarabunPSK.php');
+        $this->SetFont('THSarabunPSK', '', 12);
+
+        $this->Cell(0, 10, iconv('UTF-8', 'TIS-620', 'หน้า ' . $this->PageNo() . '/{nb}'), 0, 0, 'C');
+    }
+}
+
+$pdf = new PDF();
+$pdf->AliasNbPages();
+$pdf->AddPage();
+$pdf->AddFont('THSarabunPSK', '', 'THSarabunPSK.php');
+$pdf->AddFont('THSarabunBoldPSK', '', 'THSarabunBoldPSK.php');
 $selectedCourse = isset($_GET['course']) ? $_GET['course'] : '';
 $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : date('Y-m-d');
 $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : date('Y-m-d');
@@ -83,52 +131,9 @@ $roomMapping = [
     16 => 'ม.6/1',
     17 => 'ม.6/2',
     18 => 'ม.6/3',
-];;
-
-$pdf = new FPDF('P', 'mm', 'A4');
-$pdf->AddPage();
-$pdf->AddFont('THSarabunPSK', '', 'THSarabunPSK.php');
-$pdf->AddFont('THSarabunBoldPSK', '', 'THSarabunBoldPSK.php');
+];
 ob_start();
 if (count($students) > 0) {
-    $pdf->SetFont('THSarabunPSK', '', '16');
-    $pdf->Cell(0, 1, iconv('utf-8', 'cp874', 'SAC - 2'), 0, 1, 'R');
-    $pdf->SetFont('THSarabunBoldPSK', '', '18');
-    $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'รายงานรายบุคคล'), 0, 1, 'C');
-    function formatDateThai($date)
-    {
-        $dateTime = new DateTime($date);
-        $thaiMonths = array(
-            'มกราคม', 'กุมภาพันธ์', 'มีนาคม',
-            'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-            'กรกฎาคม', 'สิงหาคม', 'กันยายน',
-            'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
-        );
-        $formattedDateThai = $dateTime->format('d') . ' ' . $thaiMonths[$dateTime->format('m') - 1] . ' ' . ($dateTime->format('Y') + 543);
-        return $formattedDateThai;
-    }
-    $startDateFormattedThai = formatDateThai($startDate);
-    $endDateFormattedThai = formatDateThai($endDate);
-    $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'ระหว่างวันที่: ' . $startDateFormattedThai . '  ถึงวันที่: ' . $endDateFormattedThai), 0, 1, 'C');
-    if (isset($_GET['absent'])) {
-        $absent = $_GET['absent'];
-        $sqlStudent = "SELECT tb_student_tname, tb_student_name, tb_student_sname, tb_student_degree 
-                       FROM ck_students 
-                       WHERE tb_student_code = :absent
-                       ORDER BY tb_student_sex ASC";
-        $stmtStudent = $conn->prepare($sqlStudent);
-        $stmtStudent->bindParam(':absent', $absent);
-        $stmtStudent->execute();
-        $studentData = $stmtStudent->fetch(PDO::FETCH_ASSOC);
-
-        if ($studentData) {
-            $studentName = $studentData['tb_student_tname'] . ' ' . $studentData['tb_student_name'] . ' ' . $studentData['tb_student_sname'];
-            $pdf->Cell(0, 7, iconv('utf-8', 'cp874', 'ชื่อ-นามสกุล: ' . $studentName . ' ' . 'รหัสนักเรียน: ' . $absent . ' ' . 'ชั้น: ' . $roomMapping[$studentData['tb_student_degree']]), 0, 1, 'C');
-        }
-    }
-
-    $pdf->Cell(0, 7, iconv('utf-8', 'cp874', ''), 0, 1, 'C');
-
     $pdf->SetFont('THSarabunBoldPSK', '', 16);
     $pdf->Cell(10, 8, iconv('utf-8', 'cp874', 'ลำดับ'), 1, 0, 'C');
     $pdf->Cell(25, 8, iconv('utf-8', 'cp874', 'วันที่'), 1, 0, 'C');

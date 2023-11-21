@@ -4,10 +4,6 @@ echo '
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">';
-//เช็คว่ามีตัวแปร session อะไรบ้าง
-// print_r($_SESSION);
-// exit();
-//สร้างเงื่อนไขตรวจสอบสิทธิ์การเข้าใช้งานจาก session
 if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surname']) && empty($_SESSION['status'])) {
     echo '<script>
                 setTimeout(function() {
@@ -29,16 +25,9 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
 <?php require_once 'head.php'; ?>
 
 <body>
-    <!-- Left Panel -->
     <?php require_once 'aside.php'; ?>
-    <!-- /#left-panel -->
-    <!-- Right Panel -->
     <div id="right-panel" class="right-panel">
-        <!-- Header-->
         <?php require_once 'header.php'; ?>
-        <!-- /#header -->
-
-        <!-- Content -->
         <div class="content">
             <!-- Animated -->
             <div class="animated fadeIn">
@@ -88,14 +77,11 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         document.getElementById('export_data').addEventListener('click', function() {
                                                             var startDate = document.querySelector('#startDate').value;
                                                             var endDate = document.querySelector('#endDate').value;
-                                                            var cause = 'ขาดเรียน';
-
                                                             if (!startDate || !endDate) {
                                                                 alert('Please select both start and end dates.');
                                                                 return;
                                                             }
-
-                                                            var url = `exportpdf1.php?startDate=${startDate}&endDate=${endDate}&cause=${encodeURIComponent(cause)}`;
+                                                            var url = `exportpdf1.php?startDate=${startDate}&endDate=${endDate}`;
                                                             url += `&timestamp=${Date.now()}`;
                                                             window.open(url, '_blank');
                                                         });
@@ -117,7 +103,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         $sql .= " AND DATE(c.time) BETWEEN :startDate AND :endDate";
                                                     }
 
-                                                    $sql .= " AND c.cause = :cause";  // Add this line to filter by cause
+                                                    $sql .= " AND c.cause = :cause";
 
                                                     $sql .= " GROUP BY c.absent ORDER BY 
                                                     s.tb_student_degree ASC, 
@@ -132,7 +118,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         $stmt->bindParam(':endDate', $endDate);
                                                     }
 
-                                                    $stmt->bindParam(':cause', $cause);  // Add this line to bind the cause parameter
+                                                    $stmt->bindParam(':cause', $cause);
 
                                                     $stmt->execute();
                                                     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);

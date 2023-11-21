@@ -88,14 +88,13 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         document.getElementById('export_data').addEventListener('click', function() {
                                                             var startDate = document.querySelector('#startDate').value;
                                                             var endDate = document.querySelector('#endDate').value;
-                                                            var cause = 'หนีเรียน';
 
                                                             if (!startDate || !endDate) {
                                                                 alert('Please select both start and end dates.');
                                                                 return;
                                                             }
 
-                                                            var url = `exportpdf2.php?startDate=${startDate}&endDate=${endDate}&cause=${encodeURIComponent(cause)}`;
+                                                            var url = `exportpdf2.php?startDate=${startDate}&endDate=${endDate}`;
                                                             url += `&timestamp=${Date.now()}`;
                                                             window.open(url, '_blank');
                                                         });
