@@ -106,7 +106,8 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                     $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
                                                     $cause = isset($_POST['cause']) ? $_POST['cause'] : 'หนีเรียน';
                                                     require_once 'connect.php';
-                                                    $sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname,s.tb_student_sex,s.tb_student_degree, c.courses, c.course_name, c.absent, COUNT(c.absent) as count 
+
+                                                    $sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname, s.tb_student_sex, s.tb_student_degree, c.absent, c.time, c.courses, c.course_name, c.cause ,c.name_title, c.name, c.surname
                                                     FROM ck_checking c
                                                     JOIN ck_students s ON c.absent = s.tb_student_code
                                                     WHERE 1=1 ";
@@ -115,12 +116,12 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         $sql .= " AND DATE(c.time) BETWEEN :startDate AND :endDate";
                                                     }
 
-                                                    $sql .= " AND c.cause = :cause";  // Add this line to filter by cause
+                                                    $sql .= " AND c.cause = :cause";
+                                                    $sql .= " ORDER BY
+                                                    s.tb_student_degree ASC,
+                                                    s.tb_student_sex ASC
+                                                   ";
 
-                                                    $sql .= " GROUP BY c.absent ORDER BY 
-                                                    s.tb_student_degree ASC, 
-                                                    s.tb_student_sex ASC, 
-                                                    c.absent ASC";
                                                     $stmt = $conn->prepare($sql);
 
                                                     if ($startDate && $endDate) {
@@ -128,8 +129,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         $stmt->bindParam(':endDate', $endDate);
                                                     }
 
-                                                    $stmt->bindParam(':cause', $cause);  // Add this line to bind the cause parameter
-
+                                                    $stmt->bindParam(':cause', $cause);
                                                     $stmt->execute();
                                                     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                     $roomMapping = [
@@ -158,11 +158,12 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         <thead>
                                                             <tr>
                                                                 <th>ลำดับ</th>
+                                                                <th>วันที่</th>
                                                                 <th>รหัสนักเรียน</th>
                                                                 <th>ชื่อ-นามสกุล</th>
                                                                 <th>วิชา</th>
+                                                                <th>ครูผู้สอน</th>
                                                                 <th>ระดับชั้น</th>
-                                                                <th>จำนวน</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -172,11 +173,12 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                             ?>
                                                                 <tr>
                                                                     <td><?= $counter ?></td>
+                                                                    <td><?= date('d/m/', strtotime($student['time'])) . (date('Y', strtotime($student['time'])) + 543) ?></td>
                                                                     <td><?= $student['absent'] ?></td>
                                                                     <td><?= $student['tb_student_tname'] . ' ' . $student['tb_student_name'] . ' ' . $student['tb_student_sname'] ?></td>
+                                                                    <td><?= $student['courses'] . ' - ' . $student['course_name'] ?></td>
+                                                                    <td><?= $student['name_title'] . ' ' . $student['name'] . ' ' . $student['surname'] ?></td>
                                                                     <td><?= $roomMapping[$student['tb_student_degree']] ?></td>
-                                                                    <td><?= $student['courses'] ?> - <?= $student['course_name'] ?></td>
-                                                                    <td><?= $student['count'] ?></td>
                                                                 </tr>
 
                                                             <?php

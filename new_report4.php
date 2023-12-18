@@ -64,7 +64,7 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 $checkings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
                                                 $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
-                                                $rooms = isset($_POST['rooms']) ? $_POST['rooms'] : ''; // แก้ตรงนี้
+                                                $rooms = isset($_POST['rooms']) ? $_POST['rooms'] : '';
                                                 $startDateObj = new DateTime($startDate);
                                                 $endDateObj = new DateTime($endDate);
                                                 $startDate = $startDateObj->format('Y-m-d');

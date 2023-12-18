@@ -1,6 +1,6 @@
 <?php
 // คำสั่งเชื่อมต่อฐานข้อมูล
-$conn = mysqli_connect("localhost", "studentcheck", "root", "");
+$conn = mysqli_connect("localhost", "stdcheck", "Alohomora007", "studentcheck");
 
 // ตรวจสอบการเชื่อมต่อ
 if (!$conn) {

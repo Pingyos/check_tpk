@@ -92,8 +92,12 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                 if (isset($_POST['startDate']) || isset($_POST['endDate'])) {
                                                     $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-d');
                                                     $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-d');
-                                                    $cause = isset($_POST['cause']) ? $_POST['cause'] : 'ขาดเรียน';
+                                                    $cause1 = isset($_POST['cause']) ? $_POST['cause'] : 'ขาดเรียน';
+                                                    $cause2 = isset($_POST['cause']) ? $_POST['cause'] : 'ลาป่วย';
+                                                    $cause3 = isset($_POST['cause']) ? $_POST['cause'] : 'ลากิจ';
+
                                                     require_once 'connect.php';
+
                                                     $sql = "SELECT s.tb_student_tname, s.tb_student_name, s.tb_student_sname,s.tb_student_sex,s.tb_student_degree, c.absent, COUNT(c.absent) as count 
                                                     FROM ck_checking c
                                                     JOIN ck_students s ON c.absent = s.tb_student_code
@@ -103,13 +107,12 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         $sql .= " AND DATE(c.time) BETWEEN :startDate AND :endDate";
                                                     }
 
-                                                    $sql .= " AND c.cause = :cause";
+                                                    $sql .= " AND (c.cause = :cause1 OR c.cause = :cause2 OR c.cause = :cause3)";
 
                                                     $sql .= " GROUP BY c.absent ORDER BY 
                                                     s.tb_student_degree ASC, 
                                                     s.tb_student_sex ASC, 
                                                     c.absent ASC";
-
 
                                                     $stmt = $conn->prepare($sql);
 
@@ -118,9 +121,13 @@ if (empty($_SESSION['id']) && empty($_SESSION['name']) && empty($_SESSION['surna
                                                         $stmt->bindParam(':endDate', $endDate);
                                                     }
 
-                                                    $stmt->bindParam(':cause', $cause);
+                                                    // Bind each cause to its respective parameter
+                                                    $stmt->bindParam(':cause1', $cause1);
+                                                    $stmt->bindParam(':cause2', $cause2);
+                                                    $stmt->bindParam(':cause3', $cause3);
 
                                                     $stmt->execute();
+
                                                     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                     $roomMapping = [
                                                         1 => 'ม.1/1',
